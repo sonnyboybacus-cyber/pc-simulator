@@ -70,6 +70,129 @@ const defaultState = {
         action: "Strengthen Grade 6 to 7 transition and Grade 10 to 11 bridging into Senior High School."
       }
     ]
+  },
+  characterization: {
+    currentStep: 0,
+    activeDomainIdx: 0,
+    steps: [
+      {
+        title: "Equipment & Assessment",
+        subtitle: "Curriculum Support — Equipment, ICT & Assessment",
+        domains: [
+          {
+            name: "Instructional Equipment",
+            letter: "E",
+            status: "Equipped · ICT uneven",
+            maturity: 3,
+            bullets: [
+              "Smart TVs in all classrooms; printers for all teachers, laptops for some.",
+              "Science & Mathematics equipment available and actively used.",
+              "ICT tools remain uneven across teachers, affecting consistency."
+            ]
+          },
+          {
+            name: "ICT Environment",
+            letter: "I",
+            status: "Constrained",
+            maturity: 2,
+            bullets: [
+              "Rising SHS ICT Programming enrolment raises equipment demand.",
+              "Existing resources are limited relative to curriculum needs.",
+              "Hands-on ICT competencies are the most affected."
+            ]
+          },
+          {
+            name: "Assessment",
+            letter: "A",
+            status: "Functional · strengthen",
+            maturity: 3,
+            bullets: [
+              "Regional Unified Quarterly Exams standardise assessment.",
+              "Pacing does not always align with exam coverage.",
+              "HOTS / NAT / PISA capacity-building and ICT for data analysis needed."
+            ]
+          }
+        ]
+      },
+      {
+        title: "Teachers & Facilities",
+        subtitle: "Curriculum Support — Teachers, Materials & Facilities",
+        domains: [
+          {
+            name: "Teachers",
+            letter: "T",
+            status: "Adaptable · multi-level load",
+            maturity: 3,
+            bullets: [
+              "Small, fluctuating classes mean multi-level loads and flexible deployment.",
+              "Teachers handle multiple areas and grade levels, esp. JHS and SHS.",
+              "SHS ICT Programming raises specialisation demands."
+            ]
+          },
+          {
+            name: "Instructional Materials",
+            letter: "M",
+            status: "Transitional",
+            maturity: 2,
+            bullets: [
+              "Limited provision; many resources outdated (pandemic-era).",
+              "MATATAG rollout delayed and staggered — started Grades 1 & 7.",
+              "Uneven access to updated materials across grade levels."
+            ]
+          },
+          {
+            name: "Facilities",
+            letter: "F",
+            status: "Functional · not optimised",
+            maturity: 2,
+            bullets: [
+              "14 classrooms, incl. temporary Marcos-type structures for SHS.",
+              "Missing: computer lab, clinic, DRRM room, Teen Center.",
+              "Home Economics room dilapidated, now used as storage."
+            ]
+          }
+        ]
+      },
+      {
+        title: "Governance & Partnerships",
+        subtitle: "Curriculum Support — Leadership, SDO & Partnerships",
+        domains: [
+          {
+            name: "School Leadership",
+            letter: "L",
+            status: "Stabilising",
+            maturity: 3,
+            bullets: [
+              "Operating amid program expansion and SHS validation.",
+              "Managing enrolment swings, compliance and limited resources.",
+              "Needs stronger forecasting, optimisation and supervision."
+            ]
+          },
+          {
+            name: "SDO Technical Assistance",
+            letter: "S",
+            status: "Comprehensive support",
+            maturity: 4,
+            bullets: [
+              "Training, staffing, ICT, assessment, supervision & governance support.",
+              "Strong for compliance and initial implementation needs.",
+              "Needs sustained coaching and on-site technical assistance."
+            ]
+          },
+          {
+            name: "Community & Partnerships",
+            letter: "P",
+            status: "Developing",
+            maturity: 2,
+            bullets: [
+              "Strong PTA, Barangay LGU and School Governing Council support.",
+              "Backed early SHS / TVL support and work immersion.",
+              "Engagement still developing in depth and sustainability."
+            ]
+          }
+        ]
+      }
+    ]
   }
 };
 
@@ -364,6 +487,18 @@ export default function Home() {
               steps: defaultState.dashboard.steps.map((step: any, idx: number) => ({
                 ...step,
                 ...(stateData.dashboard?.steps?.[idx] || {})
+              }))
+            },
+            characterization: {
+              currentStep: stateData.characterization?.currentStep ?? defaultState.characterization.currentStep,
+              activeDomainIdx: stateData.characterization?.activeDomainIdx ?? defaultState.characterization.activeDomainIdx ?? 0,
+              steps: defaultState.characterization.steps.map((step: any, idx: number) => ({
+                ...step,
+                ...(stateData.characterization?.steps?.[idx] || {}),
+                domains: step.domains.map((dom: any, dIdx: number) => ({
+                  ...dom,
+                  ...(stateData.characterization?.steps?.[idx]?.domains?.[dIdx] || {})
+                }))
               }))
             }
           };
@@ -663,6 +798,76 @@ export default function Home() {
                             dashboard: { ...prev.dashboard, steps: newSteps }
                           };
                           saveState(newState);
+                          return newState;
+                        });
+                      }}
+                    />
+                  </section>
+                );
+              }
+              if (slide.label === "Characterization") {
+                return (
+                  <section
+                    key={slide.id}
+                    data-slide-index={idx}
+                    data-label={slide.label}
+                    className={slide.className}
+                    style={parseStyleString(slide.styleAttr)}
+                  >
+                    <CharacterizationCarousel 
+                      stepData={appState.characterization?.steps || defaultState.characterization.steps}
+                      currentStep={appState.characterization?.currentStep ?? defaultState.characterization.currentStep}
+                      activeDomainIdx={appState.characterization?.activeDomainIdx ?? 0}
+                      mode={appState.mode}
+                      onActiveDomainChange={(domIdx) => {
+                        setAppState((prev: any) => {
+                          const charState = prev.characterization || defaultState.characterization;
+                          const newState = {
+                            ...prev,
+                            characterization: { ...charState, activeDomainIdx: domIdx }
+                          };
+                          saveState(newState);
+                          try {
+                            const channel = new BroadcastChannel('pir-deck-sync');
+                            channel.postMessage({ type: 'update-state', state: newState });
+                            channel.close();
+                          } catch (err) {}
+                          return newState;
+                        });
+                      }}
+                      onStepChange={(stepIdx) => {
+                        setAppState((prev: any) => {
+                          const charState = prev.characterization || defaultState.characterization;
+                          const newState = {
+                            ...prev,
+                            characterization: { ...charState, currentStep: stepIdx }
+                          };
+                          saveState(newState);
+                          try {
+                            const channel = new BroadcastChannel('pir-deck-sync');
+                            channel.postMessage({ type: 'update-state', state: newState });
+                            channel.close();
+                          } catch (err) {}
+                          return newState;
+                        });
+                      }}
+                      onDataChange={(stepIdx, domIdx, field, val) => {
+                        setAppState((prev: any) => {
+                          const charState = prev.characterization || defaultState.characterization;
+                          const newSteps = [...charState.steps];
+                          const newDomains = [...newSteps[stepIdx].domains];
+                          newDomains[domIdx] = { ...newDomains[domIdx], [field]: val };
+                          newSteps[stepIdx] = { ...newSteps[stepIdx], domains: newDomains };
+                          const newState = {
+                            ...prev,
+                            characterization: { ...charState, steps: newSteps }
+                          };
+                          saveState(newState);
+                          try {
+                            const channel = new BroadcastChannel('pir-deck-sync');
+                            channel.postMessage({ type: 'update-state', state: newState });
+                            channel.close();
+                          } catch (err) {}
                           return newState;
                         });
                       }}
@@ -1209,5 +1414,317 @@ const CohortFlow = ({ data }: { data: any }) => {
         );
       })}
     </svg>
+  );
+};
+
+// ==============================================
+// --- Sub-components for Characterization ---
+// ==============================================
+
+const CharacterizationCarousel = ({
+  stepData,
+  currentStep,
+  activeDomainIdx,
+  mode,
+  onStepChange,
+  onActiveDomainChange,
+  onDataChange
+}: {
+  stepData: any[];
+  currentStep: number;
+  activeDomainIdx?: number;
+  mode: string;
+  onStepChange: (idx: number) => void;
+  onActiveDomainChange?: (idx: number) => void;
+  onDataChange: (stepIdx: number, domIdx: number, field: string, val: any) => void;
+}) => {
+  const safeStepData = stepData || [];
+  const safeCurrentStep = currentStep ?? 0;
+  const step = safeStepData[safeCurrentStep] || { domains: [] };
+  const [hoveredDomainIdx, setHoveredDomainIdx] = useState<number | null>(null);
+
+  const [localActiveIdx, setLocalActiveIdx] = useState(0);
+  const activeIdx = activeDomainIdx !== undefined ? activeDomainIdx : localActiveIdx;
+  const setActiveIdx = (idx: number) => {
+    if (onActiveDomainChange) {
+      onActiveDomainChange(idx);
+    } else {
+      setLocalActiveIdx(idx);
+    }
+  };
+
+  // Ensure activeIdx is in bounds if step domains change
+  useEffect(() => {
+    if (step.domains && step.domains.length > 0 && activeIdx >= step.domains.length) {
+      setActiveIdx(0);
+    }
+  }, [safeCurrentStep, step.domains?.length]);
+
+  const handleBlurBullet = (domIdx: number, bulletIdx: number, e: React.FocusEvent<any>) => {
+    const nextBullets = [...step.domains[domIdx].bullets];
+    nextBullets[bulletIdx] = e.target.textContent || '';
+    onDataChange(safeCurrentStep, domIdx, 'bullets', nextBullets);
+  };
+
+  const handleBlurStatus = (domIdx: number, e: React.FocusEvent<any>) => {
+    onDataChange(safeCurrentStep, domIdx, 'status', e.target.textContent || '');
+  };
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '20px 40px', boxSizing: 'border-box', width: '100%', fontFamily: 'inherit' }}>
+      {/* Stepper Wizard Header */}
+      <div id="dashboard-stepper" style={{ marginBottom: '24px' }}>
+        {safeStepData.map((s: any, idx: number) => (
+          <button
+            key={idx}
+            type="button"
+            className={`dashboard-stepper-btn ${idx === safeCurrentStep ? 'active' : ''}`}
+            onClick={() => onStepChange(idx)}
+            style={{ padding: '12px 24px' }}
+          >
+            <span className="dashboard-stepper-num" style={{ fontSize: '18px' }}>{String(idx + 1).padStart(2, '0')}</span>
+            <span className="dashboard-stepper-label" style={{ fontSize: '22px', fontWeight: 'bold' }}>{s.title}</span>
+          </button>
+        ))}
+      </div>
+
+      <div style={{ flex: 1, display: 'flex', gap: '40px', minHeight: 0 }}>
+        {/* Left Area: Infographic circular dials */}
+        <div className="dashboard-card-glass" style={{ flex: 1.25, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '32px', position: 'relative' }}>
+          <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+            <h3 style={{ fontSize: '30px', fontWeight: 800, color: '#0a2f52', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Maturity Metrics</h3>
+            <span style={{ fontSize: '18px', color: '#5b6b7d', fontWeight: 600 }}>Curriculum Support System Assessment</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%', gap: '20px' }}>
+            {step.domains.map((dom: any, domIdx: number) => {
+              const r = 45;
+              const circ = 2 * Math.PI * r; // ~282
+              const pct = (dom.maturity / 4) * circ;
+              
+              // Colors based on maturity
+              let strokeColor = "var(--vibe-accent)";
+              if (dom.maturity === 4) strokeColor = "#10b981"; // Emerald
+              else if (dom.maturity === 3) strokeColor = "#f5a623"; // DepEd Gold
+              else if (dom.maturity === 2) strokeColor = "#f97316"; // Orange
+
+              const isSelected = activeIdx === domIdx;
+              const isHovered = hoveredDomainIdx === domIdx;
+              const isEditor = mode === 'editor';
+
+              return (
+                <div 
+                  key={dom.name} 
+                  onMouseEnter={() => setHoveredDomainIdx(domIdx)}
+                  onMouseLeave={() => setHoveredDomainIdx(null)}
+                  onClick={() => {
+                    setActiveIdx(domIdx);
+                    if (isEditor) {
+                      const nextMaturity = (dom.maturity % 4) + 1;
+                      onDataChange(safeCurrentStep, domIdx, 'maturity', nextMaturity);
+                    }
+                  }}
+                  title={isEditor ? "Click to change maturity level" : undefined}
+                  style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center', 
+                    gap: '16px', 
+                    width: '30%',
+                    cursor: 'pointer',
+                    transform: isSelected ? 'scale(1.12)' : isHovered ? 'scale(1.06)' : 'scale(1)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  }}
+                >
+                  <svg width="165" height="165" viewBox="0 0 120 120" style={{ maxWidth: '100%', maxHeight: '100%', overflow: 'visible' }}>
+                    <circle cx="60" cy="60" r={r} fill="none" stroke="#f1f5f9" strokeWidth="9" />
+                    <circle 
+                      cx="60" 
+                      cy="60" 
+                      r={r} 
+                      fill="none" 
+                      stroke={strokeColor} 
+                      strokeWidth="9" 
+                      strokeDasharray={circ} 
+                      strokeDashoffset={circ - pct}
+                      strokeLinecap="round"
+                      transform="rotate(-90 60 60)"
+                      style={{ 
+                        transition: 'stroke-dashoffset 0.45s cubic-bezier(0.4, 0, 0.2, 1)', 
+                        filter: isSelected ? `drop-shadow(0 0 12px ${strokeColor}ee)` : isHovered ? `drop-shadow(0 0 8px ${strokeColor}99)` : 'drop-shadow(0 2px 5px rgba(0,0,0,0.06))' 
+                      }}
+                    />
+                    <text 
+                      x="60" 
+                      y="70" 
+                      textAnchor="middle" 
+                      fontSize="44" 
+                      fontWeight="900" 
+                      fill="#0a2f52"
+                      style={{
+                        transform: isSelected ? 'scale(1.15)' : isHovered ? 'scale(1.08)' : 'scale(1)',
+                        transformOrigin: '60px 60px',
+                        transition: 'transform 0.3s ease'
+                      }}
+                    >
+                      {dom.letter}
+                    </text>
+                  </svg>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ 
+                      fontSize: isSelected ? '26px' : '22px', 
+                      fontWeight: isSelected ? 900 : 800, 
+                      color: isSelected ? 'var(--vibe-accent)' : '#0a2f52', 
+                      wordWrap: 'break-word', 
+                      maxWidth: '220px', 
+                      transition: 'all 0.3s ease', 
+                      lineHeight: '1.2' 
+                    }}>{dom.name}</div>
+                    <div style={{ fontSize: '16px', fontWeight: 'bold', color: strokeColor, marginTop: '6px' }}>Level {dom.maturity} / 4</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Right Area: Clean Accordion Cards */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto', minWidth: 0 }}>
+          {step.domains.map((dom: any, domIdx: number) => {
+            const isHovered = hoveredDomainIdx === domIdx;
+            const isSelected = activeIdx === domIdx;
+            const isAnyHovered = hoveredDomainIdx !== null;
+            
+            return (
+              <div 
+                key={dom.name} 
+                className="dashboard-card-glass" 
+                onMouseEnter={() => setHoveredDomainIdx(domIdx)}
+                onMouseLeave={() => setHoveredDomainIdx(null)}
+                onClick={() => {
+                  setActiveIdx(domIdx);
+                }}
+                style={{ 
+                  padding: isSelected ? '32px 40px' : '20px 28px', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: isSelected ? '22px' : '0px', 
+                  cursor: 'pointer',
+                  transition: 'all 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
+                  borderColor: isSelected ? 'var(--vibe-accent)' : isHovered ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.25)',
+                  boxShadow: isSelected 
+                    ? '0 24px 56px var(--vibe-accent-glow), inset 0 0 0 1px rgba(255, 255, 255, 0.3)' 
+                    : isHovered 
+                      ? '0 8px 24px rgba(10, 47, 82, 0.05)' 
+                      : 'none',
+                  transform: isSelected ? 'translateY(-2px)' : 'none',
+                  opacity: isAnyHovered && !isHovered && !isSelected ? 0.6 : 1,
+                  overflow: 'hidden',
+                  maxHeight: isSelected ? '600px' : '96px',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', width: '100%' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '42px',
+                      height: '42px',
+                      borderRadius: '50%',
+                      background: isSelected ? 'var(--vibe-accent)' : 'rgba(10, 47, 82, 0.05)',
+                      color: isSelected ? '#fff' : '#0a2f52',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 800,
+                      fontSize: '20px',
+                      transition: 'all 0.3s ease'
+                    }}>
+                      {dom.letter}
+                    </div>
+                    <h4 style={{ 
+                      fontSize: isSelected ? '34px' : '24px', 
+                      fontWeight: 850, 
+                      color: '#0a2f52', 
+                      margin: 0, 
+                      letterSpacing: '-0.5px',
+                      transition: 'font-size 0.3s ease'
+                    }}>
+                      {dom.name}
+                    </h4>
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span 
+                      contentEditable={mode === 'editor'}
+                      suppressContentEditableWarning
+                      onBlur={(e) => handleBlurStatus(domIdx, e)}
+                      onClick={(e) => {
+                        if (mode === 'editor') e.stopPropagation();
+                      }}
+                      style={{ 
+                        fontSize: isSelected ? '18px' : '16px', 
+                        fontWeight: 800, 
+                        color: dom.maturity >= 3 ? '#10b981' : '#b9791a', 
+                        background: dom.maturity >= 3 ? '#e3f7ef' : '#fdf4e3', 
+                        padding: '8px 18px', 
+                        borderRadius: '999px',
+                        whiteSpace: 'nowrap',
+                        outline: 'none',
+                        border: mode === 'editor' ? '1px dashed var(--vibe-accent)' : 'none',
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
+                      {dom.status}
+                    </span>
+                    
+                    <svg 
+                      width="26" 
+                      height="26" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="#0a2f52" 
+                      strokeWidth="2.5" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                      style={{ 
+                        transform: isSelected ? 'rotate(180deg)' : 'rotate(0deg)', 
+                        transition: 'transform 0.3s ease',
+                        opacity: 0.7
+                      }}
+                    >
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </div>
+                </div>
+                
+                <div style={{ 
+                  opacity: isSelected ? 1 : 0, 
+                  transition: 'opacity 0.3s ease', 
+                  visibility: isSelected ? 'visible' : 'hidden', 
+                  height: isSelected ? 'auto' : 0,
+                  overflow: 'hidden'
+                }}>
+                  <ul style={{ margin: 0, paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {dom.bullets.map((bullet: string, bIdx: number) => (
+                      <li key={bIdx} style={{ fontSize: '28px', color: '#2c3e50', lineHeight: '1.6', fontWeight: 600 }}>
+                        <span
+                          contentEditable={mode === 'editor'}
+                          suppressContentEditableWarning
+                          onBlur={(e) => handleBlurBullet(domIdx, bIdx, e)}
+                          onClick={(e) => {
+                            if (mode === 'editor') e.stopPropagation();
+                          }}
+                          style={{ outline: 'none', border: mode === 'editor' ? '1px dashed var(--vibe-accent)' : 'none', borderRadius: '4px', padding: '1px 3px' }}
+                        >
+                          {bullet}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
   );
 };

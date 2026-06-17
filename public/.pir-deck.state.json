@@ -1,11 +1,11 @@
 {
-  "theme": "deped",
+  "theme": "slate",
   "transition": "fade",
   "mode": "presenter",
   "notes": {},
   "slides": {},
   "dashboard": {
-    "currentStep": 4,
+    "currentStep": 0,
     "steps": [
       {
         "title": "Kindergarten",
@@ -104,6 +104,129 @@
         "max": 20,
         "finding": "Grade 3 and Grade 6 grew, while Kindergarten, Grade 2, Grade 5, and JHS Grade 7 / Grade 10 contracted.",
         "action": "Strengthen Grade 6 to 7 transition and Grade 10 to 11 bridging into Senior High School."
+      }
+    ]
+  },
+  "characterization": {
+    "currentStep": 2,
+    "activeDomainIdx": 2,
+    "steps": [
+      {
+        "title": "Equipment & Assessment",
+        "subtitle": "Curriculum Support — Equipment, ICT & Assessment",
+        "domains": [
+          {
+            "name": "Instructional Equipment",
+            "letter": "E",
+            "status": "Equipped · ICT uneven",
+            "maturity": 3,
+            "bullets": [
+              "Smart TVs in all classrooms; printers for all teachers, laptops for some.",
+              "Science & Mathematics equipment available and actively used.",
+              "ICT tools remain uneven across teachers, affecting consistency."
+            ]
+          },
+          {
+            "name": "ICT Environment",
+            "letter": "I",
+            "status": "Constrained",
+            "maturity": 2,
+            "bullets": [
+              "Rising SHS ICT Programming enrolment raises equipment demand.",
+              "Existing resources are limited relative to curriculum needs.",
+              "Hands-on ICT competencies are the most affected."
+            ]
+          },
+          {
+            "name": "Assessment",
+            "letter": "A",
+            "status": "Functional · strengthen",
+            "maturity": 3,
+            "bullets": [
+              "Regional Unified Quarterly Exams standardise assessment.",
+              "Pacing does not always align with exam coverage.",
+              "HOTS / NAT / PISA capacity-building and ICT for data analysis needed."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Teachers & Facilities",
+        "subtitle": "Curriculum Support — Teachers, Materials & Facilities",
+        "domains": [
+          {
+            "name": "Teachers",
+            "letter": "T",
+            "status": "Adaptable · multi-level load",
+            "maturity": 3,
+            "bullets": [
+              "Small, fluctuating classes mean multi-level loads and flexible deployment.",
+              "Teachers handle multiple areas and grade levels, esp. JHS and SHS.",
+              "SHS ICT Programming raises specialisation demands."
+            ]
+          },
+          {
+            "name": "Instructional Materials",
+            "letter": "M",
+            "status": "Transitional",
+            "maturity": 2,
+            "bullets": [
+              "Limited provision; many resources outdated (pandemic-era).",
+              "MATATAG rollout delayed and staggered — started Grades 1 & 7.",
+              "Uneven access to updated materials across grade levels."
+            ]
+          },
+          {
+            "name": "Facilities",
+            "letter": "F",
+            "status": "Functional · not optimised",
+            "maturity": 2,
+            "bullets": [
+              "14 classrooms, incl. temporary Marcos-type structures for SHS.",
+              "Missing: computer lab, clinic, DRRM room, Teen Center.",
+              "Home Economics room dilapidated, now used as storage."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Governance & Partnerships",
+        "subtitle": "Curriculum Support — Leadership, SDO & Partnerships",
+        "domains": [
+          {
+            "name": "School Leadership",
+            "letter": "L",
+            "status": "Stabilising",
+            "maturity": 3,
+            "bullets": [
+              "Operating amid program expansion and SHS validation.",
+              "Managing enrolment swings, compliance and limited resources.",
+              "Needs stronger forecasting, optimisation and supervision."
+            ]
+          },
+          {
+            "name": "SDO Technical Assistance",
+            "letter": "S",
+            "status": "Comprehensive support",
+            "maturity": 4,
+            "bullets": [
+              "Training, staffing, ICT, assessment, supervision & governance support.",
+              "Strong for compliance and initial implementation needs.",
+              "Needs sustained coaching and on-site technical assistance."
+            ]
+          },
+          {
+            "name": "Community & Partnerships",
+            "letter": "P",
+            "status": "Developing",
+            "maturity": 2,
+            "bullets": [
+              "Strong PTA, Barangay LGU and School Governing Council support.",
+              "Backed early SHS / TVL support and work immersion.",
+              "Engagement still developing in depth and sustainability."
+            ]
+          }
+        ]
       }
     ]
   }

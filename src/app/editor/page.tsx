@@ -69,6 +69,129 @@ const defaultState = {
         action: "Strengthen Grade 6 to 7 transition and Grade 10 to 11 bridging into Senior High School."
       }
     ]
+  },
+  characterization: {
+    currentStep: 0,
+    activeDomainIdx: 0,
+    steps: [
+      {
+        title: "Equipment & Assessment",
+        subtitle: "Curriculum Support — Equipment, ICT & Assessment",
+        domains: [
+          {
+            name: "Instructional Equipment",
+            letter: "E",
+            status: "Equipped · ICT uneven",
+            maturity: 3,
+            bullets: [
+              "Smart TVs in all classrooms; printers for all teachers, laptops for some.",
+              "Science & Mathematics equipment available and actively used.",
+              "ICT tools remain uneven across teachers, affecting consistency."
+            ]
+          },
+          {
+            name: "ICT Environment",
+            letter: "I",
+            status: "Constrained",
+            maturity: 2,
+            bullets: [
+              "Rising SHS ICT Programming enrolment raises equipment demand.",
+              "Existing resources are limited relative to curriculum needs.",
+              "Hands-on ICT competencies are the most affected."
+            ]
+          },
+          {
+            name: "Assessment",
+            letter: "A",
+            status: "Functional · strengthen",
+            maturity: 3,
+            bullets: [
+              "Regional Unified Quarterly Exams standardise assessment.",
+              "Pacing does not always align with exam coverage.",
+              "HOTS / NAT / PISA capacity-building and ICT for data analysis needed."
+            ]
+          }
+        ]
+      },
+      {
+        title: "Teachers & Facilities",
+        subtitle: "Curriculum Support — Teachers, Materials & Facilities",
+        domains: [
+          {
+            name: "Teachers",
+            letter: "T",
+            status: "Adaptable · multi-level load",
+            maturity: 3,
+            bullets: [
+              "Small, fluctuating classes mean multi-level loads and flexible deployment.",
+              "Teachers handle multiple areas and grade levels, esp. JHS and SHS.",
+              "SHS ICT Programming raises specialisation demands."
+            ]
+          },
+          {
+            name: "Instructional Materials",
+            letter: "M",
+            status: "Transitional",
+            maturity: 2,
+            bullets: [
+              "Limited provision; many resources outdated (pandemic-era).",
+              "MATATAG rollout delayed and staggered — started Grades 1 & 7.",
+              "Uneven access to updated materials across grade levels."
+            ]
+          },
+          {
+            name: "Facilities",
+            letter: "F",
+            status: "Functional · not optimised",
+            maturity: 2,
+            bullets: [
+              "14 classrooms, incl. temporary Marcos-type structures for SHS.",
+              "Missing: computer lab, clinic, DRRM room, Teen Center.",
+              "Home Economics room dilapidated, now used as storage."
+            ]
+          }
+        ]
+      },
+      {
+        title: "Governance & Partnerships",
+        subtitle: "Curriculum Support — Leadership, SDO & Partnerships",
+        domains: [
+          {
+            name: "School Leadership",
+            letter: "L",
+            status: "Stabilising",
+            maturity: 3,
+            bullets: [
+              "Operating amid program expansion and SHS validation.",
+              "Managing enrolment swings, compliance and limited resources.",
+              "Needs stronger forecasting, optimisation and supervision."
+            ]
+          },
+          {
+            name: "SDO Technical Assistance",
+            letter: "S",
+            status: "Comprehensive support",
+            maturity: 4,
+            bullets: [
+              "Training, staffing, ICT, assessment, supervision & governance support.",
+              "Strong for compliance and initial implementation needs.",
+              "Needs sustained coaching and on-site technical assistance."
+            ]
+          },
+          {
+            name: "Community & Partnerships",
+            letter: "P",
+            status: "Developing",
+            maturity: 2,
+            bullets: [
+              "Strong PTA, Barangay LGU and School Governing Council support.",
+              "Backed early SHS / TVL support and work immersion.",
+              "Engagement still developing in depth and sustainability."
+            ]
+          }
+        ]
+      }
+    ]
   }
 };
 
@@ -173,6 +296,18 @@ export default function Editor() {
               steps: defaultState.dashboard.steps.map((step: any, idx: number) => ({
                 ...step,
                 ...(stateData.dashboard?.steps?.[idx] || {})
+              }))
+            },
+            characterization: {
+              currentStep: stateData.characterization?.currentStep ?? defaultState.characterization.currentStep,
+              activeDomainIdx: stateData.characterization?.activeDomainIdx ?? defaultState.characterization.activeDomainIdx ?? 0,
+              steps: defaultState.characterization.steps.map((step: any, idx: number) => ({
+                ...step,
+                ...(stateData.characterization?.steps?.[idx] || {}),
+                domains: step.domains.map((dom: any, dIdx: number) => ({
+                  ...dom,
+                  ...(stateData.characterization?.steps?.[idx]?.domains?.[dIdx] || {})
+                }))
               }))
             }
           };
@@ -284,6 +419,40 @@ export default function Editor() {
     broadcastState(nextState);
   };
 
+  const handleCharStepChange = (stepIdx: number) => {
+    const nextState = {
+      ...appState,
+      characterization: { ...appState.characterization, currentStep: stepIdx }
+    };
+    setAppState(nextState);
+    saveState(nextState);
+    broadcastState(nextState);
+  };
+
+  const handleCharDataChange = (stepIdx: number, domIdx: number, field: string, val: any) => {
+    const nextSteps = [...appState.characterization.steps];
+    const nextDomains = [...nextSteps[stepIdx].domains];
+    nextDomains[domIdx] = { ...nextDomains[domIdx], [field]: val };
+    nextSteps[stepIdx] = { ...nextSteps[stepIdx], domains: nextDomains };
+    const nextState = {
+      ...appState,
+      characterization: { ...appState.characterization, steps: nextSteps }
+    };
+    setAppState(nextState);
+    saveState(nextState);
+    broadcastState(nextState);
+  };
+
+  const handleCharActiveDomainChange = (domIdx: number) => {
+    const nextState = {
+      ...appState,
+      characterization: { ...appState.characterization, activeDomainIdx: domIdx }
+    };
+    setAppState(nextState);
+    saveState(nextState);
+    broadcastState(nextState);
+  };
+
   const handleStepChange = (stepIdx: number) => {
     const nextState = {
       ...appState,
@@ -349,6 +518,8 @@ export default function Editor() {
   const isDashboardSlide = activeSlide?.label === "Enrolment Dashboard";
   const currentStep = appState.dashboard.currentStep;
   const currentStepData = appState.dashboard.steps[currentStep];
+
+  const isCharSlide = activeSlide?.label === "Characterization";
 
   return (
     <div className="editor-page-root">
@@ -645,6 +816,109 @@ export default function Editor() {
                 </div>
               </div>
 
+            </section>
+          )}
+
+          {/* Characterization Carousel Sub-Editor Panel */}
+          {isCharSlide && (
+            <section className="editor-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <h3 className="editor-card-title" style={{ marginBottom: '8px' }}>Characterization Metrics</h3>
+                <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 0 16px 0' }}>
+                  Adjust maturity levels, status badges, and bullet descriptions in real-time.
+                </p>
+              </div>
+
+              {/* Stepper controls */}
+              <div id="dashboard-stepper" style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '12px' }}>
+                {(appState.characterization?.steps || defaultState.characterization.steps).map((s: any, idx: number) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    className={`dashboard-stepper-btn ${idx === (appState.characterization?.currentStep ?? defaultState.characterization.currentStep) ? 'active' : ''}`}
+                    onClick={() => handleCharStepChange(idx)}
+                    style={{ padding: '8px 12px' }}
+                  >
+                    <span className="dashboard-stepper-num">{String(idx + 1).padStart(2, '0')}</span>
+                    <span className="dashboard-stepper-label" style={{ fontSize: '13px' }}>{s.title}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Edit inputs for 3 domains */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {((appState.characterization?.steps || defaultState.characterization.steps)[appState.characterization?.currentStep ?? defaultState.characterization.currentStep]?.domains || []).map((dom: any, domIdx: number) => {
+                  const isActive = (appState.characterization?.activeDomainIdx ?? 0) === domIdx;
+                  return (
+                    <div 
+                      key={dom.name} 
+                      onClick={() => handleCharActiveDomainChange(domIdx)}
+                      style={{ 
+                        background: '#0f172a', 
+                        padding: '16px', 
+                        borderRadius: '10px', 
+                        border: isActive ? '2px solid var(--vibe-accent)' : '1px solid #334155', 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        gap: isActive ? '14px' : '0px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '15px', color: isActive ? 'var(--vibe-accent)' : '#fff' }}>{dom.name}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }} onClick={e => e.stopPropagation()}>
+                          <span style={{ fontSize: '12px', color: '#94a3b8' }}>Status:</span>
+                          <input 
+                            type="text" 
+                            value={dom.status}
+                            onChange={(e) => handleCharDataChange(appState.characterization?.currentStep ?? defaultState.characterization.currentStep, domIdx, 'status', e.target.value)}
+                            style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#fff', padding: '4px 8px', fontSize: '12px', outline: 'none' }}
+                          />
+                        </div>
+                      </div>
+
+                      {isActive && (
+                        <>
+                          {/* Maturity slider */}
+                          <div className="dashboard-slider-item" onClick={e => e.stopPropagation()}>
+                            <div className="dashboard-slider-header" style={{ color: '#cbd5e1', fontSize: '13px' }}>
+                              <span>Maturity Level</span>
+                              <span className="dashboard-slider-val" style={{ background: '#1e293b', fontSize: '12px' }}>Level {dom.maturity} / 4</span>
+                            </div>
+                            <input
+                              type="range"
+                              className="dashboard-range-input"
+                              min={1}
+                              max={4}
+                              value={dom.maturity}
+                              onChange={(e) => handleCharDataChange(appState.characterization?.currentStep ?? defaultState.characterization.currentStep, domIdx, 'maturity', parseInt(e.target.value, 10))}
+                            />
+                          </div>
+
+                          {/* Bullets textareas */}
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }} onClick={e => e.stopPropagation()}>
+                            <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#94a3b8' }}>Bullet Points (Descriptions)</span>
+                            {dom.bullets.map((bullet: string, bIdx: number) => (
+                              <textarea
+                                key={bIdx}
+                                className="notes-textarea"
+                                value={bullet}
+                                onChange={(e) => {
+                                  const nextBullets = [...dom.bullets];
+                                  nextBullets[bIdx] = e.target.value;
+                                  handleCharDataChange(appState.characterization?.currentStep ?? defaultState.characterization.currentStep, domIdx, 'bullets', nextBullets);
+                                }}
+                                style={{ height: '45px', background: '#1e293b', borderColor: '#334155', fontSize: '13px', padding: '6px' }}
+                              />
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </section>
           )}
 
