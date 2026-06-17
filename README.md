@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Jacinto Nemeño Integrated School - Program Implementation Review (PIR)
+## SY 2026-2027 Second Quarter Review
 
-## Getting Started
+This project is a modern Next.js React application migrating the JNIS PIR presentation slide deck into a highly interactive, state-persisted presenter dashboard.
 
-First, run the development server:
+### 🌟 Features
 
+1. **Presenter & Editor Layout**:
+   - **Presenter Mode**: A sleek fullscreen mode that hides sidebars for distraction-free presenting.
+   - **Editor Mode**: Activates the Left Thumbnail rail, Right Customizer panel, and enables inline double-click editing.
+2. **Left Slide Rail**:
+   - Lists all presentation slides with dynamic slide numbers, labels, and real-time previews of speaker notes.
+   - Smooth auto-scrolling to the active slide when navigating via keyboard (arrows, space, pgup/pgdn).
+3. **Right Customizer Panel**:
+   - **Theme Picker**: On-the-fly vibe accent changes (Slate, DepEd, Emerald, Sunset).
+   - **Transitions Selector**: Custom slide transition effects (Cross Fade, Slide Horizontal, Zoom Center, None).
+   - **Speaker Notes**: Real-time editable notes per slide, auto-saved to state.
+4. **Interactive Enrolment Dashboard (Slide 4)**:
+   - Consolidates the enrolment tracking steps into a 5-step wizard:
+     - **Kindergarten**: Radial Gauges (Actual vs. Target)
+     - **Elementary**: Responsive Spline Area Chart (Targets vs. Actuals over 3 years)
+     - **Junior High**: Grouped Column Bars (Targets vs. Actuals over 3 years)
+     - **Senior High**: Segmented Donut Chart (Grade 11 vs. Grade 12 breakdown)
+     - **Cohort Tracking**: Flow Diagram representing learner transition flows
+   - Ranges and sliders adjust values instantly with animated SVG charts.
+   - Finding and Recommended Action fields can be edited inline.
+5. **API Persistence**:
+   - Auto-saves all slide text changes, theme options, speaker notes, and dashboard parameters to `public/.pir-deck.state.json` via `/api/save-state` route.
+
+---
+
+### 🚀 Getting Started
+
+#### 1. Install Dependencies
+Make sure you have Node.js installed, then run:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### 2. Run the Development Server
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+#### 3. Open in Browser
+Visit **[http://localhost:3000](http://localhost:3000)**.
+- Use **Left/Right Arrow keys**, **Page Up/Down**, or **Spacebar** to navigate slides.
+- Toggle **Editor** in the top right to adjust values or change speaker notes.
+- Double-click on any text in normal slides to edit it inline, then click away to save.
+- Use the **Reset Deck** button to jump back to slide 1.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+#### 4. Build for Production
+To build the optimized production package:
+```bash
+npm run build
+```
+And to start the production server:
+```bash
+npm start
+```

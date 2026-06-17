@@ -1,0 +1,117 @@
+{
+  "theme": "slate",
+  "transition": "fade",
+  "mode": "editor",
+  "notes": {},
+  "slides": {
+    "5": {
+      "texts": {
+        "17": "Limited provision; many resources outdated (pandemic-era)."
+      },
+      "charts": {}
+    }
+  },
+  "dashboard": {
+    "currentStep": 0,
+    "steps": [
+      {
+        "title": "Kindergarten",
+        "labels": [
+          "Target",
+          "Actual"
+        ],
+        "values": [
+          9,
+          8
+        ],
+        "max": 20,
+        "finding": "Kindergarten intake is small but consistently on or above target.",
+        "action": "Sustain early-registration drives to protect the feeder pipeline."
+      },
+      {
+        "title": "Elementary",
+        "years": [
+          "2024-25",
+          "2025-26",
+          "2026-27"
+        ],
+        "targets": [
+          96,
+          98,
+          91
+        ],
+        "actuals": [
+          98,
+          91,
+          90
+        ],
+        "max": 120,
+        "finding": "A -7 dip in 2025-2026, then stabilizing near the target (-1) in 2026-2027.",
+        "action": "Track transfer-out reasons and strengthen learner retention in the elementary cohort."
+      },
+      {
+        "title": "Junior High",
+        "years": [
+          "2024-25",
+          "2025-26",
+          "2026-27"
+        ],
+        "targets": [
+          48,
+          52,
+          56
+        ],
+        "actuals": [
+          52,
+          56,
+          59
+        ],
+        "max": 80,
+        "finding": "Actual enrolment consistently exceeded target in both years targets were set (+4, then +3).",
+        "action": "Set slightly more ambitious targets and plan section/teacher load for continued growth."
+      },
+      {
+        "title": "Senior High",
+        "grades": [
+          "Grade 11",
+          "Grade 12"
+        ],
+        "values": [
+          8,
+          11
+        ],
+        "max": 30,
+        "finding": "SHS enrolment declined from 27 to 19 due to transfers to schools offering Cookery / Automotive.",
+        "action": "Build on the 6 new computer units to make GAS / ICT-CSS strands more competitive."
+      },
+      {
+        "title": "Cohort Tracking",
+        "cohorts": [
+          "KG-G1",
+          "G1-G2",
+          "G2-G3",
+          "G3-G4",
+          "G4-G5",
+          "G5-G6",
+          "G7-G8",
+          "G8-G9",
+          "G9-G10"
+        ],
+        "flows": [
+          8,
+          3,
+          -10,
+          7,
+          2,
+          -7,
+          2,
+          1,
+          0
+        ],
+        "max": 20,
+        "finding": "Grade 3 and Grade 6 grew, while Kindergarten, Grade 2, Grade 5, and JHS Grade 7 / Grade 10 contracted.",
+        "action": "Strengthen Grade 6 to 7 transition and Grade 10 to 11 bridging into Senior High School."
+      }
+    ]
+  }
+}
