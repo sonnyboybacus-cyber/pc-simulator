@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { defaultState, SavedPerformanceBudgetState, PerformanceBudgetState, PerformanceBudgetStep, PerformanceMetric, PerformancePanel, BudgetRow, BudgetRowNumericField, PerformanceBudgetFieldValue, getAssetPath, mergeState } from "@/lib/store";
+import { defaultState, SavedPerformanceBudgetState, PerformanceBudgetState, PerformanceBudgetStep, PerformanceMetric, PerformancePanel, BudgetRow, BudgetRowNumericField, PerformanceBudgetFieldValue, getAssetPath, mergeState, getNotesKey } from "@/lib/store";
 import { getStepIcon } from "@/components/EnrolmentDashboard";
 
 export default function Editor() {
@@ -88,7 +88,8 @@ export default function Editor() {
           const parsedSlides = sections.map((section: any, idx: number) => {
             const label = section.getAttribute('data-label') || 'Slide';
             const screenLabel = section.getAttribute('data-screen-label') || '';
-            const speakerNotes = savedState.notes[idx] ?? section.getAttribute('data-speaker-notes') ?? '';
+            const noteKey = getNotesKey(idx, savedState);
+            const speakerNotes = savedState.notes[noteKey] ?? section.getAttribute('data-speaker-notes') ?? '';
 
             return {
               id: idx,
@@ -165,6 +166,7 @@ export default function Editor() {
 
   const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
+    const noteKey = getNotesKey(activeSlideIndex, appState);
 
     // Update local slides list display
     setSlides(prev => {
@@ -178,11 +180,13 @@ export default function Editor() {
       return updated;
     });
 
-    const nextNotes = { ...appState.notes, [activeSlideIndex]: val };
-    const nextState = { ...appState, notes: nextNotes };
-    setAppState(nextState);
-    saveState(nextState);
-    broadcastState(nextState);
+    setAppState((prev: any) => {
+      const newNotes = { ...prev.notes, [noteKey]: val };
+      const nextState = { ...prev, notes: newNotes };
+      saveState(nextState);
+      broadcastState(nextState);
+      return nextState;
+    });
   };
 
   const handleCharStepChange = (stepIdx: number) => {
@@ -356,6 +360,9 @@ export default function Editor() {
   }
 
   const activeSlide = slides[activeSlideIndex];
+  const noteKey = getNotesKey(activeSlideIndex, appState);
+  const activeNotesText = appState.notes?.[noteKey] ?? activeSlide?.speakerNotes ?? '';
+
   const isDashboardSlide = activeSlide?.label === "Enrolment Dashboard";
   const currentStep = appState.dashboard.currentStep;
   const currentStepData = appState.dashboard.steps[currentStep];
@@ -390,7 +397,12 @@ export default function Editor() {
               <span className="rail-item-num">{String(idx + 1).padStart(2, '0')}</span>
               <div className="rail-item-content">
                 <div className="rail-item-label">{slide.label}</div>
-                <div className="rail-item-desc">{slide.speakerNotes || 'No speaker notes.'}</div>
+                 <div className="rail-item-desc">
+                  {(() => {
+                    const itemNoteKey = getNotesKey(idx, appState);
+                    return appState.notes?.[itemNoteKey] ?? slide.speakerNotes ?? 'No speaker notes.';
+                  })()}
+                </div>
               </div>
             </div>
           ))}
@@ -890,18 +902,26 @@ export default function Editor() {
             </section>
           )}
 
-          {/* Speaker Notes Card */}
-          <section className="editor-card" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
-            <h3 className="editor-card-title">Speaker Notes</h3>
-            <textarea
-              className="notes-textarea"
-              placeholder="Type speaker notes for this slide here..."
-              value={activeSlide?.speakerNotes || ''}
-              onChange={handleNotesChange}
-              style={{ flex: 1, minHeight: '120px', resize: 'none', background: '#0f172a', borderColor: '#334155' }}
-            />
+          {/* Speaker Notes Bubble */}
+          <section className="editor-card" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, background: 'transparent', border: 'none', boxShadow: 'none', padding: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--vibe-accent)', fontWeight: 'bold', fontSize: '14px' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span>Speaker Notes Bubble</span>
+            </div>
+            
+            <div className="speaker-bubble" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+              <textarea
+                className="notes-textarea"
+                placeholder="Type speaker notes for this slide/step here..."
+                value={activeNotesText}
+                onChange={handleNotesChange}
+                style={{ flex: 1, minHeight: '120px', resize: 'none', background: 'transparent', border: 'none', padding: 0, boxShadow: 'none', color: '#cbd5e1' }}
+              />
+            </div>
             <div className="notes-hint" style={{ marginTop: '8px', color: '#64748b' }}>
-              Edits automatically save to server and synchronize with presentation tab.
+              Edits automatically save and synchronize with presentation tab.
             </div>
           </section>
 

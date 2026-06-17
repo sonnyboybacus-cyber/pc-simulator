@@ -898,3 +898,37 @@ section.slide-wm[data-label="Enrolment Dashboard"]::after {
 @media (prefers-reduced-motion: reduce) {
   .pb-viz-enter { animation: none; }
 }
+
+/* Speaker Notes Speech Bubble */
+.speaker-bubble {
+  position: relative;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 14px;
+}
+
+.speaker-bubble::before {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: -8px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #334155;
+}
+
+.speaker-bubble::after {
+  content: '';
+  position: absolute;
+  left: 25px;
+  top: -7px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #0f172a;
+}

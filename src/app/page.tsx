@@ -15,6 +15,7 @@ import {
   PhilIriLevels,
   getAssetPath,
   mergeState,
+  getNotesKey,
 } from "@/lib/store";
 import { EnrolmentDashboard } from "@/components/EnrolmentDashboard";
 import { CharacterizationCarousel } from "@/components/CharacterizationCarousel";
@@ -360,7 +361,8 @@ export default function Home() {
             const style = section.getAttribute('style') || '';
             const className = section.getAttribute('class') || '';
             
-            const speakerNotes = savedState.notes[idx] ?? section.getAttribute('data-speaker-notes') ?? '';
+            const noteKey = getNotesKey(idx, savedState);
+            const speakerNotes = savedState.notes[noteKey] ?? section.getAttribute('data-speaker-notes') ?? '';
 
             if (savedState.slides[idx]?.texts) {
               const editables = getEditableElements(section);
@@ -488,6 +490,7 @@ export default function Home() {
 
   const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
+    const noteKey = getNotesKey(activeSlideIndex, appState);
     setSlides(prev => {
       const updated = [...prev];
       if (updated[activeSlideIndex]) {
@@ -500,7 +503,7 @@ export default function Home() {
     });
 
     setAppState((prev: any) => {
-      const newNotes = { ...prev.notes, [activeSlideIndex]: val };
+      const newNotes = { ...prev.notes, [noteKey]: val };
       const newState = { ...prev, notes: newNotes };
       saveState(newState);
       return newState;
