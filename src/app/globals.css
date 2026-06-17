@@ -884,3 +884,17 @@ section.slide-wm[data-label="Enrolment Dashboard"]::after {
   box-shadow: 0 8px 32px var(--vibe-accent-glow);
   color: var(--vibe-accent);
 }
+
+/* Learning Outcomes — crossfade when switching the active group's visual */
+@keyframes pbVizIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+.pb-viz-enter {
+  animation: pbVizIn 0.35s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pb-viz-enter { animation: none; }
+}

@@ -210,6 +210,96 @@
       transition: all .18s ease;
     }
   }
+
+  /* ===== Slide 3 · School Profile redesign ===== */
+  #slide-school-profile { --sp3-navy: #0a2f52; --sp3-gold: #f5a623; }
+  .sp3-body { flex: 1; display: flex; gap: 40px; margin-top: 22px; min-height: 0; }
+
+  .sp3-left { width: 42%; display: flex; }
+  .sp3-photo {
+    position: relative; flex: 1; border-radius: 20px; overflow: hidden;
+    box-shadow: 0 24px 60px rgba(10,47,82,0.22);
+    transition: box-shadow .3s ease, transform .3s ease;
+  }
+  .sp3-photo:hover { box-shadow: 0 30px 72px rgba(10,47,82,0.30); }
+  .sp3-photo image-slot { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .sp3-photo::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to top, rgba(7,26,46,0.92) 0%, rgba(7,26,46,0.45) 30%, rgba(7,26,46,0) 58%);
+  }
+  .sp3-photo-badge {
+    position: absolute; top: 22px; left: 22px; z-index: 2; pointer-events: none;
+    font-family: 'IBM Plex Mono', monospace; font-size: 17px; font-weight: 700; letter-spacing: 2px;
+    color: #0a2f52; background: var(--sp3-gold); padding: 8px 16px; border-radius: 999px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.28);
+  }
+  .sp3-photo-caption { position: absolute; left: 30px; right: 30px; bottom: 28px; z-index: 2; pointer-events: none; color: #fff; }
+  .sp3-photo-caption .name { font-size: 32px; font-weight: 800; line-height: 1.12; text-shadow: 0 2px 14px rgba(0,0,0,0.45); }
+  .sp3-photo-caption .meta { font-family: 'IBM Plex Mono', monospace; font-size: 18px; color: var(--sp3-gold); margin-top: 8px; }
+
+  .sp3-right { flex: 1; display: flex; flex-direction: column; gap: 22px; min-height: 0; }
+  .sp3-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .sp3-card {
+    position: relative; background: #fff; border: 1px solid #e7ecf2; border-radius: 16px;
+    padding: 20px 24px; overflow: hidden; cursor: default;
+    transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease;
+  }
+  .sp3-card::before {
+    content: ""; position: absolute; top: 0; left: 0; height: 4px; width: 0;
+    background: var(--sp3-gold); transition: width .3s ease;
+  }
+  .sp3-card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(10,47,82,0.16); border-color: rgba(245,166,35,0.55); }
+  .sp3-card:hover::before { width: 100%; }
+  .sp3-card .ico { width: 32px; height: 32px; color: var(--sp3-gold); margin-bottom: 8px; }
+  .sp3-card .num { font-family: 'IBM Plex Mono', monospace; font-size: 50px; font-weight: 700; color: var(--sp3-navy); line-height: 1; }
+  .sp3-card .lbl { font-size: 19px; color: #5b6b7d; margin-top: 6px; }
+  .sp3-card.gold { background: #fdf4e3; border-color: #f3d9a6; }
+  .sp3-card.gold .num { color: #b9791a; }
+  .sp3-card.gold .lbl { color: #95702a; }
+  .sp3-card.gold .ico { color: #b9791a; }
+
+  .sp3-panel {
+    flex: 1; min-height: 0; display: flex; flex-direction: column;
+    background: #fff; border: 1px solid #e7ecf2; border-radius: 16px; padding: 8px;
+    box-shadow: 0 4px 18px rgba(10,47,82,0.04);
+  }
+  .sp3-tabs { display: flex; gap: 6px; padding: 6px; }
+  .sp3-tab {
+    flex: 1; border: 0; background: transparent; border-radius: 11px; padding: 13px 16px;
+    font: 700 19px/1 'Libre Franklin', sans-serif; color: #5b6b7d; cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+  }
+  .sp3-tab[aria-selected="true"] { background: var(--sp3-navy); color: #fff; }
+  .sp3-tab:hover:not([aria-selected="true"]) { background: #eef3f8; color: var(--sp3-navy); }
+  .sp3-tabpanel { padding: 4px 20px 14px; }
+  .sp3-tabpanel[hidden] { display: none; }
+  .sp3-row {
+    display: flex; justify-content: space-between; align-items: center; gap: 20px;
+    padding: 14px 12px; border-radius: 10px; border-bottom: 1px solid #eef2f6; transition: background .18s ease;
+  }
+  .sp3-row:last-child { border-bottom: 0; }
+  .sp3-row:hover { background: #f6f9fc; }
+  .sp3-row .k { font-size: 22px; color: #5b6b7d; }
+  .sp3-row .v { font-size: 22px; font-weight: 600; color: #16263a; text-align: right; }
+  .sp3-chips { display: flex; flex-wrap: wrap; gap: 12px; padding: 14px 12px; }
+  .sp3-chip {
+    display: flex; align-items: center; gap: 10px; background: #f4f7fb; border: 1px solid #e3eaf2;
+    border-radius: 999px; padding: 12px 20px; font-size: 20px; font-weight: 600; color: var(--sp3-navy);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .sp3-chip:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(10,47,82,0.12); border-color: rgba(245,166,35,0.55); }
+  .sp3-chip .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--sp3-gold); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    #slide-school-profile .sp3-left,
+    #slide-school-profile .sp3-kpis,
+    #slide-school-profile .sp3-panel {
+      opacity: 0; transform: translateY(16px); transition: opacity .55s ease, transform .55s ease;
+    }
+    #slide-school-profile.is-in .sp3-left { opacity: 1; transform: none; transition-delay: .05s; }
+    #slide-school-profile.is-in .sp3-kpis { opacity: 1; transform: none; transition-delay: .15s; }
+    #slide-school-profile.is-in .sp3-panel { opacity: 1; transform: none; transition-delay: .28s; }
+  }
 </style>
 </helmet>
 
@@ -280,53 +370,80 @@
   </section>
 
   <!-- ===== 3 · SCHOOL PROFILE ===== -->
-  <section class="slide-wm" data-label="School Profile" data-screen-label="03" data-speaker-notes="Small rural integrated school, established 1935. 176 learners, 16 teachers, healthy 1:15 ratio. Recently became an independent SHS." style="background: #f7f9fb; font-family: 'Libre Franklin', sans-serif; overflow: hidden;">
-    <div style="height: 100%; display: flex; flex-direction: column; padding: 64px 90px; box-sizing: border-box;">
+  <section id="slide-school-profile" class="slide-wm" data-label="School Profile" data-screen-label="03" data-speaker-notes="Small rural integrated school, established 1935. 176 learners, 16 teachers, healthy 1:15 ratio. Recently became an independent SHS." style="background: #f7f9fb; font-family: 'Libre Franklin', sans-serif; overflow: hidden;">
+    <div style="height: 100%; display: flex; flex-direction: column; padding: 60px 90px; box-sizing: border-box;">
       <div class="mono" style="font-size: 22px; letter-spacing: 3px; text-transform: uppercase; color: #f5a623; font-weight: 600;">01 · School Profile</div>
-      <h2 style="font-size: 56px; font-weight: 800; color: #0a2f52; letter-spacing: -0.5px; margin-top: 8px;">School Profile</h2>
+      <h2 style="font-size: 56px; font-weight: 800; color: #0a2f52; letter-spacing: -0.5px; margin-top: 4px;">School Profile</h2>
+      <p style="font-size: 22px; color: #5b6b7d; line-height: 1.4; margin-top: 6px; max-width: 900px;">A small rural integrated school serving K–12 learners in Purok 1, Manaka, Ozamiz City — established 1935.</p>
 
-      <div style="flex: 1; display: flex; gap: 44px; margin-top: 30px;">
-        <div style="width: 40%; display: flex; flex-direction: column; gap: 20px;">
-          <image-slot id="school-photo" style="width: 100%; flex: 1; min-height: 0; align-self: stretch; height: 100%; display: block" shape="rounded" radius="16" fit="cover" placeholder="Drop a photo of the school"></image-slot>
-          <div style="background: #0a2f52; color: #fff; border-radius: 14px; padding: 26px 30px;">
-            <div style="font-size: 30px; font-weight: 800;">Jacinto Nemeño Integrated School</div>
-            <div class="mono" style="font-size: 22px; color: #f5a623; margin-top: 6px;">School ID 501206 · Est. 1935</div>
+      <div class="sp3-body">
+        <!-- LEFT · interactive photo hero -->
+        <div class="sp3-left">
+          <div class="sp3-photo">
+            <image-slot id="school-photo" src="./uploads/Gemini_Generated_Image_ddu677ddu677ddu6.png" shape="rounded" radius="20" fit="cover" placeholder="Drop a photo of the school"></image-slot>
+            <div class="sp3-photo-badge">EST · 1935</div>
+            <div class="sp3-photo-caption">
+              <div class="name">Jacinto Nemeño Integrated School</div>
+              <div class="meta">School ID 501206 · Purok 1, Manaka, Ozamiz City</div>
+            </div>
           </div>
         </div>
 
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 22px;">
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
-            <div style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 22px 24px; text-align: center;">
-              <div class="mono" style="font-size: 54px; font-weight: 700; color: #0a2f52;">176</div>
-              <div style="font-size: 20px; color: #5b6b7d; margin-top: 2px;">Learners</div>
+        <!-- RIGHT · KPIs + tabbed details -->
+        <div class="sp3-right">
+          <div class="sp3-kpis">
+            <div class="sp3-card">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <div class="num" data-count="176">176</div>
+              <div class="lbl">Learners</div>
             </div>
-            <div style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 22px 24px; text-align: center;">
-              <div class="mono" style="font-size: 54px; font-weight: 700; color: #0a2f52;">16</div>
-              <div style="font-size: 20px; color: #5b6b7d; margin-top: 2px;">Teachers</div>
+            <div class="sp3-card">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <div class="num" data-count="16">16</div>
+              <div class="lbl">Teachers</div>
             </div>
-            <div style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 22px 24px; text-align: center;">
-              <div class="mono" style="font-size: 54px; font-weight: 700; color: #0a2f52;">14</div>
-              <div style="font-size: 20px; color: #5b6b7d; margin-top: 2px;">Classrooms</div>
+            <div class="sp3-card">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9h.01M9 13h.01M9 17h.01"/></svg>
+              <div class="num" data-count="14">14</div>
+              <div class="lbl">Classrooms</div>
             </div>
-            <div style="background: #fdf4e3; border: 1px solid #f3d9a6; border-radius: 14px; padding: 22px 24px; text-align: center;">
-              <div class="mono" style="font-size: 54px; font-weight: 700; color: #b9791a;">1:15</div>
-              <div style="font-size: 20px; color: #95702a; margin-top: 2px;">Learner–teacher</div>
+            <div class="sp3-card gold">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+              <div class="num">1:15</div>
+              <div class="lbl">Learner–teacher</div>
             </div>
-            <div style="background: #fdf4e3; border: 1px solid #f3d9a6; border-radius: 14px; padding: 22px 24px; text-align: center;">
-              <div class="mono" style="font-size: 54px; font-weight: 700; color: #b9791a;">1:15</div>
-              <div style="font-size: 20px; color: #95702a; margin-top: 2px;">Classroom–learner</div>
+            <div class="sp3-card gold">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+              <div class="num">1:15</div>
+              <div class="lbl">Classroom–learner</div>
             </div>
-            <div style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 22px 24px; text-align: center;">
-              <div class="mono" style="font-size: 54px; font-weight: 700; color: #0a2f52;">K–12</div>
-              <div style="font-size: 20px; color: #5b6b7d; margin-top: 2px;">Integrated</div>
+            <div class="sp3-card">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 3 6 3s6-2 6-3v-5"/></svg>
+              <div class="num">K–12</div>
+              <div class="lbl">Integrated</div>
             </div>
           </div>
 
-          <div style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 12px 30px; flex: 1;">
-            <div style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #eef2f6;"><span style="font-size: 24px; color: #5b6b7d;">Region</span><span style="font-size: 24px; font-weight: 600; color: #16263a;">Region X — Northern Mindanao</span></div>
-            <div style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #eef2f6;"><span style="font-size: 24px; color: #5b6b7d;">Division</span><span style="font-size: 24px; font-weight: 600; color: #16263a;">Ozamiz City · District 10</span></div>
-            <div style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #eef2f6;"><span style="font-size: 24px; color: #5b6b7d;">School Head</span><span style="font-size: 24px; font-weight: 600; color: #16263a;">Jorenda P. Solitario, Principal I</span></div>
-            <div style="display: flex; justify-content: space-between; padding: 14px 0;"><span style="font-size: 24px; color: #5b6b7d;">Address</span><span style="font-size: 24px; font-weight: 600; color: #16263a;">Purok 1, Manaka, Ozamiz City</span></div>
+          <div class="sp3-panel">
+            <div class="sp3-tabs" role="tablist" aria-label="School profile details">
+              <button class="sp3-tab" type="button" role="tab" data-tab="details" aria-selected="true">School Details</button>
+              <button class="sp3-tab" type="button" role="tab" data-tab="glance" aria-selected="false">At a Glance</button>
+            </div>
+            <div class="sp3-tabpanel" role="tabpanel" data-tab="details">
+              <div class="sp3-row"><span class="k">Region</span><span class="v">Region X — Northern Mindanao</span></div>
+              <div class="sp3-row"><span class="k">Division</span><span class="v">Ozamiz City · District 10</span></div>
+              <div class="sp3-row"><span class="k">School Head</span><span class="v">Jorenda P. Solitario, Principal I</span></div>
+              <div class="sp3-row"><span class="k">Address</span><span class="v">Purok 1, Manaka, Ozamiz City</span></div>
+            </div>
+            <div class="sp3-tabpanel" role="tabpanel" data-tab="glance" hidden>
+              <div class="sp3-chips">
+                <span class="sp3-chip"><span class="dot"></span>Established 1935</span>
+                <span class="sp3-chip"><span class="dot"></span>K–12 Integrated</span>
+                <span class="sp3-chip"><span class="dot"></span>Independent Senior High School</span>
+                <span class="sp3-chip"><span class="dot"></span>Rural community school</span>
+                <span class="sp3-chip"><span class="dot"></span>Healthy 1:15 class size</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -369,133 +486,88 @@
     </div>
   </section>
   
+  <!-- ===== ENROLLMENT ACTION MATRIX (S10–11) ===== -->
+  <section class="slide-wm" data-label="Enrollment Action Matrix" data-speaker-notes="Institutional matrix for the decreasing/fluctuating enrollment context: programs implemented, their limitations, what to strengthen and introduce, why the SDO could not fully address them, and the programs to sustain (JESP and Learner Assistance)." style="background: #f7f9fb; font-family: 'Libre Franklin', sans-serif; overflow: hidden;">
+    <div style="height: 100%; display: flex; flex-direction: column; padding: 54px 90px; box-sizing: border-box;">
+      <div class="mono" style="font-size: 22px; letter-spacing: 3px; text-transform: uppercase; color: #f5a623; font-weight: 600;">Enrollment Context · Action Matrix</div>
+      <h2 style="font-size: 46px; font-weight: 800; color: #0a2f52; letter-spacing: -0.5px; margin-top: 6px;">Decreasing &amp; Fluctuating Enrollment</h2>
+      <div style="flex: 1; min-height: 0; overflow-y: auto; margin-top: 20px; display: flex; flex-direction: column; gap: 12px; padding-right: 8px;">
+
+        <details style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 0 28px;">
+          <summary style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; font-size: 25px; font-weight: 800; color: #0a2f52;"><span>1 · Programs Implemented</span><span class="dmark" style="color: #f5a623; font-size: 30px;">+</span></summary>
+          <ul style="margin: 0; padding: 0 0 20px 26px; font-size: 21px; line-height: 1.45; color: #2c3e50; display: flex; flex-direction: column; gap: 7px;">
+            <li>Early Registration Campaign</li>
+            <li>Balik-Eskwela &amp; Oplan Balik-Eskwela programs</li>
+            <li>Learner Information System (LIS) updating and validation</li>
+            <li>School-based enrollment advocacy and orientation activities</li>
+            <li>Coordination with parents and barangay stakeholders during enrollment</li>
+          </ul>
+        </details>
+
+        <details style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 0 28px;">
+          <summary style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; font-size: 25px; font-weight: 800; color: #0a2f52;"><span>2 · Limitations</span><span class="dmark" style="color: #f5a623; font-size: 30px;">+</span></summary>
+          <ul style="margin: 0; padding: 0 0 20px 26px; font-size: 21px; line-height: 1.45; color: #2c3e50; display: flex; flex-direction: column; gap: 7px;">
+            <li>Limited reach in remote/coastal areas → delayed or missed enrollment information and low awareness</li>
+            <li>Limited counseling personnel; family financial difficulties; learner mobility (relocation/employment)</li>
+            <li>Low parent participation (work schedules, language barriers, weak engagement structures)</li>
+            <li>Limited budget for sustained campaigns and outreach</li>
+            <li>Transportation and geographic barriers in far-flung areas</li>
+          </ul>
+        </details>
+
+        <details style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 0 28px;">
+          <summary style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; font-size: 25px; font-weight: 800; color: #0a2f52;"><span>3 · To Strengthen</span><span class="dmark" style="color: #f5a623; font-size: 30px;">+</span></summary>
+          <ul style="margin: 0; padding: 0 0 20px 26px; font-size: 21px; line-height: 1.45; color: #2c3e50; display: flex; flex-direction: column; gap: 7px;">
+            <li>Early Registration &amp; Continuous Enrollment Advocacy Program</li>
+            <li>Oplan Balik-Eskwela institutionalization and expansion</li>
+            <li>Strengthened Community and Parent Engagement Program</li>
+            <li>Learner Tracking, Retention, and Re-enrollment Monitoring System</li>
+            <li>School-Community Partnership Strengthening (SGC + Barangay linkage)</li>
+          </ul>
+        </details>
+
+        <details style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 0 28px;">
+          <summary style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; font-size: 25px; font-weight: 800; color: #0a2f52;"><span>4 · To Implement / Introduce</span><span class="dmark" style="color: #f5a623; font-size: 30px;">+</span></summary>
+          <ul style="margin: 0; padding: 0 0 20px 26px; font-size: 21px; line-height: 1.45; color: #2c3e50; display: flex; flex-direction: column; gap: 7px;">
+            <li><strong>LOMP</strong> — Learner Outreach &amp; Mapping Program: locate remote learners, track enrolment annually</li>
+            <li><strong>CBEAT</strong> — Community-Based Enrollment Advocacy Teams (teachers, barangay partners, parent leaders)</li>
+            <li>Home-Based Learning Support &amp; Counseling for struggling learners and at-risk dropouts</li>
+            <li>JHS→SHS Continuity Pathway Program to reduce transition-year dropout</li>
+            <li>Integrated Literacy + Retention Intervention Program (reading gains ↔ retention)</li>
+          </ul>
+        </details>
+
+        <details style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 0 28px;">
+          <summary style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; font-size: 25px; font-weight: 800; color: #0a2f52;"><span>5 · Why Not Fully Addressed by the SDO</span><span class="dmark" style="color: #f5a623; font-size: 30px;">+</span></summary>
+          <ul style="margin: 0; padding: 0 0 20px 26px; font-size: 21px; line-height: 1.45; color: #2c3e50; display: flex; flex-direction: column; gap: 7px;">
+            <li>SDO works within approved budgets from higher government, which may not fully cover campaigns, transportation, personnel, and outreach</li>
+            <li>Enrollment is driven by socio-economic factors (poverty, migration, relocation) needing LGU, social-welfare, and barangay collaboration beyond the SDO mandate</li>
+            <li>Limited division manpower and competing priorities constrain field monitoring, child-finding, and sustained technical assistance</li>
+          </ul>
+        </details>
+
+        <details style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 0 28px;">
+          <summary style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; font-size: 25px; font-weight: 800; color: #0a2f52;"><span>6 · Programs to Sustain</span><span class="dmark" style="color: #f5a623; font-size: 30px;">+</span></summary>
+          <ul style="margin: 0; padding: 0 0 20px 26px; font-size: 21px; line-height: 1.45; color: #2c3e50; display: flex; flex-direction: column; gap: 7px;">
+            <li><strong>JESP</strong> — Enrollment Sustainability &amp; Partnership Program: stronger LGU/barangay/parent partnerships, a yearly sustainability plan, and stakeholder mobilization for retention</li>
+            <li><strong>Learner Assistance &amp; Retention Support</strong>: identify learners needing support, refer/link to agencies, and strengthen school-based interventions for vulnerable learners</li>
+          </ul>
+        </details>
+
+      </div>
+    </div>
+  </section>
+
   <!-- ===== 10 · CHARACTERIZATION 1 ===== -->
   <section class="slide-wm" data-label="Characterization" data-screen-label="10" data-speaker-notes="This is the interactive Characterization Carousel. We can step through Equipment, Assessment & ICT, Teachers, Materials & Facilities, and Leadership, SDO & Partnerships dynamically, and edit their maturity metrics and captions in real-time." style="background: #f7f9fb; font-family: 'Libre Franklin', sans-serif; overflow: hidden;">
     <!-- Rendered via React component -->
   </section>
 
-  <!-- ===== 13 · LEARNING OUTCOMES CAROUSEL ===== -->
-  <section class="slide-wm" data-label="Learning Outcomes" data-screen-label="13" data-speaker-notes="This is the interactive Learning Outcomes Carousel. Step through ELLNA, NAT Grade 6, NAT Grade 10, PHIL-IRI Elementary, and PHIL-IRI Secondary dynamically." style="background: #f7f9fb; font-family: 'Libre Franklin', sans-serif; overflow: hidden;">
+  <!-- ===== 13 · PERFORMANCE & BUDGET CAROUSEL ===== -->
+  <section class="slide-wm" data-label="Performance &amp; Budget" data-screen-label="13" data-speaker-notes="This is the interactive Performance & Budget Carousel. Step through Learning Outcomes, NC II Certification, Work Immersion, Budget Overview, and SOB 2026 detail dynamically with large charts, stat cards, and editable accordion insights." style="background: #f7f9fb; font-family: 'Libre Franklin', sans-serif; overflow: hidden;">
     <!-- Rendered dynamically by Next.js -->
   </section>
 
-
-  <!-- ===== 19 · NATIONAL CERTIFICATION ===== -->
-  <section class="slide-wm" data-label="NC II" data-screen-label="19" data-speaker-notes="A flagship win — the first SHS batch passed Computer Systems Servicing NC II at 100%, with partner ICST." style="background: #f7f9fb; font-family: 'Libre Franklin', sans-serif; overflow: hidden;">
-    <div style="height: 100%; display: flex;">
-      <div style="width: 42%; background: linear-gradient(160deg, #0a2f52, #0e477c); color: #fff; padding: 60px 56px; display: flex; flex-direction: column; justify-content: center;">
-        <div class="mono" style="font-size: 20px; letter-spacing: 2.5px; text-transform: uppercase; color: #f5a623; font-weight: 600;">National Certification</div>
-        <h2 style="font-size: 44px; font-weight: 800; line-height: 1.08; margin-top: 12px;">Computer Systems Servicing NC II</h2>
-        <div style="display: flex; align-items: center; gap: 36px; margin-top: 40px;">
-          <div style="position: relative; width: 220px; height: 220px; border-radius: 50%; background: conic-gradient(#3ad29f 0% 100%, rgba(255,255,255,0.1) 0); display: flex; align-items: center; justify-content: center;">
-            <div style="width: 158px; height: 158px; border-radius: 50%; background: #0b3a64; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-              <div class="mono" style="font-size: 52px; font-weight: 700; color: #3ad29f; line-height: 1;">100%</div>
-              <div style="font-size: 18px; color: #cdddee;">passing rate</div>
-            </div>
-          </div>
-          <div>
-            <div class="mono" style="font-size: 64px; font-weight: 700; color: #f5a623; line-height: 1;">16</div>
-            <div style="font-size: 22px; color: #cdddee; line-height: 1.3;">Grade 12 CSS<br>learners · first batch</div>
-          </div>
-        </div>
-        <div style="margin-top: 44px; display: flex; flex-direction: column; gap: 14px;">
-          <div style="display: flex; gap: 14px; align-items: flex-start;"><span style="color: #f5a623; font-size: 22px;">▪</span><span style="font-size: 23px; color: #eaf1f8;"><strong>Partner:</strong> Immaculate Conception School of Technology (ICST).</span></div>
-          <div style="display: flex; gap: 14px; align-items: flex-start;"><span style="color: #f5a623; font-size: 22px;">▪</span><span style="font-size: 23px; color: #eaf1f8;"><strong>Approach:</strong> closely monitored implementation.</span></div>
-        </div>
-      </div>
-
-      <div style="flex: 1; padding: 56px 56px; display: flex; flex-direction: column;">
-        <image-slot id="nc-holders" style="width: 100%; flex: 1; min-height: 0;" shape="rounded" radius="16" fit="cover" src="assets/nc-holders.png" placeholder="Drop NC II holders photo"></image-slot>
-        <details style="margin-top: 22px; border: 1px solid #e7ecf2; border-radius: 12px; background: #fff;" open="">
-          <summary style="padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; font-size: 26px; font-weight: 700; color: #0a2f52;"><span>What this result tells us</span><span class="dmark" style="color: #f5a623; font-size: 30px;">＋</span></summary>
-          <div style="padding: 4px 24px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px;">
-            <div><div style="font-size: 18px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9aa7b4; margin-bottom: 8px;">Implication</div><div style="font-size: 23px; line-height: 1.4; color: #2c3e50;">The TVL–ICT track delivers job-ready, industry-certified graduates despite tight equipment.</div></div>
-            <div style="border-left: 3px solid #f5a623; padding-left: 18px;"><div style="font-size: 18px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #b9791a; margin-bottom: 8px;">Recommended action</div><div style="font-size: 23px; line-height: 1.4; color: #0a2f52; font-weight: 500;">Protect the ICST partnership and invest in a computer laboratory to scale the next batch.</div></div>
-          </div>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== 20 · WORK IMMERSION ===== -->
-  <section class="slide-wm" data-label="Work Immersion" data-screen-label="20" data-speaker-notes="Monitored, visible implementation is what turned the partnership into a 100% pass — the through-line of this review." style="background: #0a2f52; font-family: 'Libre Franklin', sans-serif; color: #fff; overflow: hidden;">
-    <div style="height: 100%; display: flex;">
-      <div style="width: 50%; position: relative;">
-        <image-slot id="immersion-photo" style="width: 100%; height: 100%;" shape="rect" fit="cover" src="assets/immersion-group.jpg" placeholder="Work immersion photo"></image-slot>
-      </div>
-      <div style="flex: 1; padding: 80px 70px; display: flex; flex-direction: column; justify-content: center;">
-        <div class="mono" style="font-size: 22px; letter-spacing: 3px; text-transform: uppercase; color: #f5a623; font-weight: 600;">SHS Work Immersion</div>
-        <h2 style="font-size: 60px; font-weight: 900; line-height: 1.02; margin-top: 18px; letter-spacing: -1px;">Visible monitoring,<br>quality results.</h2>
-        <div style="width: 100px; height: 5px; background: #f5a623; margin-top: 28px;"></div>
-        <p style="font-size: 28px; color: #cdddee; margin-top: 28px; line-height: 1.5; max-width: 640px;">Close, on-site monitoring of the CSS work-immersion programme with ICST is what converted a first-batch cohort into fully certified graduates.</p>
-        <div style="display: flex; gap: 18px; margin-top: 40px;">
-          <div style="flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-left: 4px solid #f5a623; border-radius: 12px; padding: 22px 24px;"><div class="mono" style="font-size: 40px; font-weight: 700; color: #f5a623;">PTA</div><div style="font-size: 20px; color: #cdddee; margin-top: 2px;">Active support</div></div>
-          <div style="flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-left: 4px solid #f5a623; border-radius: 12px; padding: 22px 24px;"><div class="mono" style="font-size: 40px; font-weight: 700; color: #f5a623;">LGU</div><div style="font-size: 20px; color: #cdddee; margin-top: 2px;">Barangay partner</div></div>
-          <div style="flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-left: 4px solid #f5a623; border-radius: 12px; padding: 22px 24px;"><div class="mono" style="font-size: 40px; font-weight: 700; color: #f5a623;">SGC</div><div style="font-size: 20px; color: #cdddee; margin-top: 2px;">Governing council</div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== 21 · DIVIDER: BUDGET ===== -->
-  <section class="slide-wm" data-label="Budget" data-screen-label="21" data-speaker-notes="Move to resource utilisation — how the School-Based Operating Budget was downloaded and spent." style="background: linear-gradient(150deg, #0a2f52 0%, #0e477c 100%); font-family: 'Libre Franklin', sans-serif; color: #fff; overflow: hidden;">
-    <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 90px 110px; box-sizing: border-box;">
-      <div class="mono" style="font-size: 26px; letter-spacing: 5px; text-transform: uppercase; color: #f5a623; font-weight: 600;">04 · Resource Utilization</div>
-      <h2 style="font-size: 100px; font-weight: 900; letter-spacing: -2px; line-height: 1; margin-top: 18px;">Budget Utilization</h2>
-      <div style="width: 120px; height: 6px; background: #f5a623; margin-top: 30px;"></div>
-      <p style="font-size: 30px; color: #aec4dc; margin-top: 30px; max-width: 1100px; line-height: 1.5;">Obligation and disbursement of the School-Based Operating Budget — allocation, download flow, and taxes.</p>
-    </div>
-  </section>
-
-  <!-- ===== 22 · BUDGET · SOB 2026 (ES + JHS) ===== -->
-  <section class="slide-wm" data-label="Budget · SOB 2026" data-screen-label="22" data-speaker-notes="Two operating budgets were downloaded as cash advances for January to June 2026 — ES and JHS. Both are being liquidated on schedule, with utilisation above 87% of the amounts downloaded." style="background: #f7f9fb; font-family: 'Libre Franklin', sans-serif; overflow: hidden;">
-    <div style="height: 100%; display: flex; flex-direction: column; padding: 56px 84px; box-sizing: border-box;">
-      <div class="mono" style="font-size: 22px; letter-spacing: 3px; text-transform: uppercase; color: #f5a623; font-weight: 600;">04 · Budget Utilization · SOB 2026</div>
-      <h2 style="font-size: 52px; font-weight: 800; color: #0a2f52; letter-spacing: -0.5px; margin-top: 6px;">Obligation &amp; Disbursement</h2>
-      <p style="font-size: 23px; color: #5b6b7d; margin-top: 6px;">Cash advance downloaded for January–June 2026, against each School-Based Operating Budget.</p>
-
-      <div style="flex: 1; display: flex; gap: 30px; margin-top: 24px;">
-        <div style="flex: 1; background: #fff; border: 1px solid #e7ecf2; border-radius: 16px; padding: 34px 38px; display: flex; flex-direction: column;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <div>
-              <div style="font-size: 26px; font-weight: 800; color: #0a2f52;">JNIS ES · SOB ES 2026</div>
-              <div style="font-size: 20px; color: #9aa7b4; margin-top: 2px;">Allocation ceiling</div>
-            </div>
-            <div class="mono" style="font-size: 40px; font-weight: 700; color: #0a2f52;">₱540,000.00</div>
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 22px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; background: #f7f9fb; border-radius: 10px;"><span style="font-size: 23px; color: #2c3e50; font-weight: 600;">Downloaded cash advance</span><span class="mono" style="font-size: 28px; font-weight: 700; color: #0a2f52;">₱359,000.00</span></div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; background: #f7f9fb; border-radius: 10px;"><span style="font-size: 23px; color: #2c3e50; font-weight: 600;">Liquidated amount</span><span class="mono" style="font-size: 28px; font-weight: 700; color: #0a2f52;">₱300,118.91</span></div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; background: #f7f9fb; border-radius: 10px;"><span style="font-size: 23px; color: #2c3e50; font-weight: 600;">Tax remittance (TRA)</span><span class="mono" style="font-size: 28px; font-weight: 700; color: #46688f;">₱12,606.42</span></div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px 22px; background: #e3f7ef; border: 1px solid #b6e6d2; border-radius: 10px;"><span style="font-size: 24px; color: #1f6f52; font-weight: 800;">Utilized amount</span><span class="mono" style="font-size: 30px; font-weight: 700; color: #1f8a5b;">₱312,725.33</span></div>
-          </div>
-          <div style="margin-top: auto; padding-top: 24px;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;"><span style="font-size: 21px; color: #5b6b7d; font-weight: 600;">Utilisation of downloaded funds</span><span class="mono" style="font-size: 26px; font-weight: 700; color: #b9791a;">87.1%</span></div>
-            <div style="width: 100%; height: 16px; background: #eef2f6; border-radius: 8px;"><div style="height: 100%; width: 87.1%; background: #f5a623; border-radius: 8px;"></div></div>
-          </div>
-        </div>
-        <div style="flex: 1; background: #fff; border: 1px solid #e7ecf2; border-radius: 16px; padding: 34px 38px; display: flex; flex-direction: column;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <div>
-              <div style="font-size: 26px; font-weight: 800; color: #0a2f52;">JNIS JHS · SOB JHS 2026</div>
-              <div style="font-size: 20px; color: #9aa7b4; margin-top: 2px;">Allocation ceiling</div>
-            </div>
-            <div class="mono" style="font-size: 40px; font-weight: 700; color: #0a2f52;">₱420,000.00</div>
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 22px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; background: #f7f9fb; border-radius: 10px;"><span style="font-size: 23px; color: #2c3e50; font-weight: 600;">Downloaded cash advance</span><span class="mono" style="font-size: 28px; font-weight: 700; color: #0a2f52;">₱327,000.00</span></div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; background: #f7f9fb; border-radius: 10px;"><span style="font-size: 23px; color: #2c3e50; font-weight: 600;">Liquidated amount</span><span class="mono" style="font-size: 28px; font-weight: 700; color: #0a2f52;">₱279,280.44</span></div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; background: #f7f9fb; border-radius: 10px;"><span style="font-size: 23px; color: #2c3e50; font-weight: 600;">Tax remittance (TRA)</span><span class="mono" style="font-size: 28px; font-weight: 700; color: #46688f;">₱13,559.30</span></div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px 22px; background: #e3f7ef; border: 1px solid #b6e6d2; border-radius: 10px;"><span style="font-size: 24px; color: #1f6f52; font-weight: 800;">Utilized amount</span><span class="mono" style="font-size: 30px; font-weight: 700; color: #1f8a5b;">₱291,839.74</span></div>
-          </div>
-          <div style="margin-top: auto; padding-top: 24px;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;"><span style="font-size: 21px; color: #5b6b7d; font-weight: 600;">Utilisation of downloaded funds</span><span class="mono" style="font-size: 26px; font-weight: 700; color: #b9791a;">89.2%</span></div>
-            <div style="width: 100%; height: 16px; background: #eef2f6; border-radius: 8px;"><div style="height: 100%; width: 89.2%; background: #f5a623; border-radius: 8px;"></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- ===== 23 · SCHOOL MOOE MANAGEMENT ===== -->
   <section class="slide-wm" data-label="MOOE Management" data-screen-label="23" data-speaker-notes="MOOE is managed by the School Head with the Administrative Officer, ADAS III, BAC, and the Inspectorate Team, strictly following DepEd, government accounting, and COA rules." style="background: #f7f9fb; font-family: 'Libre Franklin', sans-serif; overflow: hidden;">
@@ -857,6 +929,78 @@
     document.addEventListener('DOMContentLoaded', boot, { once: true });
   } else {
     boot();
+  }
+})();
+</script>
+<script>
+/* Slide 3 · School Profile — tabs, count-up, staggered reveal */
+(() => {
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function setup(slide) {
+    if (slide.dataset.sp3Init) return;
+    slide.dataset.sp3Init = '1';
+
+    // Tabs
+    const tabs = Array.from(slide.querySelectorAll('.sp3-tab'));
+    const panels = Array.from(slide.querySelectorAll('.sp3-tabpanel'));
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const key = tab.getAttribute('data-tab');
+        tabs.forEach((t) => t.setAttribute('aria-selected', t === tab ? 'true' : 'false'));
+        panels.forEach((p) => { p.hidden = p.getAttribute('data-tab') !== key; });
+      });
+    });
+
+    // Count-up (numeric KPIs only) + staggered reveal, fired once on first reveal
+    let revealed = false;
+    const runCount = () => {
+      if (reduce) return;
+      slide.querySelectorAll('.num[data-count]').forEach((el) => {
+        const target = parseFloat(el.getAttribute('data-count')) || 0;
+        const duration = 1100;
+        let start = null;
+        el.textContent = '0';
+        const step = (ts) => {
+          if (start === null) start = ts;
+          const p = Math.min((ts - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = String(Math.round(eased * target));
+          if (p < 1) requestAnimationFrame(step);
+          else el.textContent = String(target);
+        };
+        requestAnimationFrame(step);
+      });
+    };
+    const reveal = () => {
+      if (revealed) return;
+      revealed = true;
+      slide.classList.add('is-in');
+      runCount();
+    };
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) { reveal(); io.disconnect(); } });
+      }, { threshold: 0.35 });
+      io.observe(slide);
+    }
+    // Fallback so content never stays hidden if the observer never fires.
+    window.setTimeout(reveal, 1800);
+  }
+
+  function init() {
+    const slide = document.getElementById('slide-school-profile');
+    if (slide) { setup(slide); return true; }
+    return false;
+  }
+
+  if (!init()) {
+    const observer = new MutationObserver(() => { if (init()) observer.disconnect(); });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+    window.setTimeout(() => observer.disconnect(), 5000);
   }
 })();
 </script>

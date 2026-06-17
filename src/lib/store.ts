@@ -1,0 +1,609 @@
+// Centralized data models + default state.
+// Single source of truth shared by the presenter (src/app/page.tsx) and the editor (src/app/editor/page.tsx).
+
+export interface DashboardStep {
+  title: string;
+  labels?: string[];
+  values: number[];
+  max: number;
+  finding: string;
+  action: string;
+  years?: string[];
+  targets?: number[];
+  actuals?: number[];
+  grades?: string[];
+  cohorts?: string[];
+  flows?: number[];
+}
+
+export type PerformanceMetric = {
+  label: string;
+  group?: string;
+  value: number;
+  previous?: number;
+  target?: number;
+  unit?: string;
+};
+
+export type PerformancePanel = {
+  title: string;
+  status: string;
+  finding: string;
+  action: string;
+  bullets: string[];
+};
+
+export type BudgetRow = {
+  label: string;
+  allocation: number;
+  downloaded: number;
+  liquidated: number;
+  tax: number;
+  utilized: number;
+  utilization: number;
+};
+
+export type PhilIriLevels = { independent: number; instructional: number; frustration: number };
+
+export type PhilIriDataset = {
+  keyStage: "KS2" | "KS3";
+  year: string;
+  total: number;
+  grades: string;
+  filipino: PhilIriLevels;
+  english: PhilIriLevels;
+  interpretation: string[];
+};
+
+export type PerformanceBudgetStep = {
+  title: string;
+  subtitle: string;
+  visual: string;
+  metrics: PerformanceMetric[];
+  panels: PerformancePanel[];
+  budgetRows?: BudgetRow[];
+  philIri?: PhilIriDataset[];
+  roster?: string[];
+};
+
+export type PerformanceBudgetState = {
+  currentStep: number;
+  activePanelIdx: number;
+  steps: PerformanceBudgetStep[];
+};
+
+export type SavedPerformanceBudgetStep = Partial<Omit<PerformanceBudgetStep, "metrics" | "panels" | "budgetRows">> & {
+  metrics?: Partial<PerformanceMetric>[];
+  panels?: (Partial<PerformancePanel> & { bullets?: string[] })[];
+  budgetRows?: Partial<BudgetRow>[];
+};
+
+export type SavedPerformanceBudgetState = Partial<Omit<PerformanceBudgetState, "steps">> & {
+  steps?: SavedPerformanceBudgetStep[];
+};
+
+export type PerformanceBudgetAppState = Record<string, unknown> & {
+  performanceBudget?: PerformanceBudgetState;
+};
+
+// Helper types consumed by the editor controls.
+export type BudgetRowNumericField = Exclude<keyof BudgetRow, "label">;
+export type PerformanceBudgetFieldValue =
+  | string
+  | number
+  | PerformanceMetric[]
+  | PerformancePanel[]
+  | BudgetRow[];
+
+export const defaultState = {
+  theme: 'slate',
+  transition: 'fade',
+  mode: 'editor',
+  notes: {} as Record<number, string>,
+  slides: {} as Record<number, { texts: Record<number, string>; charts?: any }>,
+  dashboard: {
+    currentStep: 0,
+    steps: [
+      {
+        title: "Kindergarten",
+        years: ["2024-25", "2025-26", "2026-27"],
+        targets: [10, 15, 7],
+        actuals: [12, 16, 8],
+        max: 20,
+        finding: "Kindergarten enrolment is declining — with no incoming completers from the Day Care Center, there are no new entrants, weakening the early-childhood feeder system.",
+        action: "Strengthen Day Care Center linkage and early-registration drives to rebuild the Kindergarten feeder pipeline."
+      },
+      {
+        title: "Elementary",
+        years: ["2024-25", "2025-26", "2026-27"],
+        targets: [96, 98, 91],
+        actuals: [98, 91, 90],
+        max: 120,
+        finding: "A -7 dip in 2025-2026, then stabilizing near the target (-1) in 2026-2027.",
+        action: "Track transfer-out reasons and strengthen learner retention in the elementary cohort."
+      },
+      {
+        title: "Junior High",
+        years: ["2024-25", "2025-26", "2026-27"],
+        targets: [52, 52, 56],
+        actuals: [52, 56, 59],
+        max: 80,
+        finding: "Actual enrolment met target in 2024-2025 and exceeded it in the next two years (+4, then +3), a steady upward trend.",
+        action: "Set slightly more ambitious targets and plan section/teacher load for continued growth."
+      },
+      {
+        title: "Senior High",
+        grades: ["Grade 11", "Grade 12"],
+        values: [8, 11],
+        max: 30,
+        finding: "SHS enrolment declined from 27 to 19 due to transfers to schools offering Cookery / Automotive.",
+        action: "Build on the 6 new computer units to make GAS / ICT-CSS strands more competitive."
+      },
+      {
+        title: "Cohort Tracking",
+        cohorts: ["KG-G1", "G1-G2", "G2-G3", "G3-G4", "G4-G5", "G5-G6", "G7-G8", "G8-G9", "G9-G10"],
+        flows: [8, 3, -10, 7, 2, -7, 2, 1, 0],
+        max: 20,
+        finding: "Grade 3 and Grade 6 grew, while Kindergarten, Grade 2, Grade 5, and JHS Grade 7 / Grade 10 contracted.",
+        action: "Strengthen Grade 6 to 7 transition and Grade 10 to 11 bridging into Senior High School."
+      }
+    ]
+  },
+  characterization: {
+    currentStep: 0,
+    activeDomainIdx: 0,
+    steps: [
+      {
+        title: "Equipment & Assessment",
+        subtitle: "Curriculum Support — Equipment, ICT & Assessment",
+        domains: [
+          {
+            name: "Instructional Equipment",
+            letter: "E",
+            driver: "Smart TVs in every classroom and functional Science & Mathematics equipment keep core instruction and hands-on lessons running.",
+            bottleneck: "ICT tools are uneven across teachers and equipment is limited relative to rising SHS ICT/CSS demand, capping hands-on competencies.",
+            status: "Equipped · ICT uneven",
+            maturity: 3,
+            bullets: [
+              "Smart TVs in all classrooms; printers for all teachers, laptops for some.",
+              "Science & Mathematics equipment available and actively used.",
+              "ICT tools remain uneven across teachers, affecting consistency."
+            ]
+          },
+          {
+            name: "ICT Environment",
+            letter: "I",
+            driver: "Emerging digital platforms (Wayground, MS Teams) and tablets for testing speed up and clean up assessment data collection.",
+            bottleneck: "Inconsistent internet, no dedicated ICT lab or library, and device scarcity limit interactive learning — correlating with low Grade 10 Math (28.27%) and Science (26.29%).",
+            status: "Constrained",
+            maturity: 2,
+            bullets: [
+              "Rising SHS ICT Programming enrolment raises equipment demand.",
+              "Existing resources are limited relative to curriculum needs.",
+              "Hands-on ICT competencies are the most affected."
+            ]
+          },
+          {
+            name: "Assessment",
+            letter: "A",
+            driver: "Data-driven profiling with NAT, ELLNA, CRLA, and PHIL-IRI lets teachers catch learning gaps early and tailor remediation.",
+            bottleneck: "Assessment literacy must deepen across the faculty so classroom tests stay valid, consistent, and aligned with regional standards.",
+            status: "Functional · strengthen",
+            maturity: 3,
+            bullets: [
+              "Regional Unified Quarterly Exams standardise assessment.",
+              "Pacing does not always align with exam coverage.",
+              "HOTS / NAT / PISA capacity-building and ICT for data analysis needed."
+            ]
+          }
+        ]
+      },
+      {
+        title: "Teachers & Facilities",
+        subtitle: "Curriculum Support — Teachers, Materials & Facilities",
+        domains: [
+          {
+            name: "Teachers",
+            letter: "T",
+            driver: "Strong commitment to reading and numeracy interventions (CNR-ESP, RRP) drove major elementary gains — Grade 6 NAT Science +46.48% and Math +37.45%.",
+            bottleneck: "Beginning teachers (Teacher I) still building classroom management, plus multi-grade and multi-subject loads, strain capacity and slow Grade 10 NAT mastery.",
+            status: "Adaptable · multi-level load",
+            maturity: 3,
+            bullets: [
+              "Small, fluctuating classes mean multi-level loads and flexible deployment.",
+              "Teachers handle multiple areas and grade levels, esp. JHS and SHS.",
+              "SHS ICT Programming raises specialisation demands."
+            ]
+          },
+          {
+            name: "Instructional Materials",
+            letter: "M",
+            driver: "Maximizing foundational reading materials lifted early literacy — a +56.17% shift in ELLNA Numeracy and +38.35% in Mother Tongue.",
+            bottleneck: "A shortage of updated media and a staggered MATATAG rollout cause uneven access; limited advanced-text exposure drove ELLNA English down 6.28%.",
+            status: "Transitional",
+            maturity: 2,
+            bullets: [
+              "Limited provision; many resources outdated (pandemic-era).",
+              "MATATAG rollout delayed and staggered — started Grades 1 & 7.",
+              "Uneven access to updated materials across grade levels."
+            ]
+          },
+          {
+            name: "Facilities",
+            letter: "F",
+            driver: "The school maximizes its 14 classrooms and available spaces to keep every program operating.",
+            bottleneck: "No computer lab, clinic, DRRM room, or Teen Center; the Home Economics room is dilapidated and SHS uses a less-ideal Marcos-type building.",
+            status: "Functional · not optimised",
+            maturity: 2,
+            bullets: [
+              "14 classrooms, incl. temporary Marcos-type structures for SHS.",
+              "Missing: computer lab, clinic, DRRM room, Teen Center.",
+              "Home Economics room dilapidated, now used as storage."
+            ]
+          }
+        ]
+      },
+      {
+        title: "Governance & Partnerships",
+        subtitle: "Curriculum Support — Leadership, SDO & Partnerships",
+        domains: [
+          {
+            name: "School Leadership",
+            letter: "L",
+            driver: "Strategic tracking, classroom monitoring, and instructional coaching give teachers structural support and strengthen stakeholder trust.",
+            bottleneck: "Sustaining continuous instructional leadership is hard while balancing heavy administrative demands and urgent infrastructure fixes.",
+            status: "Stabilising",
+            maturity: 3,
+            bullets: [
+              "Operating amid program expansion and SHS validation.",
+              "Managing enrolment swings, compliance and limited resources.",
+              "Needs stronger forecasting, optimisation and supervision."
+            ]
+          },
+          {
+            name: "SDO Technical Assistance",
+            letter: "S",
+            driver: "Official SDO program validation and direct trainings (MS Teams, ARAL Tutors, Reading Coach) act as a booster shot for instructional quality.",
+            bottleneck: "Division manpower is stretched across competing priorities, limiting the frequency of intensive, localized field monitoring and coaching.",
+            status: "Comprehensive support",
+            maturity: 4,
+            bullets: [
+              "Training, staffing, ICT, assessment, supervision & governance support.",
+              "Strong for compliance and initial implementation needs.",
+              "Needs sustained coaching and on-site technical assistance."
+            ]
+          },
+          {
+            name: "Community & Partnerships",
+            letter: "P",
+            driver: "Active PTA and LGU collaboration adds facilities funding; child mapping and 'purok enrollment boxes' stabilize enrolment and keep at-risk readers in school.",
+            bottleneck: "Socio-economic challenges — family finances and learner mobility — occasionally overpower outreach efforts and disrupt remedial continuity.",
+            status: "Developing",
+            maturity: 2,
+            bullets: [
+              "Strong PTA, Barangay LGU and School Governing Council support.",
+              "Backed early SHS / TVL support and work immersion.",
+              "Engagement still developing in depth and sustainability."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  performanceBudget: {
+    currentStep: 0,
+    activePanelIdx: 0,
+    steps: [
+      {
+        title: "Learning Outcomes",
+        subtitle: "ELLNA, NAT, and PHIL-IRI performance signals",
+        visual: "learning",
+        metrics: [
+          { label: "ELLNA English", group: "ELLNA", value: 61.23, previous: 67.51, target: 75, unit: "%" },
+          { label: "ELLNA Filipino", group: "ELLNA", value: 69.01, previous: 67.95, target: 75, unit: "%" },
+          { label: "ELLNA Numeracy", group: "ELLNA", value: 60, previous: 3.83, target: 75, unit: "%" },
+          { label: "ELLNA Mother Tongue", group: "ELLNA", value: 63.46, previous: 25.11, target: 75, unit: "%" },
+          { label: "NAT G6 Filipino", group: "NAT G6", value: 73.15, previous: 59.26, target: 75, unit: "%" },
+          { label: "NAT G6 AP", group: "NAT G6", value: 78.7, previous: 57.41, target: 75, unit: "%" },
+          { label: "NAT G6 Math", group: "NAT G6", value: 77.96, previous: 40.51, target: 75, unit: "%" },
+          { label: "NAT G6 Science", group: "NAT G6", value: 88.15, previous: 41.67, target: 75, unit: "%" },
+          { label: "NAT G6 English", group: "NAT G6", value: 85.74, previous: 44.44, target: 75, unit: "%" },
+          { label: "NAT G10 Overall", group: "NAT G10", value: 34.76, target: 75, unit: "%" },
+          { label: "NAT G10 Filipino", group: "NAT G10", value: 42.83, target: 75, unit: "%" },
+          { label: "NAT G10 AP", group: "NAT G10", value: 42.96, target: 75, unit: "%" },
+          { label: "NAT G10 English", group: "NAT G10", value: 33.45, target: 75, unit: "%" },
+          { label: "NAT G10 Math", group: "NAT G10", value: 28.27, target: 75, unit: "%" },
+          { label: "NAT G10 Science", group: "NAT G10", value: 26.29, target: 75, unit: "%" },
+          { label: "K2 English Frustration", group: "PHIL-IRI", value: 2.27, previous: 18, target: 0, unit: "%" },
+          { label: "K2 Filipino Frustration", group: "PHIL-IRI", value: 0, target: 0, unit: "%" },
+          { label: "K3 Filipino Frustration", group: "PHIL-IRI", value: 10.71, previous: 23.08, target: 0, unit: "%" },
+          { label: "K3 English Independent", group: "PHIL-IRI", value: 50, previous: 59.62, target: 75, unit: "%" }
+        ],
+        philIri: [
+          {
+            keyStage: "KS2",
+            year: "2024-2025",
+            total: 50,
+            grades: "G4: 16 · G5: 14 · G6: 20",
+            filipino: { independent: 60, instructional: 36, frustration: 4 },
+            english: { independent: 38, instructional: 44, frustration: 18 },
+            interpretation: [
+              "Filipino proficiency is strong: 96% of learners sit in the Independent/Instructional zone, and only 4% require intervention.",
+              "English needs urgent attention: nearly 1 in 5 learners (18%) is at the Frustration level — prioritise English reading comprehension and decoding."
+            ]
+          },
+          {
+            keyStage: "KS2",
+            year: "2025-2026",
+            total: 44,
+            grades: "G4: 12 · G5: 18 · G6: 14",
+            filipino: { independent: 79.55, instructional: 20.45, frustration: 0 },
+            english: { independent: 65.91, instructional: 31.82, frustration: 2.27 },
+            interpretation: [
+              "Strong overall progress versus the previous year — a clear upward shift in both languages.",
+              "Filipino mastery: 0% at Frustration and nearly 80% reading independently.",
+              "English improved dramatically: Frustration dropped to 2.27% (~1 learner), showing earlier reading interventions were highly effective."
+            ]
+          },
+          {
+            keyStage: "KS3",
+            year: "2024-2025",
+            total: 52,
+            grades: "G7: 14 · G8: 10 · G9: 14 · G10: 14",
+            filipino: { independent: 30.77, instructional: 46.15, frustration: 23.08 },
+            english: { independent: 59.62, instructional: 23.08, frustration: 17.31 },
+            interpretation: [
+              "English is a strength: the majority (59.62%) are Independent readers — unlike the elementary levels.",
+              "Filipino needs help: 23.08% at Frustration and 46.15% requiring guided support.",
+              "Pivot secondary reading interventions to prioritise Filipino comprehension."
+            ]
+          },
+          {
+            keyStage: "KS3",
+            year: "2025-2026",
+            total: 56,
+            grades: "G7: 18 · G8: 15 · G9: 10 · G10: 13",
+            filipino: { independent: 57.14, instructional: 32.14, frustration: 10.71 },
+            english: { independent: 50, instructional: 33.93, frustration: 16.07 },
+            interpretation: [
+              "Filipino progresses: Frustration dropped to 10.71% while Independent readers grew to 57.14%.",
+              "English steady: half the cohort (50%) remains Independent, though a 16.07% Frustration rate still requires attention.",
+              "Solid academic improvement and healthy cohort progression across both languages."
+            ]
+          }
+        ],
+        panels: [
+          {
+            title: "ELLNA",
+            status: "Mixed gains",
+            finding: "Numeracy and Mother Tongue posted the largest improvements, while English declined and remains a priority.",
+            action: "Sustain foundational numeracy gains while intensifying English reading comprehension and vocabulary support.",
+            bullets: [
+              "Numeracy improved from 3.83% to 60.00%.",
+              "Mother Tongue rose from 25.11% to 63.46%.",
+              "English decreased from 67.51% to 61.23%."
+            ]
+          },
+          {
+            title: "NAT Grade 6",
+            status: "Strong growth",
+            finding: "Grade 6 performance improved across all areas, with Science, English, and Mathematics exceeding large year-over-year gains.",
+            action: "Preserve the intervention cycle that lifted Grade 6 outcomes and use it as the elementary benchmark.",
+            bullets: [
+              "Science reached 88.15%, the strongest current result.",
+              "English reached 85.74% after a 41.30-point increase.",
+              "Mathematics reached 77.96%, above the 75% target."
+            ]
+          },
+          {
+            title: "NAT Grade 10",
+            status: "Priority support",
+            finding: "Grade 10 remains below expected mastery, with overall proficiency at 34.76%.",
+            action: "Focus JHS remediation on Science, Mathematics, and English while protecting AP and Filipino gains.",
+            bullets: [
+              "Science is the lowest area at 26.29%.",
+              "Mathematics is also a priority at 28.27%.",
+              "Araling Panlipunan (42.96%) and Filipino (42.83%) are the strongest areas, with English (33.45%) also lagging — all still below the 75% target."
+            ]
+          },
+          {
+            title: "PHIL-IRI",
+            status: "Reading recovery",
+            finding: "K2 English frustration dropped sharply from 18% to 2.27%, while K3 Filipino frustration also improved.",
+            action: "Continue targeted reading remediation and keep secondary Filipino comprehension as a focus area.",
+            bullets: [
+              "K2 Filipino frustration is down to 0%.",
+              "K3 Filipino frustration improved from 23.08% to 10.71%.",
+              "K3 English independent readers moved from 59.62% to 50%, requiring monitoring."
+            ]
+          }
+        ]
+      },
+      {
+        title: "NC II",
+        subtitle: "Computer Systems Servicing certification result",
+        visual: "certification",
+        metrics: [
+          { label: "Pass Rate", value: 100, target: 100, unit: "%" },
+          { label: "Certified Learners", value: 16, target: 16, unit: "" },
+          { label: "Partner Support", value: 100, target: 100, unit: "%" }
+        ],
+        roster: [
+          "Alguetas, Darene",
+          "Banglos, Jelian",
+          "Burgona, Roseller",
+          "Canencia, Edmar",
+          "Molina, Levin",
+          "Taytay, Tonton",
+          "Villarin, Johnnil",
+          "Cabillon, Maroo",
+          "Alonto, Asnairah",
+          "Martinez, Ashley Nicole",
+          "Hernando, Jennelyn",
+          "Naoja, Marie",
+          "Permano, Cinderela Jane",
+          "Selim, Abegail",
+          "Villar, Shianne Grace",
+          "Naoja, Leslie"
+        ],
+        panels: [
+          {
+            title: "Certification Result",
+            status: "100% passed",
+            finding: "The first Grade 12 CSS batch reached a 100% NC II passing rate.",
+            action: "Use the result as proof of readiness while preparing equipment and coaching for the next batch.",
+            bullets: [
+              "16 Grade 12 CSS learners passed.",
+              "The result validates close monitoring and partner-supported preparation.",
+              "The achievement strengthens the SHS ICT-CSS pathway."
+            ]
+          },
+          {
+            title: "Industry Partner",
+            status: "ICST",
+            finding: "Immaculate Conception School of Technology helped convert the first-batch cohort into certified learners.",
+            action: "Protect the ICST partnership and define recurring support for assessment preparation.",
+            bullets: [
+              "Partner coordination supported certification readiness.",
+              "Work immersion and certification preparation are connected.",
+              "Future cohorts need the same partner-backed preparation cycle."
+            ]
+          },
+          {
+            title: "Scale Up Need",
+            status: "ICT lab",
+            finding: "Certification success is strong, but equipment constraints can limit scale and consistency.",
+            action: "Prioritize computer laboratory investment and preventive maintenance for CSS delivery.",
+            bullets: [
+              "Hands-on ICT competencies require reliable device access.",
+              "Certification readiness depends on repeated practice.",
+              "Additional equipment will help sustain future pass rates."
+            ]
+          }
+        ]
+      },
+      {
+        title: "Work Immersion",
+        subtitle: "Community-supported monitoring and implementation",
+        visual: "immersion",
+        metrics: [
+          { label: "PTA Support", value: 100, target: 100, unit: "%" },
+          { label: "LGU Support", value: 100, target: 100, unit: "%" },
+          { label: "SGC Support", value: 100, target: 100, unit: "%" }
+        ],
+        panels: [
+          {
+            title: "Visible Monitoring",
+            status: "Active",
+            finding: "Close monitoring of CSS work immersion helped turn partnership activity into certification results.",
+            action: "Keep on-site monitoring visible and document learner progress during immersion.",
+            bullets: [
+              "Monitoring created a clear through-line from immersion to NC II success.",
+              "Teacher and partner coordination supported learner readiness.",
+              "Documentation should feed future program improvement."
+            ]
+          },
+          {
+            title: "Stakeholder Support",
+            status: "PTA + LGU + SGC",
+            finding: "PTA, Barangay LGU, and SGC support are practical assets for sustaining learner participation.",
+            action: "Formalize support roles so assistance is predictable during immersion cycles.",
+            bullets: [
+              "PTA support helps learner attendance and preparation.",
+              "LGU support strengthens community linkage.",
+              "SGC support reinforces governance and accountability."
+            ]
+          },
+          {
+            title: "Program Continuity",
+            status: "Sustain",
+            finding: "The immersion model works best when partner engagement, monitoring, and assessment preparation are aligned.",
+            action: "Build an annual immersion calendar connected to certification milestones.",
+            bullets: [
+              "Set recurring partner check-ins.",
+              "Track learner readiness before assessment.",
+              "Report partner contributions in the next PIR cycle."
+            ]
+          }
+        ]
+      },
+      {
+        title: "Budget Overview",
+        subtitle: "School-Based Operating Budget utilization",
+        visual: "budgetOverview",
+        metrics: [
+          { label: "Total SOB Allocation", value: 960000, unit: "PHP" },
+          { label: "Downloaded Cash Advance", value: 686000, unit: "PHP" },
+          { label: "Total Utilized", value: 604565.07, unit: "PHP" },
+          { label: "Downloaded Utilization", value: 88.13, target: 100, unit: "%" }
+        ],
+        budgetRows: [
+          { label: "JNIS ES", allocation: 540000, downloaded: 359000, liquidated: 300118.91, tax: 12606.42, utilized: 312725.33, utilization: 87.1 },
+          { label: "JNIS JHS", allocation: 420000, downloaded: 327000, liquidated: 279280.44, tax: 13559.3, utilized: 291839.74, utilization: 89.2 }
+        ],
+        panels: [
+          {
+            title: "Resource Picture",
+            status: "PHP 960K allocation",
+            finding: "The combined SOB allocation is PHP 960,000, with PHP 604,565.07 already utilized from downloaded funds.",
+            action: "Maintain liquidation pacing and keep budget reporting linked to learner-facing priorities.",
+            bullets: [
+              "ES allocation is PHP 540,000.",
+              "JHS allocation is PHP 420,000.",
+              "Combined downloaded cash advance is PHP 686,000."
+            ]
+          },
+          {
+            title: "Utilization Signal",
+            status: "88.13% of downloaded",
+            finding: "Utilization of downloaded funds is above 88% overall.",
+            action: "Keep obligation, liquidation, and tax remittance updates visible in regular monitoring.",
+            bullets: [
+              "ES utilization of downloaded funds is 87.1%.",
+              "JHS utilization of downloaded funds is 89.2%.",
+              "Both funds are being liquidated on schedule."
+            ]
+          }
+        ]
+      },
+      {
+        title: "SOB 2026",
+        subtitle: "ES and JHS obligation and disbursement detail",
+        visual: "sobDetail",
+        metrics: [
+          { label: "ES Utilization", value: 87.1, target: 100, unit: "%" },
+          { label: "JHS Utilization", value: 89.2, target: 100, unit: "%" },
+          { label: "Total Utilized", value: 604565.07, unit: "PHP" }
+        ],
+        budgetRows: [
+          { label: "JNIS ES", allocation: 540000, downloaded: 359000, liquidated: 300118.91, tax: 12606.42, utilized: 312725.33, utilization: 87.1 },
+          { label: "JNIS JHS", allocation: 420000, downloaded: 327000, liquidated: 279280.44, tax: 13559.3, utilized: 291839.74, utilization: 89.2 }
+        ],
+        panels: [
+          {
+            title: "ES SOB 2026",
+            status: "87.1% utilized",
+            finding: "The ES fund utilized PHP 312,725.33 of the PHP 359,000 downloaded cash advance.",
+            action: "Continue liquidation monitoring and align remaining funds to school operations and learning needs.",
+            bullets: [
+              "Allocation ceiling: PHP 540,000.",
+              "Liquidated amount: PHP 300,118.91.",
+              "Tax remittance: PHP 12,606.42."
+            ]
+          },
+          {
+            title: "JHS SOB 2026",
+            status: "89.2% utilized",
+            finding: "The JHS fund utilized PHP 291,839.74 of the PHP 327,000 downloaded cash advance.",
+            action: "Maintain documentation and liquidation pacing through the next reporting period.",
+            bullets: [
+              "Allocation ceiling: PHP 420,000.",
+              "Liquidated amount: PHP 279,280.44.",
+              "Tax remittance: PHP 13,559.30."
+            ]
+          }
+        ]
+      }
+    ]
+  } as PerformanceBudgetState
+};

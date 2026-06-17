@@ -1,200 +1,22 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import {
+  defaultState,
+  PerformanceMetric,
+  PerformancePanel,
+  BudgetRow,
+  PerformanceBudgetStep,
+  PerformanceBudgetState,
+  SavedPerformanceBudgetStep,
+  SavedPerformanceBudgetState,
+  PerformanceBudgetAppState,
+  PhilIriDataset,
+  PhilIriLevels,
+} from "@/lib/store";
+import { EnrolmentDashboard } from "@/components/EnrolmentDashboard";
+import { CharacterizationCarousel } from "@/components/CharacterizationCarousel";
 
-
-interface DashboardStep {
-  title: string;
-  labels?: string[];
-  values: number[];
-  max: number;
-  finding: string;
-  action: string;
-  years?: string[];
-  targets?: number[];
-  actuals?: number[];
-  grades?: string[];
-  cohorts?: string[];
-  flows?: number[];
-}
-
-const defaultState = {
-  theme: 'slate',
-  transition: 'fade',
-  mode: 'editor',
-  notes: {} as Record<number, string>,
-  slides: {} as Record<number, { texts: Record<number, string>; charts?: any }>,
-  dashboard: {
-    currentStep: 0,
-    steps: [
-      {
-        title: "Kindergarten",
-        labels: ["Target", "Actual"],
-        values: [7, 8],
-        max: 20,
-        finding: "Kindergarten intake is small but consistently on or above target.",
-        action: "Sustain early-registration drives to protect the feeder pipeline."
-      },
-      {
-        title: "Elementary",
-        years: ["2024-25", "2025-26", "2026-27"],
-        targets: [96, 98, 91],
-        actuals: [98, 91, 90],
-        max: 120,
-        finding: "A -7 dip in 2025-2026, then stabilizing near the target (-1) in 2026-2027.",
-        action: "Track transfer-out reasons and strengthen learner retention in the elementary cohort."
-      },
-      {
-        title: "Junior High",
-        years: ["2024-25", "2025-26", "2026-27"],
-        targets: [48, 52, 56],
-        actuals: [52, 56, 59],
-        max: 80,
-        finding: "Actual enrolment consistently exceeded target in both years targets were set (+4, then +3).",
-        action: "Set slightly more ambitious targets and plan section/teacher load for continued growth."
-      },
-      {
-        title: "Senior High",
-        grades: ["Grade 11", "Grade 12"],
-        values: [8, 11],
-        max: 30,
-        finding: "SHS enrolment declined from 27 to 19 due to transfers to schools offering Cookery / Automotive.",
-        action: "Build on the 6 new computer units to make GAS / ICT-CSS strands more competitive."
-      },
-      {
-        title: "Cohort Tracking",
-        cohorts: ["KG-G1", "G1-G2", "G2-G3", "G3-G4", "G4-G5", "G5-G6", "G7-G8", "G8-G9", "G9-G10"],
-        flows: [8, 3, -10, 7, 2, -7, 2, 1, 0],
-        max: 20,
-        finding: "Grade 3 and Grade 6 grew, while Kindergarten, Grade 2, Grade 5, and JHS Grade 7 / Grade 10 contracted.",
-        action: "Strengthen Grade 6 to 7 transition and Grade 10 to 11 bridging into Senior High School."
-      }
-    ]
-  },
-  characterization: {
-    currentStep: 0,
-    activeDomainIdx: 0,
-    steps: [
-      {
-        title: "Equipment & Assessment",
-        subtitle: "Curriculum Support — Equipment, ICT & Assessment",
-        domains: [
-          {
-            name: "Instructional Equipment",
-            letter: "E",
-            status: "Equipped · ICT uneven",
-            maturity: 3,
-            bullets: [
-              "Smart TVs in all classrooms; printers for all teachers, laptops for some.",
-              "Science & Mathematics equipment available and actively used.",
-              "ICT tools remain uneven across teachers, affecting consistency."
-            ]
-          },
-          {
-            name: "ICT Environment",
-            letter: "I",
-            status: "Constrained",
-            maturity: 2,
-            bullets: [
-              "Rising SHS ICT Programming enrolment raises equipment demand.",
-              "Existing resources are limited relative to curriculum needs.",
-              "Hands-on ICT competencies are the most affected."
-            ]
-          },
-          {
-            name: "Assessment",
-            letter: "A",
-            status: "Functional · strengthen",
-            maturity: 3,
-            bullets: [
-              "Regional Unified Quarterly Exams standardise assessment.",
-              "Pacing does not always align with exam coverage.",
-              "HOTS / NAT / PISA capacity-building and ICT for data analysis needed."
-            ]
-          }
-        ]
-      },
-      {
-        title: "Teachers & Facilities",
-        subtitle: "Curriculum Support — Teachers, Materials & Facilities",
-        domains: [
-          {
-            name: "Teachers",
-            letter: "T",
-            status: "Adaptable · multi-level load",
-            maturity: 3,
-            bullets: [
-              "Small, fluctuating classes mean multi-level loads and flexible deployment.",
-              "Teachers handle multiple areas and grade levels, esp. JHS and SHS.",
-              "SHS ICT Programming raises specialisation demands."
-            ]
-          },
-          {
-            name: "Instructional Materials",
-            letter: "M",
-            status: "Transitional",
-            maturity: 2,
-            bullets: [
-              "Limited provision; many resources outdated (pandemic-era).",
-              "MATATAG rollout delayed and staggered — started Grades 1 & 7.",
-              "Uneven access to updated materials across grade levels."
-            ]
-          },
-          {
-            name: "Facilities",
-            letter: "F",
-            status: "Functional · not optimised",
-            maturity: 2,
-            bullets: [
-              "14 classrooms, incl. temporary Marcos-type structures for SHS.",
-              "Missing: computer lab, clinic, DRRM room, Teen Center.",
-              "Home Economics room dilapidated, now used as storage."
-            ]
-          }
-        ]
-      },
-      {
-        title: "Governance & Partnerships",
-        subtitle: "Curriculum Support — Leadership, SDO & Partnerships",
-        domains: [
-          {
-            name: "School Leadership",
-            letter: "L",
-            status: "Stabilising",
-            maturity: 3,
-            bullets: [
-              "Operating amid program expansion and SHS validation.",
-              "Managing enrolment swings, compliance and limited resources.",
-              "Needs stronger forecasting, optimisation and supervision."
-            ]
-          },
-          {
-            name: "SDO Technical Assistance",
-            letter: "S",
-            status: "Comprehensive support",
-            maturity: 4,
-            bullets: [
-              "Training, staffing, ICT, assessment, supervision & governance support.",
-              "Strong for compliance and initial implementation needs.",
-              "Needs sustained coaching and on-site technical assistance."
-            ]
-          },
-          {
-            name: "Community & Partnerships",
-            letter: "P",
-            status: "Developing",
-            maturity: 2,
-            bullets: [
-              "Strong PTA, Barangay LGU and School Governing Council support.",
-              "Backed early SHS / TVL support and work immersion.",
-              "Engagement still developing in depth and sustainability."
-            ]
-          }
-        ]
-      }
-    ]
-  }
-};
 
 // --- Helper Functions for Slide Chart Syncing ---
 const parseNumber = (text: string) => {
@@ -477,6 +299,7 @@ export default function Home() {
         const stateRes = await fetch('/.pir-deck.state.json?t=' + Date.now());
         if (stateRes.ok) {
           const stateData = await stateRes.json();
+          const savedPerformanceBudget = stateData.performanceBudget as SavedPerformanceBudgetState | undefined;
           savedState = {
             ...defaultState,
             ...stateData,
@@ -500,6 +323,32 @@ export default function Home() {
                   ...(stateData.characterization?.steps?.[idx]?.domains?.[dIdx] || {})
                 }))
               }))
+            },
+            performanceBudget: {
+              currentStep: savedPerformanceBudget?.currentStep ?? defaultState.performanceBudget.currentStep,
+              activePanelIdx: savedPerformanceBudget?.activePanelIdx ?? defaultState.performanceBudget.activePanelIdx ?? 0,
+              steps: defaultState.performanceBudget.steps.map((step, idx) => {
+                const savedStep = savedPerformanceBudget?.steps?.[idx] || {};
+                return {
+                  ...step,
+                  ...savedStep,
+                  metrics: (step.metrics || []).map((metric, metricIdx) => ({
+                    ...metric,
+                    ...(savedStep.metrics?.[metricIdx] || {})
+                  })),
+                  budgetRows: step.budgetRows
+                    ? step.budgetRows.map((row, rowIdx) => ({
+                        ...row,
+                        ...(savedStep.budgetRows?.[rowIdx] || {})
+                      }))
+                    : undefined,
+                  panels: (step.panels || []).map((panel, panelIdx) => ({
+                    ...panel,
+                    ...(savedStep.panels?.[panelIdx] || {}),
+                    bullets: savedStep.panels?.[panelIdx]?.bullets || panel.bullets
+                  }))
+                };
+              })
             }
           };
         }
@@ -673,6 +522,7 @@ export default function Home() {
     if (!section) return;
     const slideIdx = parseInt(section.getAttribute('data-slide-index') || '-1', 10);
     if (section.getAttribute('data-label') === 'Enrolment Dashboard') return;
+    if (section.getAttribute('data-label') === 'Performance & Budget') return;
 
     if (['H1', 'H2', 'H3', 'P', 'LI', 'SPAN', 'DIV'].includes(target.tagName)) {
       if (target.closest('.pir-chart-tools') || target.closest('.pir-wizard') || target.closest('.pir-long-toggle')) return;
@@ -805,6 +655,74 @@ export default function Home() {
                   </section>
                 );
               }
+              if (slide.label === "Performance & Budget") {
+                return (
+                  <section
+                    key={slide.id}
+                    data-slide-index={idx}
+                    data-label={slide.label}
+                    className={slide.className}
+                    style={parseStyleString(slide.styleAttr)}
+                  >
+                    <PerformanceBudgetCarousel
+                      stepData={appState.performanceBudget?.steps || defaultState.performanceBudget.steps}
+                      currentStep={appState.performanceBudget?.currentStep ?? defaultState.performanceBudget.currentStep}
+                      activePanelIdx={appState.performanceBudget?.activePanelIdx ?? defaultState.performanceBudget.activePanelIdx}
+                      mode={appState.mode}
+                      onActivePanelChange={(panelIdx) => {
+                        setAppState((prev: PerformanceBudgetAppState) => {
+                          const perfState: PerformanceBudgetState = prev.performanceBudget || defaultState.performanceBudget;
+                          const newState = {
+                            ...prev,
+                            performanceBudget: { ...perfState, activePanelIdx: panelIdx }
+                          };
+                          saveState(newState);
+                          try {
+                            const channel = new BroadcastChannel('pir-deck-sync');
+                            channel.postMessage({ type: 'update-state', state: newState });
+                            channel.close();
+                          } catch (err) {}
+                          return newState;
+                        });
+                      }}
+                      onStepChange={(stepIdx) => {
+                        setAppState((prev: PerformanceBudgetAppState) => {
+                          const perfState: PerformanceBudgetState = prev.performanceBudget || defaultState.performanceBudget;
+                          const newState = {
+                            ...prev,
+                            performanceBudget: { ...perfState, currentStep: stepIdx, activePanelIdx: 0 }
+                          };
+                          saveState(newState);
+                          try {
+                            const channel = new BroadcastChannel('pir-deck-sync');
+                            channel.postMessage({ type: 'update-state', state: newState });
+                            channel.close();
+                          } catch (err) {}
+                          return newState;
+                        });
+                      }}
+                      onDataChange={(stepIdx, field, val) => {
+                        setAppState((prev: PerformanceBudgetAppState) => {
+                          const perfState: PerformanceBudgetState = prev.performanceBudget || defaultState.performanceBudget;
+                          const newSteps = [...(perfState.steps || defaultState.performanceBudget.steps)];
+                          newSteps[stepIdx] = { ...newSteps[stepIdx], [field]: val } as PerformanceBudgetStep;
+                          const newState = {
+                            ...prev,
+                            performanceBudget: { ...perfState, steps: newSteps }
+                          };
+                          saveState(newState);
+                          try {
+                            const channel = new BroadcastChannel('pir-deck-sync');
+                            channel.postMessage({ type: 'update-state', state: newState });
+                            channel.close();
+                          } catch (err) {}
+                          return newState;
+                        });
+                      }}
+                    />
+                  </section>
+                );
+              }
               if (slide.label === "Characterization") {
                 return (
                   <section
@@ -899,826 +817,171 @@ export default function Home() {
 // --- Sub-components for Enrolment Dashboard ---
 // ==========================================
 
-const getStepIcon = (idx: number) => {
-  switch (idx) {
-    case 0:
-      return (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ display: 'inline-block' }}>
-          <circle cx="12" cy="12" r="9" strokeDasharray="30 15" />
-        </svg>
-      );
-    case 1:
-      return (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ display: 'inline-block' }}>
-          <path d="M3 20L8 14L14 17L21 6" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      );
-    case 2:
-      return (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ display: 'inline-block' }}>
-          <rect x="3" y="11" width="4" height="10" rx="1" />
-          <rect x="10" y="6" width="4" height="15" rx="1" />
-          <rect x="17" y="13" width="4" height="8" rx="1" />
-        </svg>
-      );
-    case 3:
-      return (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ display: 'inline-block' }}>
-          <circle cx="12" cy="12" r="9" />
-          <circle cx="12" cy="12" r="4" strokeDasharray="6 3" />
-        </svg>
-      );
-    case 4:
-      return (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ display: 'inline-block' }}>
-          <path d="M4 12h16M14 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      );
-    default:
-      return null;
-  }
+const formatMoneyShort = (value: number) => {
+  if (value >= 1000000) return `PHP ${(value / 1000000).toFixed(1)}M`;
+  if (value >= 1000) return `PHP ${(value / 1000).toFixed(value % 1000 === 0 ? 0 : 1)}K`;
+  return `PHP ${value.toLocaleString()}`;
 };
 
-const EnrolmentDashboard = ({ 
-  stepData, 
-  currentStep, 
-  mode, 
-  onStepChange, 
-  onDataChange 
-}: {
-  stepData: any[];
-  currentStep: number;
-  mode: string;
-  onStepChange: (idx: number) => void;
-  onDataChange: (idx: number, field: string, val: any) => void;
-}) => {
-  const step = stepData[currentStep];
+const formatMoneyFull = (value: number) => `PHP ${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-  const handleSliderChange = (valIdx: number, isTarget: boolean, val: number) => {
-    if (currentStep === 0 || currentStep === 3) {
-      const newVals = [...step.values];
-      newVals[valIdx] = val;
-      onDataChange(currentStep, 'values', newVals);
-    } else if (currentStep === 1 || currentStep === 2) {
-      if (isTarget) {
-        const newTargets = [...step.targets];
-        newTargets[valIdx] = val;
-        onDataChange(currentStep, 'targets', newTargets);
-      } else {
-        const newActuals = [...step.actuals];
-        newActuals[valIdx] = val;
-        onDataChange(currentStep, 'actuals', newActuals);
-      }
-    } else if (currentStep === 4) {
-      const newFlows = [...step.flows];
-      newFlows[valIdx] = val;
-      onDataChange(currentStep, 'flows', newFlows);
-    }
-  };
+const clampPercent = (value: number) => Math.max(0, Math.min(100, value));
 
-  const handleBlurText = (field: 'finding' | 'action', e: React.FocusEvent<HTMLDivElement>) => {
-    onDataChange(currentStep, field, e.target.textContent || '');
-  };
-
-  return (
-    <div id="enrolment-dashboard-container" style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '20px 40px', boxSizing: 'border-box', width: '100%' }}>
-      {/* Stepper Wizard Header */}
-      <div id="dashboard-stepper">
-        {stepData.map((s, idx) => (
-          <button
-            key={idx}
-            type="button"
-            className={`dashboard-stepper-btn ${idx === currentStep ? 'active' : ''}`}
-            onClick={() => onStepChange(idx)}
-          >
-            <span className="dashboard-stepper-num">{String(idx + 1).padStart(2, '0')}</span>
-            {getStepIcon(idx)}
-            <span className="dashboard-stepper-label">{s.title}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Main Split Layout */}
-      <div style={{ flex: 1, display: 'flex', gap: '40px', minHeight: 0 }}>
-        {/* Left Area (Chart Viewport) */}
-        <div id="dashboard-chart-viewport" className="dashboard-card-glass" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '24px', position: 'relative', overflow: 'hidden' }}>
-          {currentStep === 0 && <RadialGauges data={step} />}
-          {currentStep === 1 && <AreaChart data={step} />}
-          {currentStep === 2 && <GroupedColumns data={step} />}
-          {currentStep === 3 && <DonutChart data={step} />}
-          {currentStep === 4 && <CohortFlow data={step} />}
-        </div>
-
-        {/* Right Area (Controls & Findings) */}
-        <div style={{ width: '38%', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {/* Sliders Control Card */}
-          <div id="dashboard-controls-card" className="dashboard-card-glass" style={{ padding: '24px' }}>
-            <div id="dashboard-controls-title" style={{ fontSize: '18px', fontWeight: 700, color: '#0a2f52', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Adjust Metrics</div>
-            <div id="dashboard-sliders-list" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              {currentStep === 0 && (
-                <>
-                  <DashboardSlider label="Target Value" value={step.values[0]} min={1} max={step.max} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(0, false, val)} />
-                  <DashboardSlider label="Actual Value" value={step.values[1]} min={1} max={step.max} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(1, false, val)} />
-                </>
-              )}
-              {(currentStep === 1 || currentStep === 2) && step.years && (
-                <>
-                  <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingRight: '4px' }}>
-                    {step.years.map((yr: string, yIdx: number) => (
-                      <React.Fragment key={yr}>
-                        <DashboardSlider label={`${yr} Target`} value={(step.targets || [])[yIdx]} min={10} max={step.max} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(yIdx, true, val)} />
-                        <DashboardSlider label={`${yr} Actual`} value={(step.actuals || [])[yIdx]} min={10} max={step.max} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(yIdx, false, val)} />
-                      </React.Fragment>
-                    ))}
-                  </div>
-                </>
-              )}
-              {currentStep === 3 && (
-                <>
-                  <DashboardSlider label="Grade 11 Enrolment" value={step.values[0]} min={1} max={step.max} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(0, false, val)} />
-                  <DashboardSlider label="Grade 12 Enrolment" value={step.values[1]} min={1} max={step.max} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(1, false, val)} />
-                </>
-              )}
-              {currentStep === 4 && step.cohorts && (
-                <>
-                  <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingRight: '4px' }}>
-                    {step.cohorts.map((cName: string, cIdx: number) => (
-                      <DashboardSlider key={cName} label={`${cName} flow shift`} value={(step.flows || [])[cIdx]} min={-15} max={15} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(cIdx, false, val)} />
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Findings & Action Card */}
-          <div id="dashboard-details-card" className="dashboard-card-glass" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px', padding: '24px' }}>
-            <div>
-              <div style={{ fontSize: '14px', fontWeight: 800, color: '#9aa7b4', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>Finding</div>
-              <div 
-                className="no-edit"
-                contentEditable={mode === 'editor'}
-                suppressContentEditableWarning
-                onBlur={(e) => handleBlurText('finding', e)}
-                style={{ fontSize: '18px', lineHeight: '1.45', color: '#2c3e50', outline: 'none', border: mode === 'editor' ? '1px dashed var(--vibe-accent)' : 'none', borderRadius: '6px', padding: '6px', minHeight: '36px' }}
-              >
-                {step.finding}
-              </div>
-            </div>
-            <div style={{ borderLeft: '4px solid #f5a623', paddingLeft: '14px' }}>
-              <div style={{ fontSize: '14px', fontWeight: 800, color: '#b9791a', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>Recommended Action</div>
-              <div 
-                className="no-edit"
-                contentEditable={mode === 'editor'}
-                suppressContentEditableWarning
-                onBlur={(e) => handleBlurText('action', e)}
-                style={{ fontSize: '18px', lineHeight: '1.45', color: '#0a2f52', fontWeight: 600, outline: 'none', border: mode === 'editor' ? '1px dashed var(--vibe-accent)' : 'none', borderRadius: '6px', padding: '6px', minHeight: '36px' }}
-              >
-                {step.action}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+const getMetricColor = (value: number, target?: number) => {
+  if (target === 0) return value <= 5 ? "#10b981" : value <= 15 ? "#f5a623" : "#ef4444";
+  if (target && value >= target) return "#10b981";
+  if (value >= 60) return "#f5a623";
+  return "#ef4444";
 };
 
-const DashboardSlider = ({ 
-  label, 
-  value, 
-  min, 
-  max, 
-  disabled, 
-  onChange 
-}: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  disabled: boolean;
-  onChange: (val: number) => void;
-}) => {
-  return (
-    <div className="dashboard-slider-item">
-      <div className="dashboard-slider-header">
-        <span>{label}</span>
-        <span className="dashboard-slider-val">{value}</span>
-      </div>
-      <input
-        type="range"
-        className="dashboard-range-input"
-        min={min}
-        max={max}
-        value={value}
-        disabled={disabled}
-        onChange={(e) => onChange(parseInt(e.target.value, 10))}
-      />
-    </div>
-  );
+const averageMetric = (metrics: PerformanceMetric[]) => {
+  if (!metrics.length) return 0;
+  return metrics.reduce((sum, metric) => sum + metric.value, 0) / metrics.length;
 };
 
-// --- SVG Diagrams for Dashboard Steps ---
-
-const RadialGauges = ({ data }: { data: any }) => {
-  const [target, actual] = data.values;
-  const max = data.max || 20;
-  const targetPct = Math.round((target / max) * 100);
-  const actualPct = Math.round((actual / max) * 100);
-
-  const cOuter = 2 * Math.PI * 100; // ~628
-  const cInner = 2 * Math.PI * 70;  // ~440
-
-  return (
-    <svg width="100%" height="100%" viewBox="0 0 400 320" style={{ fontFamily: 'inherit', maxWidth: '100%', maxHeight: '100%' }}>
-      <defs>
-        <filter id="radial-shadow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#0a2f52" floodOpacity="0.08" />
-        </filter>
-        <linearGradient id="radial-actual-grad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="var(--vibe-accent)" />
-          <stop offset="100%" stopColor="var(--vibe-accent-hover)" />
-        </linearGradient>
-        <linearGradient id="radial-target-grad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#cbd5e1" />
-          <stop offset="100%" stopColor="#94a3b8" />
-        </linearGradient>
-      </defs>
-
-      {/* Concentric backdrops */}
-      <circle cx="200" cy="150" r="100" fill="none" stroke="#f1f5f9" strokeWidth="14" />
-      <circle cx="200" cy="150" r="70" fill="none" stroke="#f1f5f9" strokeWidth="14" />
-      
-      {/* Target (Inner) */}
-      <circle cx="200" cy="150" r="70" fill="none" stroke="url(#radial-target-grad)" strokeWidth="14" 
-        strokeDasharray={cInner} strokeDashoffset={cInner - (target / max) * cInner}
-        strokeLinecap="round" transform="rotate(-90 200 150)" style={{ transition: 'stroke-dashoffset 0.45s ease' }} />
-      {/* Actual (Outer) */}
-      <circle cx="200" cy="150" r="100" fill="none" stroke="url(#radial-actual-grad)" strokeWidth="14" 
-        strokeDasharray={cOuter} strokeDashoffset={cOuter - (actual / max) * cOuter}
-        strokeLinecap="round" transform="rotate(-90 200 150)" style={{ transition: 'stroke-dashoffset 0.45s ease' }} />
-
-      {/* Central Card Backdrop */}
-      <circle cx="200" cy="150" r="56" fill="#ffffff" filter="url(#radial-shadow)" />
-
-      {/* Central Display Metric */}
-      <text x="200" y="145" textAnchor="middle" fill="#0a2f52" fontSize="38" fontWeight="900" className="mono">{actual}</text>
-      <text x="200" y="166" textAnchor="middle" fill="#64748b" fontSize="10" fontWeight="800" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>Actual vs {target}</text>
-      
-      <g transform="translate(65, 285)">
-        <circle cx="10" cy="10" r="6" fill="var(--vibe-accent)" />
-        <text x="22" y="14" fill="#475569" fontSize="12" fontWeight="700">Actual ({actualPct}%)</text>
-        
-        <circle cx="150" cy="10" r="6" fill="#94a3b8" />
-        <text x="162" y="14" fill="#475569" fontSize="12" fontWeight="700">Target ({targetPct}%)</text>
-      </g>
-    </svg>
-  );
-};
-
-const AreaChart = ({ data }: { data: any }) => {
-  const targets = data.targets || [96, 98, 91];
-  const actuals = data.actuals || [98, 91, 90];
-  const max = data.max || 120;
-  
-  const w = 520, h = 280;
-  const xPadding = 60, yPadding = 45;
-  const chartW = w - xPadding * 2;
-  const chartH = h - yPadding * 2;
-  
-  const xCoords = [xPadding, xPadding + chartW / 2, xPadding + chartW];
-  const getY = (val: number) => h - yPadding - (val / max) * chartH;
-  
-  const targetY = targets.map(getY);
-  const actualY = actuals.map(getY);
-  
-  const dTarget = `M ${xCoords[0]} ${targetY[0]} Q ${xCoords[1]} ${targetY[1]} ${xCoords[2]} ${targetY[2]}`;
-  const dActual = `M ${xCoords[0]} ${actualY[0]} Q ${xCoords[1]} ${actualY[1]} ${xCoords[2]} ${actualY[2]}`;
-
-  return (
-    <svg width="100%" height="100%" viewBox="0 0 520 280" style={{ fontFamily: 'inherit', maxWidth: '100%', maxHeight: '100%' }}>
-      <defs>
-        <filter id="area-shadow" x="-10%" y="-10%" width="120%" height="120%">
-          <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#0a2f52" floodOpacity="0.06" />
-        </filter>
-        <filter id="line-glow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="var(--vibe-accent)" floodOpacity="0.25" />
-        </filter>
-        <linearGradient id="grad-actual" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--vibe-accent)" stopOpacity="0.26"/>
-          <stop offset="100%" stopColor="var(--vibe-accent)" stopOpacity="0"/>
-        </linearGradient>
-      </defs>
-      
-      {/* Horizontal grid lines */}
-      <line x1={xPadding} y1={yPadding} x2={w-xPadding} y2={yPadding} stroke="#f1f5f9" strokeWidth="1" />
-      <line x1={xPadding} y1={yPadding + chartH/2} x2={w-xPadding} y2={yPadding + chartH/2} stroke="#f1f5f9" strokeWidth="1" />
-      <line x1={xPadding} y1={h-yPadding} x2={w-xPadding} y2={h-yPadding} stroke="#e2e8f0" strokeWidth="2" />
-      
-      {/* Fill Area under actuals */}
-      <path d={`${dActual} L ${xCoords[2]} ${h-yPadding} L ${xCoords[0]} ${h-yPadding} Z`} fill="url(#grad-actual)" />
-      
-      {/* Plot lines */}
-      <path d={dTarget} fill="none" stroke="#cbd5e1" strokeWidth="3" strokeDasharray="6" className="svg-animate-draw" />
-      <path d={dActual} fill="none" stroke="var(--vibe-accent)" strokeWidth="4.5" className="svg-animate-draw" filter="url(#line-glow)" strokeLinecap="round" />
-      
-      {/* Value points & labels */}
-      {xCoords.map((x, i) => (
-        <g key={i}>
-          {/* Target Point */}
-          <circle cx={x} cy={targetY[i]} r="5" fill="#fff" stroke="#94a3b8" strokeWidth="2.5" />
-          <text x={x} y={targetY[i] - 14} textAnchor="middle" fill="#64748b" fontSize="11" fontWeight="700" className="mono">{targets[i]}</text>
-          
-          {/* Actual Point */}
-          <circle cx={x} cy={actualY[i]} r="6" fill="#fff" stroke="var(--vibe-accent)" strokeWidth="3" filter="url(#area-shadow)" />
-          <circle cx={x} cy={actualY[i]} r="3" fill="var(--vibe-accent)" />
-          <text x={x} y={actualY[i] + 22} textAnchor="middle" fill="#0a2f52" fontSize="13" fontWeight="850" className="mono">{actuals[i]}</text>
-          
-          {/* Year Labels */}
-          <text x={x} y={h-14} textAnchor="middle" fill="#475569" fontSize="12" fontWeight="700">{(data.years || [])[i]}</text>
-        </g>
-      ))}
-    </svg>
-  );
-};
-
-const GroupedColumns = ({ data }: { data: any }) => {
-  const targets = data.targets || [48, 52, 56];
-  const actuals = data.actuals || [52, 56, 59];
-  const max = data.max || 80;
-  
-  const w = 520, h = 280;
-  const xPadding = 60, yPadding = 45;
-  const chartH = h - yPadding * 2;
-  
-  const xCenters = [120, 260, 400];
-  const getY = (val: number) => h - yPadding - (val / max) * chartH;
-  const getH = (val: number) => (val / max) * chartH;
-
-  return (
-    <svg width="100%" height="100%" viewBox="0 0 520 280" style={{ fontFamily: 'inherit', maxWidth: '100%', maxHeight: '100%' }}>
-      <defs>
-        <filter id="bar-shadow" x="-15%" y="-15%" width="130%" height="130%">
-          <feDropShadow dx="0" dy="3" stdDeviation="5" floodColor="#0a2f52" floodOpacity="0.05" />
-        </filter>
-        <linearGradient id="col-target-grad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#e2e8f0" />
-          <stop offset="100%" stopColor="#cbd5e1" />
-        </linearGradient>
-        <linearGradient id="col-actual-grad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--vibe-accent)" />
-          <stop offset="100%" stopColor="var(--vibe-accent-hover)" />
-        </linearGradient>
-      </defs>
-      <line x1={xPadding} y1={yPadding} x2={w-xPadding} y2={yPadding} stroke="#f1f5f9" strokeWidth="1" />
-      <line x1={xPadding} y1={h-yPadding} x2={w-xPadding} y2={h-yPadding} stroke="#cbd5e1" strokeWidth="1.5" />
-      
-      {xCenters.map((cx, i) => {
-        const tH = getH(targets[i]);
-        const aH = getH(actuals[i]);
-        const tY = getY(targets[i]);
-        const aY = getY(actuals[i]);
-        
-        return (
-          <g key={i} filter="url(#bar-shadow)">
-            {/* Target Column */}
-            <rect x={cx - 36} y={tY} width="28" height={tH} fill="url(#col-target-grad)" rx="6" ry="6" className="svg-bar-rect" />
-            <text x={cx - 22} y={tY - 8} textAnchor="middle" fill="#718096" fontSize="11" fontWeight="700" className="mono">{targets[i]}</text>
-            
-            {/* Actual Column */}
-            <rect x={cx + 6} y={aY} width="28" height={aH} fill="url(#col-actual-grad)" rx="6" ry="6" className="svg-bar-rect" />
-            <text x={cx + 20} y={aY - 8} textAnchor="middle" fill="var(--vibe-accent)" fontSize="13" fontWeight="850" className="mono">{actuals[i]}</text>
-            
-            {/* Year Label */}
-            <text x={cx} y={h-14} textAnchor="middle" fill="#475569" fontSize="12" fontWeight="700">{(data.years || [])[i]}</text>
-          </g>
-        );
-      })}
-    </svg>
-  );
-};
-
-const DonutChart = ({ data }: { data: any }) => {
-  const g11 = data.values[0];
-  const g12 = data.values[1];
-  const total = g11 + g12;
-  
-  const c = 2 * Math.PI * 90; // ~565
-  const g11Len = total > 0 ? (g11 / total) * c : 0;
-  const g12Len = total > 0 ? (g12 / total) * c : 0;
-
-  return (
-    <svg width="100%" height="100%" viewBox="0 0 400 320" style={{ fontFamily: 'inherit', maxWidth: '100%', maxHeight: '100%' }}>
-      <defs>
-        <filter id="donut-shadow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="5" stdDeviation="7" floodColor="#0a2f52" floodOpacity="0.08" />
-        </filter>
-        <linearGradient id="donut-g12-grad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="var(--vibe-accent)" />
-          <stop offset="100%" stopColor="var(--vibe-accent-hover)" />
-        </linearGradient>
-        <linearGradient id="donut-g11-grad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#94a3b8" />
-          <stop offset="100%" stopColor="#64748b" />
-        </linearGradient>
-      </defs>
-
-      {/* Segmented slices with spacers */}
-      {/* Grade 12 (Outer/Primary) */}
-      <circle cx="200" cy="140" r="90" fill="none" stroke="url(#donut-g12-grad)" strokeWidth="22" 
-        strokeDasharray={`${g12Len - 3} ${c}`} strokeDashoffset="0"
-        transform="rotate(-90 200 140)" className="svg-donut-slice" strokeLinecap="round" />
-      {/* Grade 11 (Inner/Secondary) */}
-      <circle cx="200" cy="140" r="90" fill="none" stroke="url(#donut-g11-grad)" strokeWidth="22" 
-        strokeDasharray={`${g11Len - 3} ${c}`} strokeDashoffset={`-${g12Len}`}
-        transform="rotate(-90 200 140)" className="svg-donut-slice" strokeLinecap="round" />
-
-      {/* Inner Central card backdrop */}
-      <circle cx="200" cy="140" r="62" fill="#ffffff" filter="url(#donut-shadow)" />
-        
-      {/* Central total text */}
-      <text x="200" y="136" textAnchor="middle" fill="#0a2f52" fontSize="38" fontWeight="900" className="mono">{total}</text>
-      <text x="200" y="158" textAnchor="middle" fill="#64748b" fontSize="10" fontWeight="800" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total SHS Enrolment</text>
-      
-      {/* Legend labels */}
-      <g transform="translate(60, 275)">
-        <rect x="10" y="6" width="12" height="12" fill="#64748b" rx="3" />
-        <text x="28" y="16" fill="#475569" fontSize="12" fontWeight="700">Grade 11 ({g11})</text>
-        
-        <rect x="160" y="6" width="12" height="12" fill="var(--vibe-accent)" rx="3" />
-        <text x="178" y="16" fill="#475569" fontSize="12" fontWeight="700">Grade 12 ({g12})</text>
-      </g>
-    </svg>
-  );
-};
-
-const CohortFlow = ({ data }: { data: any }) => {
-  const cohorts = data.cohorts || [];
-  const flows = data.flows || [];
-
-  return (
-    <svg width="100%" height="100%" viewBox="0 0 600 300" style={{ fontFamily: 'inherit', maxWidth: '100%', maxHeight: '100%' }}>
-      <defs>
-        <filter id="flow-glow" x="-10%" y="-10%" width="120%" height="120%">
-          <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#0a2f52" floodOpacity="0.08" />
-        </filter>
-        <linearGradient id="f-up" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#10b981" stopOpacity="0.75"/>
-          <stop offset="100%" stopColor="#34d399" stopOpacity="0.2"/>
-        </linearGradient>
-        <linearGradient id="f-down" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#ef4444" stopOpacity="0.75"/>
-          <stop offset="100%" stopColor="#f87171" stopOpacity="0.2"/>
-        </linearGradient>
-        <linearGradient id="f-flat" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#94a3b8" stopOpacity="0.5"/>
-          <stop offset="100%" stopColor="#cbd5e1" stopOpacity="0.2"/>
-        </linearGradient>
-      </defs>
-      
-      {cohorts.map((cName: string, idx: number) => {
-        const x = 30 + idx * 60;
-        const val = flows[idx] || 0;
-        const isUp = val > 0;
-        const isZero = val === 0;
-        
-        const y1 = 150;
-        const y2 = isZero ? 150 : (isUp ? 80 : 220);
-        
-        const pathD = `M ${x} ${y1} C ${x + 25} ${y1}, ${x + 35} ${y2}, ${x + 50} ${y2}`;
-        const color = isZero ? "url(#f-flat)" : (isUp ? "url(#f-up)" : "url(#f-down)");
-        const textCol = isZero ? "#64748b" : (isUp ? "#10b981" : "#ef4444");
-        const sign = isUp ? "+" : "";
-        
-        return (
-          <g key={idx} filter="url(#flow-glow)">
-            {/* Curved ribbon path */}
-            <path d={pathD} fill="none" stroke={color} strokeWidth={Math.max(6, Math.min(20, Math.abs(val) * 1.8))} className="svg-flow-path" strokeLinecap="round" />
-            
-            {/* double rings for nodes */}
-            <circle cx={x} cy={y1} r="6" fill="#fff" stroke="#0a2f52" strokeWidth="2.5" />
-            <circle cx={x} cy={y1} r="3" fill="#0a2f52" />
-
-            <circle cx={x + 50} cy={y2} r="6" fill="#fff" stroke="var(--vibe-accent)" strokeWidth="2.5" />
-            <circle cx={x + 50} cy={y2} r="3" fill="var(--vibe-accent)" />
-            
-            {/* Flow value tag */}
-            <g transform={`translate(${x + 25}, ${y2 - 12})`}>
-              <rect x="-16" y="-12" width="32" height="16" rx="4" fill="#fff" stroke={textCol} strokeWidth="1" opacity="0.9" />
-              <text textAnchor="middle" y="0" fill={textCol} fontSize="10" fontWeight="800" className="mono">{sign}{val}</text>
-            </g>
-
-            {/* Label below */}
-            <text x={x + 25} y="270" textAnchor="middle" fill="#475569" fontSize="9" fontWeight="700" transform={`rotate(-35 ${x+25} 270)`}>{cName}</text>
-          </g>
-        );
-      })}
-    </svg>
-  );
-};
-
-// ==============================================
-// --- Sub-components for Characterization ---
-// ==============================================
-
-const CharacterizationCarousel = ({
+const PerformanceBudgetCarousel = ({
   stepData,
   currentStep,
-  activeDomainIdx,
+  activePanelIdx,
   mode,
   onStepChange,
-  onActiveDomainChange,
+  onActivePanelChange,
   onDataChange
 }: {
-  stepData: any[];
+  stepData: PerformanceBudgetStep[];
   currentStep: number;
-  activeDomainIdx?: number;
+  activePanelIdx: number;
   mode: string;
   onStepChange: (idx: number) => void;
-  onActiveDomainChange?: (idx: number) => void;
-  onDataChange: (stepIdx: number, domIdx: number, field: string, val: any) => void;
+  onActivePanelChange: (idx: number) => void;
+  onDataChange: (stepIdx: number, field: string, val: unknown) => void;
 }) => {
   const safeStepData = stepData || [];
-  const safeCurrentStep = currentStep ?? 0;
-  const step = safeStepData[safeCurrentStep] || { domains: [] };
-  const [hoveredDomainIdx, setHoveredDomainIdx] = useState<number | null>(null);
+  const safeCurrentStep = Math.max(0, Math.min(currentStep ?? 0, Math.max(0, safeStepData.length - 1)));
+  const step = safeStepData[safeCurrentStep] || { title: "", subtitle: "", visual: "learning", metrics: [], panels: [] };
+  const panels = step.panels || [];
+  const safeActivePanelIdx = Math.max(0, Math.min(activePanelIdx ?? 0, Math.max(0, panels.length - 1)));
 
-  const [localActiveIdx, setLocalActiveIdx] = useState(0);
-  const activeIdx = activeDomainIdx !== undefined ? activeDomainIdx : localActiveIdx;
-  const setActiveIdx = (idx: number) => {
-    if (onActiveDomainChange) {
-      onActiveDomainChange(idx);
-    } else {
-      setLocalActiveIdx(idx);
-    }
+  const updatePanelField = (panelIdx: number, field: keyof PerformancePanel, value: string) => {
+    const nextPanels = panels.map((panel, idx) => idx === panelIdx ? { ...panel, [field]: value } : panel);
+    onDataChange(safeCurrentStep, "panels", nextPanels);
   };
 
-  // Ensure activeIdx is in bounds if step domains change
-  useEffect(() => {
-    if (step.domains && step.domains.length > 0 && activeIdx >= step.domains.length) {
-      setActiveIdx(0);
-    }
-  }, [safeCurrentStep, step.domains?.length]);
-
-  const handleBlurBullet = (domIdx: number, bulletIdx: number, e: React.FocusEvent<any>) => {
-    const nextBullets = [...step.domains[domIdx].bullets];
-    nextBullets[bulletIdx] = e.target.textContent || '';
-    onDataChange(safeCurrentStep, domIdx, 'bullets', nextBullets);
-  };
-
-  const handleBlurStatus = (domIdx: number, e: React.FocusEvent<any>) => {
-    onDataChange(safeCurrentStep, domIdx, 'status', e.target.textContent || '');
+  const updatePanelBullet = (panelIdx: number, bulletIdx: number, value: string) => {
+    const nextPanels = panels.map((panel, idx) => {
+      if (idx !== panelIdx) return panel;
+      const nextBullets = [...(panel.bullets || [])];
+      nextBullets[bulletIdx] = value;
+      return { ...panel, bullets: nextBullets };
+    });
+    onDataChange(safeCurrentStep, "panels", nextPanels);
   };
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '20px 40px', boxSizing: 'border-box', width: '100%', fontFamily: 'inherit' }}>
-      {/* Stepper Wizard Header */}
-      <div id="dashboard-stepper" style={{ marginBottom: '24px' }}>
-        {safeStepData.map((s: any, idx: number) => (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", padding: "20px 40px", boxSizing: "border-box", width: "100%", fontFamily: "inherit" }}>
+      <div id="dashboard-stepper" style={{ marginBottom: "20px" }}>
+        {safeStepData.map((item, idx) => (
           <button
-            key={idx}
+            key={item.title}
             type="button"
-            className={`dashboard-stepper-btn ${idx === safeCurrentStep ? 'active' : ''}`}
+            className={`dashboard-stepper-btn ${idx === safeCurrentStep ? "active" : ""}`}
             onClick={() => onStepChange(idx)}
-            style={{ padding: '12px 24px' }}
+            style={{ padding: "12px 14px" }}
           >
-            <span className="dashboard-stepper-num" style={{ fontSize: '18px' }}>{String(idx + 1).padStart(2, '0')}</span>
-            <span className="dashboard-stepper-label" style={{ fontSize: '22px', fontWeight: 'bold' }}>{s.title}</span>
+            <span className="dashboard-stepper-num" style={{ fontSize: "17px" }}>{String(idx + 1).padStart(2, "0")}</span>
+            <span className="dashboard-stepper-label" style={{ fontSize: "20px", fontWeight: 800 }}>{item.title}</span>
           </button>
         ))}
       </div>
 
-      <div style={{ flex: 1, display: 'flex', gap: '40px', minHeight: 0 }}>
-        {/* Left Area: Infographic circular dials */}
-        <div className="dashboard-card-glass" style={{ flex: 1.25, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '32px', position: 'relative' }}>
-          <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-            <h3 style={{ fontSize: '30px', fontWeight: 800, color: '#0a2f52', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Maturity Metrics</h3>
-            <span style={{ fontSize: '18px', color: '#5b6b7d', fontWeight: 600 }}>Curriculum Support System Assessment</span>
+      <div style={{ flex: 1, display: "flex", gap: "36px", minHeight: 0 }}>
+        <div className="dashboard-card-glass" style={{ flex: 1.2, display: "flex", flexDirection: "column", padding: "30px", overflow: "hidden" }}>
+          <div style={{ marginBottom: "18px" }}>
+            <div style={{ fontSize: "18px", fontWeight: 800, color: "#f5a623", textTransform: "uppercase", letterSpacing: "0.6px" }}>Performance & Budget</div>
+            <h3 style={{ fontSize: "34px", lineHeight: 1.1, fontWeight: 900, color: "#0a2f52", margin: "6px 0 4px" }}>{step.title}</h3>
+            <div style={{ fontSize: "20px", color: "#5b6b7d", fontWeight: 700 }}>{step.subtitle}</div>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%', gap: '20px' }}>
-            {step.domains.map((dom: any, domIdx: number) => {
-              const r = 45;
-              const circ = 2 * Math.PI * r; // ~282
-              const pct = (dom.maturity / 4) * circ;
-              
-              // Colors based on maturity
-              let strokeColor = "var(--vibe-accent)";
-              if (dom.maturity === 4) strokeColor = "#10b981"; // Emerald
-              else if (dom.maturity === 3) strokeColor = "#f5a623"; // DepEd Gold
-              else if (dom.maturity === 2) strokeColor = "#f97316"; // Orange
-
-              const isSelected = activeIdx === domIdx;
-              const isHovered = hoveredDomainIdx === domIdx;
-              const isEditor = mode === 'editor';
-
-              return (
-                <div 
-                  key={dom.name} 
-                  onMouseEnter={() => setHoveredDomainIdx(domIdx)}
-                  onMouseLeave={() => setHoveredDomainIdx(null)}
-                  onClick={() => {
-                    setActiveIdx(domIdx);
-                    if (isEditor) {
-                      const nextMaturity = (dom.maturity % 4) + 1;
-                      onDataChange(safeCurrentStep, domIdx, 'maturity', nextMaturity);
-                    }
-                  }}
-                  title={isEditor ? "Click to change maturity level" : undefined}
-                  style={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    alignItems: 'center', 
-                    gap: '16px', 
-                    width: '30%',
-                    cursor: 'pointer',
-                    transform: isSelected ? 'scale(1.12)' : isHovered ? 'scale(1.06)' : 'scale(1)',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                  }}
-                >
-                  <svg width="165" height="165" viewBox="0 0 120 120" style={{ maxWidth: '100%', maxHeight: '100%', overflow: 'visible' }}>
-                    <circle cx="60" cy="60" r={r} fill="none" stroke="#f1f5f9" strokeWidth="9" />
-                    <circle 
-                      cx="60" 
-                      cy="60" 
-                      r={r} 
-                      fill="none" 
-                      stroke={strokeColor} 
-                      strokeWidth="9" 
-                      strokeDasharray={circ} 
-                      strokeDashoffset={circ - pct}
-                      strokeLinecap="round"
-                      transform="rotate(-90 60 60)"
-                      style={{ 
-                        transition: 'stroke-dashoffset 0.45s cubic-bezier(0.4, 0, 0.2, 1)', 
-                        filter: isSelected ? `drop-shadow(0 0 12px ${strokeColor}ee)` : isHovered ? `drop-shadow(0 0 8px ${strokeColor}99)` : 'drop-shadow(0 2px 5px rgba(0,0,0,0.06))' 
-                      }}
-                    />
-                    <text 
-                      x="60" 
-                      y="70" 
-                      textAnchor="middle" 
-                      fontSize="44" 
-                      fontWeight="900" 
-                      fill="#0a2f52"
-                      style={{
-                        transform: isSelected ? 'scale(1.15)' : isHovered ? 'scale(1.08)' : 'scale(1)',
-                        transformOrigin: '60px 60px',
-                        transition: 'transform 0.3s ease'
-                      }}
-                    >
-                      {dom.letter}
-                    </text>
-                  </svg>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ 
-                      fontSize: isSelected ? '26px' : '22px', 
-                      fontWeight: isSelected ? 900 : 800, 
-                      color: isSelected ? 'var(--vibe-accent)' : '#0a2f52', 
-                      wordWrap: 'break-word', 
-                      maxWidth: '220px', 
-                      transition: 'all 0.3s ease', 
-                      lineHeight: '1.2' 
-                    }}>{dom.name}</div>
-                    <div style={{ fontSize: '16px', fontWeight: 'bold', color: strokeColor, marginTop: '6px' }}>Level {dom.maturity} / 4</div>
-                  </div>
-                </div>
-              );
-            })}
+          <div style={{ flex: 1, minHeight: 0 }}>
+            <PerformanceBudgetVisual step={step} activePanelIdx={safeActivePanelIdx} />
           </div>
         </div>
 
-        {/* Right Area: Clean Accordion Cards */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto', minWidth: 0 }}>
-          {step.domains.map((dom: any, domIdx: number) => {
-            const isHovered = hoveredDomainIdx === domIdx;
-            const isSelected = activeIdx === domIdx;
-            const isAnyHovered = hoveredDomainIdx !== null;
-            
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "14px", overflowY: "auto", minWidth: 0 }}>
+          {panels.map((panel, panelIdx) => {
+            const isSelected = panelIdx === safeActivePanelIdx;
             return (
-              <div 
-                key={dom.name} 
-                className="dashboard-card-glass" 
-                onMouseEnter={() => setHoveredDomainIdx(domIdx)}
-                onMouseLeave={() => setHoveredDomainIdx(null)}
-                onClick={() => {
-                  setActiveIdx(domIdx);
-                }}
-                style={{ 
-                  padding: isSelected ? '32px 40px' : '20px 28px', 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: isSelected ? '22px' : '0px', 
-                  cursor: 'pointer',
-                  transition: 'all 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
-                  borderColor: isSelected ? 'var(--vibe-accent)' : isHovered ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.25)',
-                  boxShadow: isSelected 
-                    ? '0 24px 56px var(--vibe-accent-glow), inset 0 0 0 1px rgba(255, 255, 255, 0.3)' 
-                    : isHovered 
-                      ? '0 8px 24px rgba(10, 47, 82, 0.05)' 
-                      : 'none',
-                  transform: isSelected ? 'translateY(-2px)' : 'none',
-                  opacity: isAnyHovered && !isHovered && !isSelected ? 0.6 : 1,
-                  overflow: 'hidden',
-                  maxHeight: isSelected ? '600px' : '96px',
+              <div
+                key={panel.title}
+                className="dashboard-card-glass"
+                onClick={() => onActivePanelChange(panelIdx)}
+                style={{
+                  padding: isSelected ? "26px 32px" : "18px 24px",
+                  cursor: "pointer",
+                  borderColor: isSelected ? "var(--vibe-accent)" : "rgba(255, 255, 255, 0.28)",
+                  boxShadow: isSelected ? "0 20px 44px var(--vibe-accent-glow), inset 0 0 0 1px rgba(255,255,255,0.3)" : "none",
+                  overflow: "hidden",
+                  maxHeight: isSelected ? "560px" : "92px",
+                  transition: "all 0.35s cubic-bezier(0.25, 1, 0.5, 1)"
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', width: '100%' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{
-                      width: '42px',
-                      height: '42px',
-                      borderRadius: '50%',
-                      background: isSelected ? 'var(--vibe-accent)' : 'rgba(10, 47, 82, 0.05)',
-                      color: isSelected ? '#fff' : '#0a2f52',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 800,
-                      fontSize: '20px',
-                      transition: 'all 0.3s ease'
-                    }}>
-                      {dom.letter}
-                    </div>
-                    <h4 style={{ 
-                      fontSize: isSelected ? '34px' : '24px', 
-                      fontWeight: 850, 
-                      color: '#0a2f52', 
-                      margin: 0, 
-                      letterSpacing: '-0.5px',
-                      transition: 'font-size 0.3s ease'
-                    }}>
-                      {dom.name}
-                    </h4>
-                  </div>
-                  
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span 
-                      contentEditable={mode === 'editor'}
-                      suppressContentEditableWarning
-                      onBlur={(e) => handleBlurStatus(domIdx, e)}
-                      onClick={(e) => {
-                        if (mode === 'editor') e.stopPropagation();
-                      }}
-                      style={{ 
-                        fontSize: isSelected ? '18px' : '16px', 
-                        fontWeight: 800, 
-                        color: dom.maturity >= 3 ? '#10b981' : '#b9791a', 
-                        background: dom.maturity >= 3 ? '#e3f7ef' : '#fdf4e3', 
-                        padding: '8px 18px', 
-                        borderRadius: '999px',
-                        whiteSpace: 'nowrap',
-                        outline: 'none',
-                        border: mode === 'editor' ? '1px dashed var(--vibe-accent)' : 'none',
-                        transition: 'all 0.3s ease'
-                      }}
-                    >
-                      {dom.status}
-                    </span>
-                    
-                    <svg 
-                      width="26" 
-                      height="26" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="#0a2f52" 
-                      strokeWidth="2.5" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round"
-                      style={{ 
-                        transform: isSelected ? 'rotate(180deg)' : 'rotate(0deg)', 
-                        transition: 'transform 0.3s ease',
-                        opacity: 0.7
-                      }}
-                    >
-                      <polyline points="6 9 12 15 18 9" />
-                    </svg>
-                  </div>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: "16px", alignItems: "center" }}>
+                  <h4 style={{ fontSize: isSelected ? "31px" : "24px", color: "#0a2f52", margin: 0, fontWeight: 900, lineHeight: 1.1 }}>{panel.title}</h4>
+                  <span
+                    contentEditable={mode === "editor"}
+                    suppressContentEditableWarning
+                    onBlur={(e) => updatePanelField(panelIdx, "status", e.currentTarget.textContent || "")}
+                    onClick={(e) => {
+                      if (mode === "editor") e.stopPropagation();
+                    }}
+                    style={{
+                      fontSize: "17px",
+                      fontWeight: 900,
+                      color: "#0a2f52",
+                      background: "#fdf4e3",
+                      border: mode === "editor" ? "1px dashed var(--vibe-accent)" : "1px solid #f5d9a8",
+                      borderRadius: "999px",
+                      padding: "8px 16px",
+                      whiteSpace: "nowrap",
+                      outline: "none"
+                    }}
+                  >
+                    {panel.status}
+                  </span>
                 </div>
-                
-                <div style={{ 
-                  opacity: isSelected ? 1 : 0, 
-                  transition: 'opacity 0.3s ease', 
-                  visibility: isSelected ? 'visible' : 'hidden', 
-                  height: isSelected ? 'auto' : 0,
-                  overflow: 'hidden'
-                }}>
-                  <ul style={{ margin: 0, paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {dom.bullets.map((bullet: string, bIdx: number) => (
-                      <li key={bIdx} style={{ fontSize: '28px', color: '#2c3e50', lineHeight: '1.6', fontWeight: 600 }}>
-                        <span
-                          contentEditable={mode === 'editor'}
-                          suppressContentEditableWarning
-                          onBlur={(e) => handleBlurBullet(domIdx, bIdx, e)}
-                          onClick={(e) => {
-                            if (mode === 'editor') e.stopPropagation();
-                          }}
-                          style={{ outline: 'none', border: mode === 'editor' ? '1px dashed var(--vibe-accent)' : 'none', borderRadius: '4px', padding: '1px 3px' }}
-                        >
-                          {bullet}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+
+                <div style={{ opacity: isSelected ? 1 : 0, visibility: isSelected ? "visible" : "hidden", height: isSelected ? "auto" : 0, overflow: "hidden", transition: "opacity 0.25s ease" }}>
+                  <div style={{ marginTop: "20px", display: "grid", gridTemplateColumns: "1fr", gap: "14px" }}>
+                    <EditableInsight
+                      label="Finding"
+                      value={panel.finding}
+                      editable={mode === "editor"}
+                      onBlur={(value) => updatePanelField(panelIdx, "finding", value)}
+                    />
+                    <EditableInsight
+                      label="Recommended Action"
+                      value={panel.action}
+                      editable={mode === "editor"}
+                      accent
+                      onBlur={(value) => updatePanelField(panelIdx, "action", value)}
+                    />
+                    <ul style={{ margin: "4px 0 0", paddingLeft: "24px", display: "flex", flexDirection: "column", gap: "10px" }}>
+                      {(panel.bullets || []).map((bullet, bulletIdx) => (
+                        <li key={bulletIdx} style={{ fontSize: "25px", color: "#2c3e50", lineHeight: 1.35, fontWeight: 650 }}>
+                          <span
+                            contentEditable={mode === "editor"}
+                            suppressContentEditableWarning
+                            onBlur={(e) => updatePanelBullet(panelIdx, bulletIdx, e.currentTarget.textContent || "")}
+                            onClick={(e) => {
+                              if (mode === "editor") e.stopPropagation();
+                            }}
+                            style={{ outline: "none", border: mode === "editor" ? "1px dashed var(--vibe-accent)" : "none", borderRadius: "4px", padding: "1px 3px" }}
+                          >
+                            {bullet}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
             );
@@ -1728,3 +991,539 @@ const CharacterizationCarousel = ({
     </div>
   );
 };
+
+const EditableInsight = ({
+  label,
+  value,
+  editable,
+  accent,
+  onBlur
+}: {
+  label: string;
+  value: string;
+  editable: boolean;
+  accent?: boolean;
+  onBlur: (value: string) => void;
+}) => (
+  <div style={{ borderLeft: accent ? "4px solid #f5a623" : "4px solid #d8e1ec", paddingLeft: "14px" }}>
+    <div style={{ fontSize: "15px", fontWeight: 900, color: accent ? "#b9791a" : "#9aa7b4", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: "6px" }}>{label}</div>
+    <div
+      contentEditable={editable}
+      suppressContentEditableWarning
+      onBlur={(e) => onBlur(e.currentTarget.textContent || "")}
+      onClick={(e) => {
+        if (editable) e.stopPropagation();
+      }}
+      style={{
+        fontSize: "24px",
+        lineHeight: 1.35,
+        color: accent ? "#0a2f52" : "#2c3e50",
+        fontWeight: accent ? 750 : 650,
+        outline: "none",
+        border: editable ? "1px dashed var(--vibe-accent)" : "none",
+        borderRadius: "6px",
+        padding: "5px"
+      }}
+    >
+      {value}
+    </div>
+  </div>
+);
+
+const PerformanceBudgetVisual = ({ step, activePanelIdx = 0 }: { step: PerformanceBudgetStep; activePanelIdx?: number }) => {
+  if (step.visual === "certification") return <CertificationVisual step={step} />;
+  if (step.visual === "immersion") return <ImmersionVisual step={step} />;
+  if (step.visual === "budgetOverview") return <BudgetOverviewVisual step={step} />;
+  if (step.visual === "sobDetail") return <SobDetailVisual step={step} />;
+  return <LearningOutcomesVisual step={step} activePanelIdx={activePanelIdx} />;
+};
+
+// Learning Outcomes: each collapsible card on the right drives a distinct visual on the left.
+// Index-aligned to the step's panels (ELLNA, NAT Grade 6, NAT Grade 10, PHIL-IRI).
+const LO_GROUPS: { key: string; kind: "slope" | "radar" | "gauge" | "recovery"; title: string; caption: string }[] = [
+  { key: "ELLNA", kind: "slope", title: "ELLNA", caption: "Previous → current vs the 75% target" },
+  { key: "NAT G6", kind: "radar", title: "NAT Grade 6", caption: "Five learning areas vs the 75% target" },
+  { key: "NAT G10", kind: "gauge", title: "NAT Grade 10", caption: "Mastery gap to the 75% target" },
+  { key: "PHIL-IRI", kind: "recovery", title: "PHIL-IRI", caption: "Reading recovery — frustration down, independence up" }
+];
+
+const LearningOutcomesVisual = ({ step, activePanelIdx = 0 }: { step: PerformanceBudgetStep; activePanelIdx?: number }) => {
+  const idx = Math.max(0, Math.min(activePanelIdx, LO_GROUPS.length - 1));
+  const group = LO_GROUPS[idx];
+  const metrics = step.metrics.filter((metric) => (metric.group || "Other") === group.key);
+  const isRecovery = group.key === "PHIL-IRI";
+  const summary = isRecovery
+    ? 100 - averageMetric(metrics.filter((metric) => metric.target === 0))
+    : averageMetric(metrics);
+
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", minHeight: 0 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px", marginBottom: "16px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0 }}>
+          <span style={{ fontSize: "14px", fontWeight: 900, letterSpacing: "0.6px", textTransform: "uppercase", color: "#fff", background: "var(--vibe-accent)", borderRadius: "999px", padding: "7px 16px", whiteSpace: "nowrap" }}>{group.title}</span>
+          <span style={{ fontSize: "17px", color: "#5b6b7d", fontWeight: 750 }}>{group.caption}</span>
+        </div>
+        <span className="mono" style={{ fontSize: "27px", fontWeight: 900, color: "#0a2f52", whiteSpace: "nowrap" }}>
+          {summary.toFixed(1)}% <span style={{ fontSize: "14px", color: "#9aa7b4", fontWeight: 800 }}>{isRecovery ? "recovery signal" : "group average"}</span>
+        </span>
+      </div>
+      <div key={idx} className="pb-viz-enter" style={{ flex: 1, minHeight: 0 }}>
+        {metrics.length === 0 ? (
+          <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#9aa7b4", fontSize: "20px", fontWeight: 700 }}>No metrics for this group.</div>
+        ) : group.kind === "slope" ? (
+          <SlopeChart metrics={metrics} target={75} />
+        ) : group.kind === "radar" ? (
+          <RadarChart metrics={metrics} target={75} />
+        ) : group.kind === "gauge" ? (
+          <GaugeBulletPanel metrics={metrics} target={75} />
+        ) : (
+          <RecoveryChart datasets={step.philIri ?? []} metrics={metrics} />
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ELLNA — dumbbell / slope: previous ● → current ● on a 0–100 track with a target tick.
+const SlopeChart = ({ metrics, target }: { metrics: PerformanceMetric[]; target: number }) => (
+  <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", gap: "22px" }}>
+    {metrics.map((metric) => {
+      const current = metric.value;
+      const previous = metric.previous;
+      const hasPrev = typeof previous === "number";
+      const up = hasPrev ? current >= (previous as number) : true;
+      const color = !hasPrev ? "#f5a623" : up ? "#10b981" : "#ef4444";
+      const lo = hasPrev ? Math.min(current, previous as number) : current;
+      const hi = hasPrev ? Math.max(current, previous as number) : current;
+      return (
+        <div key={metric.label}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "10px", gap: "12px" }}>
+            <span style={{ fontSize: "22px", fontWeight: 850, color: "#0a2f52" }}>{metric.label.replace("ELLNA ", "")}</span>
+            <span style={{ display: "flex", alignItems: "baseline", gap: "10px" }}>
+              {hasPrev && <span className="mono" style={{ fontSize: "17px", color: "#9aa7b4", fontWeight: 800 }}>{(previous as number).toFixed(1)}%</span>}
+              <span className="mono" style={{ fontSize: "15px", color }}>{up ? "▲" : "▼"}</span>
+              <span className="mono" style={{ fontSize: "23px", fontWeight: 900, color: "#0a2f52" }}>{current.toFixed(1)}%</span>
+            </span>
+          </div>
+          <div style={{ position: "relative", height: "20px", background: "#eef2f6", borderRadius: "999px" }}>
+            <div style={{ position: "absolute", left: `${clampPercent(target)}%`, top: "-6px", bottom: "-6px", width: "3px", background: "#0a2f52", opacity: 0.55, transform: "translateX(-1px)" }} />
+            <div style={{ position: "absolute", top: "50%", height: "6px", transform: "translateY(-50%)", left: `${clampPercent(lo)}%`, width: `${clampPercent(hi) - clampPercent(lo)}%`, background: color, opacity: 0.5, borderRadius: "999px" }} />
+            {hasPrev && <span style={{ position: "absolute", top: "50%", left: `${clampPercent(previous as number)}%`, width: "16px", height: "16px", borderRadius: "50%", background: "#fff", border: "3px solid #b9c6d4", transform: "translate(-50%, -50%)" }} />}
+            <span style={{ position: "absolute", top: "50%", left: `${clampPercent(current)}%`, width: "20px", height: "20px", borderRadius: "50%", background: color, border: "3px solid #fff", boxShadow: "0 2px 6px rgba(10,47,82,0.25)", transform: "translate(-50%, -50%)" }} />
+          </div>
+        </div>
+      );
+    })}
+    <div style={{ display: "flex", gap: "22px", alignItems: "center", marginTop: "4px", fontSize: "15px", color: "#5b6b7d", fontWeight: 750 }}>
+      <span style={{ display: "flex", alignItems: "center", gap: "7px" }}><span style={{ width: "13px", height: "13px", borderRadius: "50%", background: "#fff", border: "3px solid #b9c6d4" }} />Previous</span>
+      <span style={{ display: "flex", alignItems: "center", gap: "7px" }}><span style={{ width: "15px", height: "15px", borderRadius: "50%", background: "#10b981" }} />Current</span>
+      <span style={{ display: "flex", alignItems: "center", gap: "7px" }}><span style={{ width: "3px", height: "16px", background: "#0a2f52", opacity: 0.55 }} />Target {target}%</span>
+    </div>
+  </div>
+);
+
+// NAT Grade 6 — radar/spider over the five learning areas, with a faint "previous" overlay.
+const RadarChart = ({ metrics, target }: { metrics: PerformanceMetric[]; target: number }) => {
+  const size = 560;
+  const cx = size / 2;
+  const cy = size / 2 + 4;
+  const R = 180;
+  const n = metrics.length || 1;
+  const angleFor = (i: number) => (-90 + (i * 360) / n) * (Math.PI / 180);
+  const pointAt = (i: number, radius: number) => ({ x: cx + radius * Math.cos(angleFor(i)), y: cy + radius * Math.sin(angleFor(i)) });
+  const polyPoints = (vals: number[]) => vals.map((v, i) => { const p = pointAt(i, (clampPercent(v) / 100) * R); return `${p.x.toFixed(1)},${p.y.toFixed(1)}`; }).join(" ");
+  const currentVals = metrics.map((m) => m.value);
+  const prevVals = metrics.map((m) => (typeof m.previous === "number" ? (m.previous as number) : 0));
+  const hasPrev = metrics.some((m) => typeof m.previous === "number");
+  const rings = [25, 50, 75, 100];
+
+  return (
+    <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <svg viewBox={`0 0 ${size} ${size}`} style={{ width: "100%", height: "100%" }} preserveAspectRatio="xMidYMid meet">
+        {rings.map((r) => (
+          <polygon
+            key={r}
+            points={metrics.map((_, i) => { const p = pointAt(i, (r / 100) * R); return `${p.x.toFixed(1)},${p.y.toFixed(1)}`; }).join(" ")}
+            fill="none"
+            stroke={r === target ? "var(--vibe-accent)" : "#e2e8f0"}
+            strokeWidth={r === target ? 2 : 1}
+            strokeDasharray={r === target ? "6 6" : undefined}
+          />
+        ))}
+        {metrics.map((m, i) => {
+          const edge = pointAt(i, R);
+          const label = pointAt(i, R + 30);
+          const anchor = Math.abs(label.x - cx) < 10 ? "middle" : label.x > cx ? "start" : "end";
+          const name = m.label.replace("NAT G6 ", "").replace("NAT ", "");
+          return (
+            <g key={m.label}>
+              <line x1={cx} y1={cy} x2={edge.x} y2={edge.y} stroke="#e2e8f0" strokeWidth="1" />
+              <text x={label.x} y={label.y - 5} textAnchor={anchor} fontSize="19" fontWeight="850" fill="#0a2f52">{name}</text>
+              <text x={label.x} y={label.y + 16} textAnchor={anchor} fontSize="17" fontWeight="900" fill={getMetricColor(m.value, target)} className="mono">{m.value.toFixed(1)}%</text>
+            </g>
+          );
+        })}
+        {hasPrev && <polygon points={polyPoints(prevVals)} fill="none" stroke="#b9c6d4" strokeWidth="2" strokeDasharray="5 5" />}
+        <polygon points={polyPoints(currentVals)} fill="var(--vibe-accent)" fillOpacity="0.22" stroke="var(--vibe-accent)" strokeWidth="3" />
+        {currentVals.map((v, i) => { const p = pointAt(i, (clampPercent(v) / 100) * R); return <circle key={i} cx={p.x} cy={p.y} r="6" fill="var(--vibe-accent)" stroke="#fff" strokeWidth="2" />; })}
+      </svg>
+    </div>
+  );
+};
+
+// Shared bullet bar: filled value with a target tick, used by gauge + recovery views.
+const BulletBar = ({ label, value, target }: { label: string; value: number; target: number }) => {
+  const pct = clampPercent(value);
+  const color = getMetricColor(value, target);
+  const gap = target - value;
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "8px", gap: "12px" }}>
+        <span style={{ fontSize: "23px", fontWeight: 850, color: "#0a2f52" }}>{label}</span>
+        <span style={{ display: "flex", alignItems: "baseline", gap: "10px" }}>
+          <span className="mono" style={{ fontSize: "24px", fontWeight: 900, color }}>{value.toFixed(1)}%</span>
+          {gap > 0 && <span style={{ fontSize: "15px", fontWeight: 800, color: "#b9791a", background: "#fdf4e3", borderRadius: "999px", padding: "3px 10px", whiteSpace: "nowrap" }}>{gap.toFixed(1)} to target</span>}
+        </span>
+      </div>
+      <div style={{ position: "relative", height: "22px", background: "#eef2f6", borderRadius: "999px" }}>
+        <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: "999px", transition: "width 0.35s ease" }} />
+        <div style={{ position: "absolute", left: `${clampPercent(target)}%`, top: "-6px", bottom: "-6px", width: "3px", background: "#0a2f52", transform: "translateX(-1px)" }} />
+      </div>
+    </div>
+  );
+};
+
+// NAT Grade 10 — gauge ring for the overall score + bullet bars showing gap to the 75% target.
+const GaugeBulletPanel = ({ metrics, target }: { metrics: PerformanceMetric[]; target: number }) => {
+  const overall = metrics.find((m) => /overall/i.test(m.label)) || metrics[0];
+  return (
+    <div style={{ height: "100%", display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: "30px", alignItems: "center" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "14px" }}>
+        <PerfRing value={overall?.value ?? 0} label="Overall Proficiency" size={300} />
+        <div style={{ fontSize: "17px", color: "#5b6b7d", fontWeight: 800, textAlign: "center" }}>
+          {Math.max(0, target - (overall?.value ?? 0)).toFixed(1)} pts below the {target}% mastery target
+        </div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "26px" }}>
+        {metrics.map((m) => (
+          <BulletBar key={m.label} label={m.label.replace("NAT G10 ", "")} value={m.value} target={target} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// PHIL-IRI — reading recovery: frustration (lower is better) shrinking prev→now, plus independence.
+// PHIL-IRI reading levels (stacked-bar segments).
+const PHIL_LEVELS: { key: keyof PhilIriLevels; label: string; color: string }[] = [
+  { key: "independent", label: "Independent", color: "#10b981" },
+  { key: "instructional", label: "Instructional", color: "#f5a623" },
+  { key: "frustration", label: "Frustration", color: "#ef4444" }
+];
+
+const fmtPhil = (v: number) => `${v % 1 === 0 ? v : v.toFixed(2)}%`;
+
+const PhilIriStack = ({ title, dist }: { title: string; dist: PhilIriLevels }) => (
+  <div>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "8px", gap: "12px" }}>
+      <span style={{ fontSize: "22px", fontWeight: 850, color: "#0a2f52" }}>{title}</span>
+      <span className="mono" style={{ fontSize: "15px", fontWeight: 800, color: "#5b6b7d" }}>
+        {fmtPhil(dist.independent)} Ind · {fmtPhil(dist.instructional)} Inst · {fmtPhil(dist.frustration)} Frust
+      </span>
+    </div>
+    <div style={{ display: "flex", height: "32px", borderRadius: "10px", overflow: "hidden", background: "#eef2f6" }}>
+      {PHIL_LEVELS.map((lvl) => {
+        const v = dist[lvl.key];
+        if (v <= 0) return null;
+        return (
+          <div key={lvl.key} style={{ width: `${clampPercent(v)}%`, background: lvl.color, display: "flex", alignItems: "center", justifyContent: "center", transition: "width 0.35s ease" }}>
+            {v >= 9 && <span className="mono" style={{ fontSize: "14px", fontWeight: 800, color: "#fff" }}>{Math.round(v)}%</span>}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+);
+
+// PHIL-IRI — full breakdown: toggle Key Stage + Year, stacked Independent/Instructional/Frustration
+// bars for Filipino & English, with collapsible strategic interpretation. Falls back to metrics if no datasets.
+const RecoveryChart = ({ datasets, metrics }: { datasets: PhilIriDataset[]; metrics: PerformanceMetric[] }) => {
+  const stages = Array.from(new Set(datasets.map((d) => d.keyStage)));
+  const years = Array.from(new Set(datasets.map((d) => d.year)));
+  const [ks, setKs] = useState<string>(stages[0] ?? "KS2");
+  const [yr, setYr] = useState<string>(years[years.length - 1] ?? "");
+  const [showNotes, setShowNotes] = useState(false);
+
+  if (!datasets.length) {
+    return (
+      <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", gap: "18px" }}>
+        {metrics.map((m) => (
+          <BulletBar key={m.label} label={m.label} value={m.value} target={m.target ?? 75} />
+        ))}
+      </div>
+    );
+  }
+
+  const active =
+    datasets.find((d) => d.keyStage === ks && d.year === yr) ||
+    datasets.find((d) => d.keyStage === ks) ||
+    datasets[0];
+
+  const pill = (selected: boolean): React.CSSProperties => ({
+    border: 0,
+    cursor: "pointer",
+    borderRadius: "999px",
+    padding: "8px 16px",
+    fontSize: "16px",
+    fontWeight: 800,
+    fontFamily: "inherit",
+    background: selected ? "var(--vibe-accent)" : "transparent",
+    color: selected ? "#fff" : "#5b6b7d",
+    transition: "background 0.2s ease, color 0.2s ease"
+  });
+
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", gap: "18px", minHeight: 0 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "14px", alignItems: "center", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: "4px", background: "#f7f9fb", padding: "4px", borderRadius: "999px" }}>
+            {stages.map((s) => (
+              <button key={s} type="button" onClick={() => setKs(s)} style={pill(s === ks)}>{s === "KS2" ? "Key Stage 2" : s === "KS3" ? "Key Stage 3" : s}</button>
+            ))}
+          </div>
+          <div style={{ display: "flex", gap: "4px", background: "#f7f9fb", padding: "4px", borderRadius: "999px" }}>
+            {years.map((y) => (
+              <button key={y} type="button" onClick={() => setYr(y)} style={pill(y === yr)}>{y}</button>
+            ))}
+          </div>
+        </div>
+        <span className="mono" style={{ fontSize: "15px", fontWeight: 800, color: "#5b6b7d", whiteSpace: "nowrap" }}>n = {active.total} · {active.grades}</span>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <PhilIriStack title="Filipino" dist={active.filipino} />
+        <PhilIriStack title="English" dist={active.english} />
+      </div>
+
+      <div style={{ display: "flex", gap: "20px", alignItems: "center", fontSize: "15px", color: "#5b6b7d", fontWeight: 750 }}>
+        {PHIL_LEVELS.map((lvl) => (
+          <span key={lvl.key} style={{ display: "flex", alignItems: "center", gap: "7px" }}>
+            <span style={{ width: "13px", height: "13px", borderRadius: "4px", background: lvl.color }} />{lvl.label}
+          </span>
+        ))}
+      </div>
+
+      <div style={{ borderTop: "1px solid #eef2f6", paddingTop: "12px", marginTop: "auto" }}>
+        <button
+          type="button"
+          onClick={() => setShowNotes((s) => !s)}
+          style={{ border: 0, background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", padding: 0, fontFamily: "inherit", fontSize: "16px", fontWeight: 800, color: "#0a2f52" }}
+        >
+          <span style={{ display: "inline-block", transform: showNotes ? "rotate(90deg)" : "none", transition: "transform 0.2s ease" }}>▸</span>
+          Strategic interpretation
+        </button>
+        {showNotes && (
+          <ul style={{ margin: "12px 0 0", paddingLeft: "22px", display: "flex", flexDirection: "column", gap: "8px" }}>
+            {active.interpretation.map((line, i) => (
+              <li key={i} style={{ fontSize: "18px", lineHeight: 1.4, color: "#2c3e50", fontWeight: 600 }}>{line}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const CertificationVisual = ({ step }: { step: PerformanceBudgetStep }) => {
+  const passRate = step.metrics.find((metric) => metric.label === "Pass Rate")?.value ?? 100;
+  const learners = step.metrics.find((metric) => metric.label === "Certified Learners")?.value ?? 16;
+  const roster = step.roster ?? [];
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", gap: "22px", justifyContent: "center" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "0.9fr 1.1fr", gap: "34px", alignItems: "center" }}>
+        <PerfRing value={passRate} label="NC II Passing Rate" size={260} />
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          <BigNumberCard label="Certified Grade 12 CSS Learners" value={String(learners)} caption="First batch result" tone="#f5a623" />
+          <BigNumberCard label="Industry Partner" value="ICST" caption="Immaculate Conception School of Technology" tone="#0a2f52" />
+        </div>
+      </div>
+      {roster.length > 0 && (
+        <div className="dashboard-card-glass" style={{ padding: "20px 26px", background: "#fff !important" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "14px", gap: "12px" }}>
+            <span style={{ fontSize: "20px", fontWeight: 900, color: "#0a2f52" }}>Certified NC II Holders</span>
+            <span className="mono" style={{ fontSize: "15px", fontWeight: 800, color: "#10b981" }}>{roster.length} learners · 100% pass</span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px 18px" }}>
+            {roster.map((name, i) => (
+              <div key={name} style={{ display: "flex", gap: "8px", alignItems: "baseline", fontSize: "15px", color: "#2c3e50", fontWeight: 650 }}>
+                <span className="mono" style={{ color: "#9aa7b4", fontSize: "13px", minWidth: "18px" }}>{String(i + 1).padStart(2, "0")}</span>
+                <span>{name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ImmersionVisual = ({ step }: { step: PerformanceBudgetStep }) => (
+  <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", gap: "22px" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "18px" }}>
+      {step.metrics.map((metric) => (
+        <div key={metric.label} className="dashboard-card-glass" style={{ padding: "26px 24px", textAlign: "center", background: "rgba(10,47,82,0.08) !important" }}>
+          <div style={{ width: "72px", height: "72px", borderRadius: "50%", margin: "0 auto 14px", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--vibe-accent)", color: "#fff", fontSize: "28px", fontWeight: 900 }}>
+            {metric.label.split(" ")[0].slice(0, 3)}
+          </div>
+          <div style={{ fontSize: "30px", fontWeight: 900, color: "#0a2f52" }}>{metric.label}</div>
+          <div style={{ marginTop: "10px", fontSize: "20px", color: "#5b6b7d", fontWeight: 700 }}>Active support</div>
+          <PerfHorizontalBar label="Engagement" value={metric.value} max={100} valueLabel={`${metric.value}%`} compact />
+        </div>
+      ))}
+    </div>
+    <div className="dashboard-card-glass" style={{ padding: "30px 34px", borderLeft: "6px solid #f5a623" }}>
+      <div style={{ fontSize: "32px", lineHeight: 1.25, color: "#0a2f52", fontWeight: 850 }}>
+        Visible monitoring connects immersion, partner support, and certification readiness.
+      </div>
+    </div>
+  </div>
+);
+
+const BudgetOverviewVisual = ({ step }: { step: PerformanceBudgetStep }) => {
+  const rows = step.budgetRows || [];
+  const totalAllocation = rows.reduce((sum, row) => sum + row.allocation, 0);
+  const totalUtilized = rows.reduce((sum, row) => sum + row.utilized, 0);
+  return (
+    <div style={{ height: "100%", display: "grid", gridTemplateRows: "auto 1fr", gap: "22px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
+        <BigNumberCard label="Total SOB Allocation" value={formatMoneyShort(totalAllocation)} caption="ES + JHS" tone="#0a2f52" />
+        <BigNumberCard label="Total Utilized" value={formatMoneyShort(totalUtilized)} caption={formatMoneyFull(totalUtilized)} tone="#10b981" />
+        <BigNumberCard label="Downloaded Utilization" value="88.13%" caption="Combined ES + JHS" tone="#f5a623" />
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "24px" }}>
+        {rows.map((row) => (
+          <BudgetStackedBar key={row.label} row={row} totalAllocation={totalAllocation} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const SobDetailVisual = ({ step }: { step: PerformanceBudgetStep }) => (
+  <div style={{ height: "100%", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "22px", alignItems: "stretch" }}>
+    {(step.budgetRows || []).map((row) => (
+      <BudgetDetailCard key={row.label} row={row} />
+    ))}
+  </div>
+);
+
+const PerfRing = ({ value, label, size = 250 }: { value: number; label: string; size?: number }) => {
+  const pct = clampPercent(value);
+  const radius = 88;
+  const circumference = 2 * Math.PI * radius;
+  const dash = (pct / 100) * circumference;
+  return (
+    <svg width={size} height={size} viewBox="0 0 240 240" style={{ maxWidth: "100%" }}>
+      <defs>
+        <linearGradient id={`perf-ring-${label.replace(/\W/g, "")}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="var(--vibe-accent)" />
+          <stop offset="100%" stopColor="#10b981" />
+        </linearGradient>
+      </defs>
+      <circle cx="120" cy="120" r={radius} fill="#fff" stroke="#edf2f7" strokeWidth="18" />
+      <circle
+        cx="120"
+        cy="120"
+        r={radius}
+        fill="none"
+        stroke={`url(#perf-ring-${label.replace(/\W/g, "")})`}
+        strokeWidth="18"
+        strokeLinecap="round"
+        strokeDasharray={`${dash} ${circumference}`}
+        transform="rotate(-90 120 120)"
+        style={{ transition: "stroke-dasharray 0.4s ease" }}
+      />
+      <text x="120" y="116" textAnchor="middle" fill="#0a2f52" fontSize="44" fontWeight="900" className="mono">{pct.toFixed(pct % 1 === 0 ? 0 : 1)}%</text>
+      <text x="120" y="146" textAnchor="middle" fill="#5b6b7d" fontSize="15" fontWeight="800">{label}</text>
+    </svg>
+  );
+};
+
+const PerfHorizontalBar = ({
+  label,
+  value,
+  max,
+  valueLabel,
+  compact
+}: {
+  label: string;
+  value: number;
+  max: number;
+  valueLabel: string;
+  compact?: boolean;
+}) => {
+  const pct = clampPercent((value / max) * 100);
+  const color = getMetricColor(value, max === 100 ? 75 : undefined);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: compact ? "5px" : "8px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", gap: "12px", alignItems: "baseline" }}>
+        <span style={{ fontSize: compact ? "17px" : "22px", fontWeight: 850, color: "#0a2f52" }}>{label}</span>
+        <span className="mono" style={{ fontSize: compact ? "16px" : "21px", fontWeight: 900, color }}>{valueLabel}</span>
+      </div>
+      <div style={{ height: compact ? "10px" : "16px", background: "#eef2f6", borderRadius: "999px", overflow: "hidden" }}>
+        <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: "999px", transition: "width 0.35s ease" }} />
+      </div>
+    </div>
+  );
+};
+
+const BigNumberCard = ({ label, value, caption, tone }: { label: string; value: string; caption: string; tone: string }) => (
+  <div className="dashboard-card-glass" style={{ padding: "24px 26px", background: "#fff !important" }}>
+    <div style={{ fontSize: "17px", color: "#5b6b7d", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.5px" }}>{label}</div>
+    <div className="mono" style={{ fontSize: "44px", lineHeight: 1.05, color: tone, fontWeight: 900, marginTop: "8px" }}>{value}</div>
+    <div style={{ fontSize: "18px", color: "#2c3e50", fontWeight: 700, marginTop: "8px" }}>{caption}</div>
+  </div>
+);
+
+const BudgetStackedBar = ({ row, totalAllocation }: { row: BudgetRow; totalAllocation: number }) => {
+  const allocationPct = clampPercent((row.allocation / totalAllocation) * 100);
+  const utilizedPct = clampPercent((row.utilized / row.allocation) * 100);
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "10px" }}>
+        <div style={{ fontSize: "26px", fontWeight: 900, color: "#0a2f52" }}>{row.label}</div>
+        <div className="mono" style={{ fontSize: "24px", fontWeight: 900, color: "#10b981" }}>{formatMoneyFull(row.utilized)}</div>
+      </div>
+      <div style={{ height: "28px", background: "#eef2f6", borderRadius: "999px", overflow: "hidden", display: "flex" }}>
+        <div style={{ width: `${allocationPct}%`, background: "#d8e1ec" }}>
+          <div style={{ width: `${utilizedPct}%`, height: "100%", background: "#10b981", borderRadius: "999px" }} />
+        </div>
+      </div>
+      <div style={{ marginTop: "8px", fontSize: "18px", color: "#5b6b7d", fontWeight: 750 }}>
+        {formatMoneyFull(row.allocation)} allocation - {row.utilization}% of downloaded funds utilized
+      </div>
+    </div>
+  );
+};
+
+const BudgetDetailCard = ({ row }: { row: BudgetRow }) => (
+  <div className="dashboard-card-glass" style={{ padding: "28px 30px", display: "flex", flexDirection: "column", gap: "18px", background: "#fff !important" }}>
+    <div>
+      <div style={{ fontSize: "32px", fontWeight: 900, color: "#0a2f52" }}>{row.label}</div>
+      <div style={{ fontSize: "20px", color: "#5b6b7d", fontWeight: 750 }}>SOB 2026 obligation and disbursement</div>
+    </div>
+    <PerfRing value={row.utilization} label="Downloaded Utilization" size={210} />
+    {[
+      ["Allocation", row.allocation],
+      ["Downloaded", row.downloaded],
+      ["Liquidated", row.liquidated],
+      ["Tax Remittance", row.tax],
+      ["Utilized", row.utilized]
+    ].map(([label, value]) => (
+      <div key={label as string} style={{ display: "flex", justifyContent: "space-between", gap: "12px", padding: "12px 14px", background: label === "Utilized" ? "#e3f7ef" : "#f7f9fb", borderRadius: "10px" }}>
+        <span style={{ fontSize: "20px", color: "#2c3e50", fontWeight: 800 }}>{label}</span>
+        <span className="mono" style={{ fontSize: "21px", color: label === "Utilized" ? "#1f8a5b" : "#0a2f52", fontWeight: 900 }}>{formatMoneyFull(value as number)}</span>
+      </div>
+    ))}
+  </div>
+);

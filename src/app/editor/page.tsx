@@ -1,239 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-
-interface DashboardStep {
-  title: string;
-  labels?: string[];
-  values: number[];
-  max: number;
-  finding: string;
-  action: string;
-  years?: string[];
-  targets?: number[];
-  actuals?: number[];
-  grades?: string[];
-  cohorts?: string[];
-  flows?: number[];
-}
-
-const defaultState = {
-  theme: 'slate',
-  transition: 'fade',
-  mode: 'editor',
-  notes: {} as Record<number, string>,
-  slides: {} as Record<number, { texts: Record<number, string>; charts?: any }>,
-  dashboard: {
-    currentStep: 0,
-    steps: [
-      {
-        title: "Kindergarten",
-        labels: ["Target", "Actual"],
-        values: [7, 8],
-        max: 20,
-        finding: "Kindergarten intake is small but consistently on or above target.",
-        action: "Sustain early-registration drives to protect the feeder pipeline."
-      },
-      {
-        title: "Elementary",
-        years: ["2024-25", "2025-26", "2026-27"],
-        targets: [96, 98, 91],
-        actuals: [98, 91, 90],
-        max: 120,
-        finding: "A -7 dip in 2025-2026, then stabilizing near the target (-1) in 2026-2027.",
-        action: "Track transfer-out reasons and strengthen learner retention in the elementary cohort."
-      },
-      {
-        title: "Junior High",
-        years: ["2024-25", "2025-26", "2026-27"],
-        targets: [48, 52, 56],
-        actuals: [52, 56, 59],
-        max: 80,
-        finding: "Actual enrolment consistently exceeded target in both years targets were set (+4, then +3).",
-        action: "Set slightly more ambitious targets and plan section/teacher load for continued growth."
-      },
-      {
-        title: "Senior High",
-        grades: ["Grade 11", "Grade 12"],
-        values: [8, 11],
-        max: 30,
-        finding: "SHS enrolment declined from 27 to 19 due to transfers to schools offering Cookery / Automotive.",
-        action: "Build on the 6 new computer units to make GAS / ICT-CSS strands more competitive."
-      },
-      {
-        title: "Cohort Tracking",
-        cohorts: ["KG-G1", "G1-G2", "G2-G3", "G3-G4", "G4-G5", "G5-G6", "G7-G8", "G8-G9", "G9-G10"],
-        flows: [8, 3, -10, 7, 2, -7, 2, 1, 0],
-        max: 20,
-        finding: "Grade 3 and Grade 6 grew, while Kindergarten, Grade 2, Grade 5, and JHS Grade 7 / Grade 10 contracted.",
-        action: "Strengthen Grade 6 to 7 transition and Grade 10 to 11 bridging into Senior High School."
-      }
-    ]
-  },
-  characterization: {
-    currentStep: 0,
-    activeDomainIdx: 0,
-    steps: [
-      {
-        title: "Equipment & Assessment",
-        subtitle: "Curriculum Support — Equipment, ICT & Assessment",
-        domains: [
-          {
-            name: "Instructional Equipment",
-            letter: "E",
-            status: "Equipped · ICT uneven",
-            maturity: 3,
-            bullets: [
-              "Smart TVs in all classrooms; printers for all teachers, laptops for some.",
-              "Science & Mathematics equipment available and actively used.",
-              "ICT tools remain uneven across teachers, affecting consistency."
-            ]
-          },
-          {
-            name: "ICT Environment",
-            letter: "I",
-            status: "Constrained",
-            maturity: 2,
-            bullets: [
-              "Rising SHS ICT Programming enrolment raises equipment demand.",
-              "Existing resources are limited relative to curriculum needs.",
-              "Hands-on ICT competencies are the most affected."
-            ]
-          },
-          {
-            name: "Assessment",
-            letter: "A",
-            status: "Functional · strengthen",
-            maturity: 3,
-            bullets: [
-              "Regional Unified Quarterly Exams standardise assessment.",
-              "Pacing does not always align with exam coverage.",
-              "HOTS / NAT / PISA capacity-building and ICT for data analysis needed."
-            ]
-          }
-        ]
-      },
-      {
-        title: "Teachers & Facilities",
-        subtitle: "Curriculum Support — Teachers, Materials & Facilities",
-        domains: [
-          {
-            name: "Teachers",
-            letter: "T",
-            status: "Adaptable · multi-level load",
-            maturity: 3,
-            bullets: [
-              "Small, fluctuating classes mean multi-level loads and flexible deployment.",
-              "Teachers handle multiple areas and grade levels, esp. JHS and SHS.",
-              "SHS ICT Programming raises specialisation demands."
-            ]
-          },
-          {
-            name: "Instructional Materials",
-            letter: "M",
-            status: "Transitional",
-            maturity: 2,
-            bullets: [
-              "Limited provision; many resources outdated (pandemic-era).",
-              "MATATAG rollout delayed and staggered — started Grades 1 & 7.",
-              "Uneven access to updated materials across grade levels."
-            ]
-          },
-          {
-            name: "Facilities",
-            letter: "F",
-            status: "Functional · not optimised",
-            maturity: 2,
-            bullets: [
-              "14 classrooms, incl. temporary Marcos-type structures for SHS.",
-              "Missing: computer lab, clinic, DRRM room, Teen Center.",
-              "Home Economics room dilapidated, now used as storage."
-            ]
-          }
-        ]
-      },
-      {
-        title: "Governance & Partnerships",
-        subtitle: "Curriculum Support — Leadership, SDO & Partnerships",
-        domains: [
-          {
-            name: "School Leadership",
-            letter: "L",
-            status: "Stabilising",
-            maturity: 3,
-            bullets: [
-              "Operating amid program expansion and SHS validation.",
-              "Managing enrolment swings, compliance and limited resources.",
-              "Needs stronger forecasting, optimisation and supervision."
-            ]
-          },
-          {
-            name: "SDO Technical Assistance",
-            letter: "S",
-            status: "Comprehensive support",
-            maturity: 4,
-            bullets: [
-              "Training, staffing, ICT, assessment, supervision & governance support.",
-              "Strong for compliance and initial implementation needs.",
-              "Needs sustained coaching and on-site technical assistance."
-            ]
-          },
-          {
-            name: "Community & Partnerships",
-            letter: "P",
-            status: "Developing",
-            maturity: 2,
-            bullets: [
-              "Strong PTA, Barangay LGU and School Governing Council support.",
-              "Backed early SHS / TVL support and work immersion.",
-              "Engagement still developing in depth and sustainability."
-            ]
-          }
-        ]
-      }
-    ]
-  }
-};
-
-const getStepIcon = (idx: number) => {
-  switch (idx) {
-    case 0:
-      return (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ display: 'inline-block' }}>
-          <circle cx="12" cy="12" r="9" strokeDasharray="30 15" />
-        </svg>
-      );
-    case 1:
-      return (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ display: 'inline-block' }}>
-          <path d="M3 20L8 14L14 17L21 6" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      );
-    case 2:
-      return (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ display: 'inline-block' }}>
-          <rect x="3" y="11" width="4" height="10" rx="1" />
-          <rect x="10" y="6" width="4" height="15" rx="1" />
-          <rect x="17" y="13" width="4" height="8" rx="1" />
-        </svg>
-      );
-    case 3:
-      return (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ display: 'inline-block' }}>
-          <circle cx="12" cy="12" r="9" />
-          <circle cx="12" cy="12" r="4" strokeDasharray="6 3" />
-        </svg>
-      );
-    case 4:
-      return (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ display: 'inline-block' }}>
-          <path d="M4 12h16M14 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      );
-    default:
-      return null;
-  }
-};
+import { defaultState, SavedPerformanceBudgetState, PerformanceBudgetState, PerformanceBudgetStep, PerformanceMetric, PerformancePanel, BudgetRow, BudgetRowNumericField, PerformanceBudgetFieldValue } from "@/lib/store";
+import { getStepIcon } from "@/components/EnrolmentDashboard";
 
 export default function Editor() {
   const [appState, setAppState] = useState<any>(defaultState);
@@ -286,6 +55,7 @@ export default function Editor() {
         const stateRes = await fetch('/.pir-deck.state.json?t=' + Date.now());
         if (stateRes.ok) {
           const stateData = await stateRes.json();
+          const savedPerformanceBudget = stateData.performanceBudget as SavedPerformanceBudgetState | undefined;
           savedState = {
             ...defaultState,
             ...stateData,
@@ -309,6 +79,32 @@ export default function Editor() {
                   ...(stateData.characterization?.steps?.[idx]?.domains?.[dIdx] || {})
                 }))
               }))
+            },
+            performanceBudget: {
+              currentStep: savedPerformanceBudget?.currentStep ?? defaultState.performanceBudget.currentStep,
+              activePanelIdx: savedPerformanceBudget?.activePanelIdx ?? defaultState.performanceBudget.activePanelIdx ?? 0,
+              steps: defaultState.performanceBudget.steps.map((step, idx) => {
+                const savedStep = savedPerformanceBudget?.steps?.[idx] || {};
+                return {
+                  ...step,
+                  ...savedStep,
+                  metrics: (step.metrics || []).map((metric, metricIdx) => ({
+                    ...metric,
+                    ...(savedStep.metrics?.[metricIdx] || {})
+                  })),
+                  budgetRows: step.budgetRows
+                    ? step.budgetRows.map((row, rowIdx) => ({
+                      ...row,
+                      ...(savedStep.budgetRows?.[rowIdx] || {})
+                    }))
+                    : undefined,
+                  panels: (step.panels || []).map((panel, panelIdx) => ({
+                    ...panel,
+                    ...(savedStep.panels?.[panelIdx] || {}),
+                    bullets: savedStep.panels?.[panelIdx]?.bullets || panel.bullets
+                  }))
+                };
+              })
             }
           };
         }
@@ -399,7 +195,7 @@ export default function Editor() {
 
   const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
-    
+
     // Update local slides list display
     setSlides(prev => {
       const updated = [...prev];
@@ -453,6 +249,81 @@ export default function Editor() {
     broadcastState(nextState);
   };
 
+  const handlePerfStepChange = (stepIdx: number) => {
+    const perfState: PerformanceBudgetState = appState.performanceBudget || defaultState.performanceBudget;
+    const nextState = {
+      ...appState,
+      performanceBudget: { ...perfState, currentStep: stepIdx, activePanelIdx: 0 }
+    };
+    setAppState(nextState);
+    saveState(nextState);
+    broadcastState(nextState);
+  };
+
+  const handlePerfActivePanelChange = (panelIdx: number) => {
+    const perfState: PerformanceBudgetState = appState.performanceBudget || defaultState.performanceBudget;
+    const nextState = {
+      ...appState,
+      performanceBudget: { ...perfState, activePanelIdx: panelIdx }
+    };
+    setAppState(nextState);
+    saveState(nextState);
+    broadcastState(nextState);
+  };
+
+  const handlePerfStepDataChange = (stepIdx: number, field: keyof PerformanceBudgetStep, val: PerformanceBudgetFieldValue) => {
+    const perfState: PerformanceBudgetState = appState.performanceBudget || defaultState.performanceBudget;
+    const nextSteps = [...perfState.steps];
+    nextSteps[stepIdx] = { ...nextSteps[stepIdx], [field]: val } as PerformanceBudgetStep;
+    const nextState = {
+      ...appState,
+      performanceBudget: { ...perfState, steps: nextSteps }
+    };
+    setAppState(nextState);
+    saveState(nextState);
+    broadcastState(nextState);
+  };
+
+  const handlePerfMetricChange = (metricIdx: number, field: keyof PerformanceMetric, val: number) => {
+    const perfState: PerformanceBudgetState = appState.performanceBudget || defaultState.performanceBudget;
+    const stepIdx = perfState.currentStep ?? defaultState.performanceBudget.currentStep;
+    const step = perfState.steps[stepIdx];
+    const nextMetrics = [...(step.metrics || [])];
+    nextMetrics[metricIdx] = { ...nextMetrics[metricIdx], [field]: val };
+    handlePerfStepDataChange(stepIdx, 'metrics', nextMetrics);
+  };
+
+  const handlePerfBudgetRowChange = (rowIdx: number, field: BudgetRowNumericField, val: number) => {
+    const perfState: PerformanceBudgetState = appState.performanceBudget || defaultState.performanceBudget;
+    const stepIdx = perfState.currentStep ?? defaultState.performanceBudget.currentStep;
+    const step = perfState.steps[stepIdx];
+    const nextRows = [...(step.budgetRows || [])];
+    nextRows[rowIdx] = { ...nextRows[rowIdx], [field]: val };
+    handlePerfStepDataChange(stepIdx, 'budgetRows', nextRows);
+  };
+
+  const handlePerfPanelFieldChange = (field: keyof PerformancePanel, val: string) => {
+    const perfState: PerformanceBudgetState = appState.performanceBudget || defaultState.performanceBudget;
+    const stepIdx = perfState.currentStep ?? defaultState.performanceBudget.currentStep;
+    const step = perfState.steps[stepIdx];
+    const panelIdx = perfState.activePanelIdx ?? defaultState.performanceBudget.activePanelIdx;
+    const nextPanels = [...(step.panels || [])];
+    nextPanels[panelIdx] = { ...nextPanels[panelIdx], [field]: val };
+    handlePerfStepDataChange(stepIdx, 'panels', nextPanels);
+  };
+
+  const handlePerfPanelBulletChange = (bulletIdx: number, val: string) => {
+    const perfState: PerformanceBudgetState = appState.performanceBudget || defaultState.performanceBudget;
+    const stepIdx = perfState.currentStep ?? defaultState.performanceBudget.currentStep;
+    const step = perfState.steps[stepIdx];
+    const panelIdx = perfState.activePanelIdx ?? defaultState.performanceBudget.activePanelIdx;
+    const nextPanels = [...(step.panels || [])];
+    const nextBullets = [...(nextPanels[panelIdx].bullets || [])];
+    nextBullets[bulletIdx] = val;
+    nextPanels[panelIdx] = { ...nextPanels[panelIdx], bullets: nextBullets };
+    handlePerfStepDataChange(stepIdx, 'panels', nextPanels);
+  };
+
   const handleStepChange = (stepIdx: number) => {
     const nextState = {
       ...appState,
@@ -479,11 +350,11 @@ export default function Editor() {
     const currentStep = appState.dashboard.currentStep;
     const step = appState.dashboard.steps[currentStep];
 
-    if (currentStep === 0 || currentStep === 3) {
+    if (currentStep === 3) {
       const newVals = [...step.values];
       newVals[valIdx] = val;
       handleDashboardDataChange(currentStep, 'values', newVals);
-    } else if (currentStep === 1 || currentStep === 2) {
+    } else if (currentStep === 0 || currentStep === 1 || currentStep === 2) {
       if (isTarget) {
         const newTargets = [...step.targets];
         newTargets[valIdx] = val;
@@ -520,6 +391,14 @@ export default function Editor() {
   const currentStepData = appState.dashboard.steps[currentStep];
 
   const isCharSlide = activeSlide?.label === "Characterization";
+  const isPerfBudgetSlide = activeSlide?.label === "Performance & Budget";
+  const perfState: PerformanceBudgetState = appState.performanceBudget || defaultState.performanceBudget;
+  const perfCurrentStep = perfState.currentStep ?? defaultState.performanceBudget.currentStep;
+  const perfSteps = perfState.steps || defaultState.performanceBudget.steps;
+  const perfCurrentStepData = perfSteps[perfCurrentStep] || defaultState.performanceBudget.steps[0];
+  const perfPanels = perfCurrentStepData.panels || [];
+  const perfActivePanelIdx = Math.max(0, Math.min(perfState.activePanelIdx ?? 0, Math.max(0, perfPanels.length - 1)));
+  const perfActivePanel = perfPanels[perfActivePanelIdx];
 
   return (
     <div className="editor-page-root">
@@ -533,8 +412,8 @@ export default function Editor() {
         </div>
         <div className="rail-list" style={{ overflowY: 'auto', flex: 1, padding: '16px' }}>
           {slides.map((slide, idx) => (
-            <div 
-              key={slide.id} 
+            <div
+              key={slide.id}
               className={`rail-item ${idx === activeSlideIndex ? 'active' : ''}`}
               onClick={() => handleGoToSlide(idx)}
             >
@@ -561,15 +440,15 @@ export default function Editor() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             {/* View Mode Toggle */}
             <div className="mode-toggle-switch">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={`mode-toggle-btn ${appState.mode === 'editor' ? 'active' : ''}`}
                 onClick={() => handleModeChange('editor')}
               >
                 Editor mode
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={`mode-toggle-btn ${appState.mode === 'presenter' ? 'active' : ''}`}
                 onClick={() => handleModeChange('presenter')}
               >
@@ -577,9 +456,9 @@ export default function Editor() {
               </button>
             </div>
 
-            <button 
-              type="button" 
-              className="btn-action" 
+            <button
+              type="button"
+              className="btn-action"
               onClick={handleResetDeck}
               style={{ background: '#1e293b', borderColor: '#334155' }}
             >
@@ -589,7 +468,7 @@ export default function Editor() {
         </header>
 
         <div className="editor-content-area">
-          
+
           {/* Deck Settings Card */}
           <section className="editor-card">
             <h3 className="editor-card-title">Deck Configurations</h3>
@@ -612,7 +491,7 @@ export default function Editor() {
 
               <div style={{ flex: 1 }}>
                 <div className="customizer-section-title">Slide Transition</div>
-                <select 
+                <select
                   className="select-input"
                   value={appState.transition}
                   onChange={(e) => handleTransitionChange(e.target.value)}
@@ -661,40 +540,7 @@ export default function Editor() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', background: '#0f172a', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
-                  {currentStep === 0 && (
-                    <>
-                      <div className="dashboard-slider-item">
-                        <div className="dashboard-slider-header" style={{ color: '#cbd5e1' }}>
-                          <span>Target Value</span>
-                          <span className="dashboard-slider-val" style={{ background: '#1e293b' }}>{currentStepData.values[0]}</span>
-                        </div>
-                        <input
-                          type="range"
-                          className="dashboard-range-input"
-                          min={1}
-                          max={currentStepData.max}
-                          value={currentStepData.values[0]}
-                          onChange={(e) => handleSliderChange(0, false, parseInt(e.target.value, 10))}
-                        />
-                      </div>
-                      <div className="dashboard-slider-item">
-                        <div className="dashboard-slider-header" style={{ color: '#cbd5e1' }}>
-                          <span>Actual Value</span>
-                          <span className="dashboard-slider-val" style={{ background: '#1e293b' }}>{currentStepData.values[1]}</span>
-                        </div>
-                        <input
-                          type="range"
-                          className="dashboard-range-input"
-                          min={1}
-                          max={currentStepData.max}
-                          value={currentStepData.values[1]}
-                          onChange={(e) => handleSliderChange(1, false, parseInt(e.target.value, 10))}
-                        />
-                      </div>
-                    </>
-                  )}
-
-                  {(currentStep === 1 || currentStep === 2) && currentStepData.years && (
+                  {(currentStep === 0 || currentStep === 1 || currentStep === 2) && currentStepData.years && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                       {currentStepData.years.map((yr: string, yIdx: number) => (
                         <div key={yr} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
@@ -706,7 +552,7 @@ export default function Editor() {
                             <input
                               type="range"
                               className="dashboard-range-input"
-                              min={10}
+                              min={currentStep === 0 ? 1 : 10}
                               max={currentStepData.max}
                               value={(currentStepData.targets || [])[yIdx]}
                               onChange={(e) => handleSliderChange(yIdx, true, parseInt(e.target.value, 10))}
@@ -720,7 +566,7 @@ export default function Editor() {
                             <input
                               type="range"
                               className="dashboard-range-input"
-                              min={10}
+                              min={currentStep === 0 ? 1 : 10}
                               max={currentStepData.max}
                               value={(currentStepData.actuals || [])[yIdx]}
                               onChange={(e) => handleSliderChange(yIdx, false, parseInt(e.target.value, 10))}
@@ -796,7 +642,7 @@ export default function Editor() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <label style={{ fontSize: '13px', fontWeight: 'bold', color: '#94a3b8' }}>Finding</label>
-                    <textarea 
+                    <textarea
                       className="notes-textarea"
                       value={currentStepData.finding}
                       onChange={(e) => handleDashboardDataChange(currentStep, 'finding', e.target.value)}
@@ -806,7 +652,7 @@ export default function Editor() {
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <label style={{ fontSize: '13px', fontWeight: 'bold', color: '#e0a96d' }}>Recommended Action</label>
-                    <textarea 
+                    <textarea
                       className="notes-textarea"
                       value={currentStepData.action}
                       onChange={(e) => handleDashboardDataChange(currentStep, 'action', e.target.value)}
@@ -816,6 +662,158 @@ export default function Editor() {
                 </div>
               </div>
 
+            </section>
+          )}
+
+          {/* Performance & Budget Carousel Sub-Editor Panel */}
+          {isPerfBudgetSlide && (
+            <section className="editor-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <h3 className="editor-card-title" style={{ marginBottom: '8px' }}>Performance & Budget Carousel</h3>
+                <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 0 16px 0' }}>
+                  Edit the merged learning outcomes, NC II, work immersion, and budget carousel in real-time.
+                </p>
+              </div>
+
+              <div id="dashboard-stepper" style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '12px' }}>
+                {perfSteps.map((s, idx) => (
+                  <button
+                    key={s.title}
+                    type="button"
+                    className={`dashboard-stepper-btn ${idx === perfCurrentStep ? 'active' : ''}`}
+                    onClick={() => handlePerfStepChange(idx)}
+                    style={{ padding: '8px 10px' }}
+                  >
+                    <span className="dashboard-stepper-num">{String(idx + 1).padStart(2, '0')}</span>
+                    <span className="dashboard-stepper-label" style={{ fontSize: '12px' }}>{s.title}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '10px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Active insight panel
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                  {perfPanels.map((panel, panelIdx) => (
+                    <button
+                      key={panel.title}
+                      type="button"
+                      className="btn-action"
+                      onClick={() => handlePerfActivePanelChange(panelIdx)}
+                      style={{
+                        background: panelIdx === perfActivePanelIdx ? 'var(--vibe-accent)' : '#1e293b',
+                        borderColor: panelIdx === perfActivePanelIdx ? 'transparent' : '#334155',
+                        color: '#fff'
+                      }}
+                    >
+                      {panel.title}
+                    </button>
+                  ))}
+                </div>
+
+                {perfActivePanel && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13px', fontWeight: 'bold', color: '#94a3b8' }}>
+                      Status
+                      <input
+                        type="text"
+                        value={perfActivePanel.status}
+                        onChange={(e) => handlePerfPanelFieldChange('status', e.target.value)}
+                        style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#fff', padding: '8px 10px', outline: 'none' }}
+                      />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13px', fontWeight: 'bold', color: '#94a3b8' }}>
+                      Finding
+                      <textarea
+                        className="notes-textarea"
+                        value={perfActivePanel.finding}
+                        onChange={(e) => handlePerfPanelFieldChange('finding', e.target.value)}
+                        style={{ height: '72px', background: '#1e293b', borderColor: '#334155' }}
+                      />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13px', fontWeight: 'bold', color: '#e0a96d' }}>
+                      Recommended Action
+                      <textarea
+                        className="notes-textarea"
+                        value={perfActivePanel.action}
+                        onChange={(e) => handlePerfPanelFieldChange('action', e.target.value)}
+                        style={{ height: '72px', background: '#1e293b', borderColor: '#334155' }}
+                      />
+                    </label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#94a3b8' }}>Detail Bullets</span>
+                      {(perfActivePanel.bullets || []).map((bullet: string, bulletIdx: number) => (
+                        <textarea
+                          key={bulletIdx}
+                          className="notes-textarea"
+                          value={bullet}
+                          onChange={(e) => handlePerfPanelBulletChange(bulletIdx, e.target.value)}
+                          style={{ height: '48px', background: '#1e293b', borderColor: '#334155', fontSize: '13px', padding: '8px' }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '10px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Metric controls
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                  {(perfCurrentStepData.metrics || []).map((metric, metricIdx) => (
+                    <div key={`${metric.label}-${metricIdx}`} className="dashboard-slider-item" style={{ background: '#1e293b', padding: '12px', borderRadius: '8px', border: '1px solid #334155' }}>
+                      <div className="dashboard-slider-header" style={{ color: '#cbd5e1', fontSize: '13px' }}>
+                        <span>{metric.label}</span>
+                        <span className="dashboard-slider-val" style={{ background: '#0f172a', fontSize: '12px' }}>{metric.unit || 'value'}</span>
+                      </div>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={metric.value}
+                        onChange={(e) => handlePerfMetricChange(metricIdx, 'value', Number(e.target.value))}
+                        style={{ width: '100%', boxSizing: 'border-box', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', padding: '8px 10px', outline: 'none' }}
+                      />
+                      {typeof metric.previous === 'number' && (
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={metric.previous}
+                          onChange={(e) => handlePerfMetricChange(metricIdx, 'previous', Number(e.target.value))}
+                          title="Previous value"
+                          style={{ width: '100%', boxSizing: 'border-box', marginTop: '8px', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#cbd5e1', padding: '8px 10px', outline: 'none' }}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {perfCurrentStepData.budgetRows && (
+                <div style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '10px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    SOB budget rows
+                  </div>
+                  {perfCurrentStepData.budgetRows.map((row, rowIdx) => (
+                    <div key={row.label} style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px', padding: '14px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                      <div style={{ gridColumn: '1 / -1', color: '#fff', fontWeight: 800 }}>{row.label}</div>
+                      {(['allocation', 'downloaded', 'liquidated', 'tax', 'utilized', 'utilization'] as BudgetRowNumericField[]).map((field) => (
+                        <label key={field} style={{ display: 'flex', flexDirection: 'column', gap: '5px', color: '#94a3b8', fontSize: '12px', fontWeight: 700 }}>
+                          {field}
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={row[field]}
+                            onChange={(e) => handlePerfBudgetRowChange(rowIdx, field, Number(e.target.value))}
+                            style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', padding: '7px 8px', outline: 'none' }}
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )}
             </section>
           )}
 
@@ -850,16 +848,16 @@ export default function Editor() {
                 {((appState.characterization?.steps || defaultState.characterization.steps)[appState.characterization?.currentStep ?? defaultState.characterization.currentStep]?.domains || []).map((dom: any, domIdx: number) => {
                   const isActive = (appState.characterization?.activeDomainIdx ?? 0) === domIdx;
                   return (
-                    <div 
-                      key={dom.name} 
+                    <div
+                      key={dom.name}
                       onClick={() => handleCharActiveDomainChange(domIdx)}
-                      style={{ 
-                        background: '#0f172a', 
-                        padding: '16px', 
-                        borderRadius: '10px', 
-                        border: isActive ? '2px solid var(--vibe-accent)' : '1px solid #334155', 
-                        display: 'flex', 
-                        flexDirection: 'column', 
+                      style={{
+                        background: '#0f172a',
+                        padding: '16px',
+                        borderRadius: '10px',
+                        border: isActive ? '2px solid var(--vibe-accent)' : '1px solid #334155',
+                        display: 'flex',
+                        flexDirection: 'column',
                         gap: isActive ? '14px' : '0px',
                         cursor: 'pointer',
                         transition: 'all 0.3s ease',
@@ -869,8 +867,8 @@ export default function Editor() {
                         <span style={{ fontWeight: 'bold', fontSize: '15px', color: isActive ? 'var(--vibe-accent)' : '#fff' }}>{dom.name}</span>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }} onClick={e => e.stopPropagation()}>
                           <span style={{ fontSize: '12px', color: '#94a3b8' }}>Status:</span>
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             value={dom.status}
                             onChange={(e) => handleCharDataChange(appState.characterization?.currentStep ?? defaultState.characterization.currentStep, domIdx, 'status', e.target.value)}
                             style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#fff', padding: '4px 8px', fontSize: '12px', outline: 'none' }}
