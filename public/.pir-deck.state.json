@@ -1,6 +1,6 @@
 {
   "theme": "slate",
-  "transition": "fade",
+  "transition": "slide",
   "mode": "presenter",
   "notes": {},
   "slides": {},
@@ -109,7 +109,7 @@
   },
   "characterization": {
     "currentStep": 2,
-    "activeDomainIdx": 2,
+    "activeDomainIdx": 0,
     "steps": [
       {
         "title": "Equipment & Assessment",
