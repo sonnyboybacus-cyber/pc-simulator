@@ -6,6 +6,8 @@ import {
   PerformanceMetric,
   PhilIriDataset,
   PhilIriLevels,
+  PhotoAsset,
+  getAssetPath,
 } from "@/lib/store";
 
 // ==========================================
@@ -60,6 +62,10 @@ export const PerformanceBudgetCarousel = ({
   const step = safeStepData[safeCurrentStep] || { title: "", subtitle: "", visual: "learning", metrics: [], panels: [] };
   const panels = step.panels || [];
   const safeActivePanelIdx = Math.max(0, Math.min(activePanelIdx ?? 0, Math.max(0, panels.length - 1)));
+  const photos = step.photos || [];
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [galleryIndex, setGalleryIndex] = useState(0);
+  const safeGalleryIndex = Math.max(0, Math.min(galleryIndex, Math.max(0, photos.length - 1)));
 
   const updatePanelField = (panelIdx: number, field: keyof PerformancePanel, value: string) => {
     const nextPanels = panels.map((panel, idx) => idx === panelIdx ? { ...panel, [field]: value } : panel);
@@ -96,10 +102,22 @@ export const PerformanceBudgetCarousel = ({
 
       <div style={{ flex: 1, display: "flex", gap: "36px", minHeight: 0 }}>
         <div className="dashboard-card-glass" style={{ flex: 1.2, display: "flex", flexDirection: "column", padding: "30px", overflow: "hidden" }}>
-          <div style={{ marginBottom: "18px" }}>
-            <div style={{ fontSize: "18px", fontWeight: 800, color: "#f5a623", textTransform: "uppercase", letterSpacing: "0.6px" }}>Performance & Budget</div>
-            <h3 style={{ fontSize: "34px", lineHeight: 1.1, fontWeight: 900, color: "#0a2f52", margin: "6px 0 4px" }}>{step.title}</h3>
-            <div style={{ fontSize: "20px", color: "#5b6b7d", fontWeight: 700 }}>{step.subtitle}</div>
+          <div style={{ marginBottom: "18px", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "20px" }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: "18px", fontWeight: 800, color: "#f5a623", textTransform: "uppercase", letterSpacing: "0.6px" }}>Performance & Budget</div>
+              <h3 style={{ fontSize: "34px", lineHeight: 1.1, fontWeight: 900, color: "#0a2f52", margin: "6px 0 4px" }}>{step.title}</h3>
+              <div style={{ fontSize: "20px", color: "#5b6b7d", fontWeight: 700 }}>{step.subtitle}</div>
+            </div>
+            {step.visual === "certification" && photos.length > 0 && (
+              <NCIIPhotoLauncher
+                photos={photos}
+                previewPhoto={step.previewPhoto}
+                onOpen={() => {
+                  setGalleryIndex(0);
+                  setGalleryOpen(true);
+                }}
+              />
+            )}
           </div>
           <div style={{ flex: 1, minHeight: 0 }}>
             <PerformanceBudgetVisual step={step} activePanelIdx={safeActivePanelIdx} />
@@ -188,6 +206,16 @@ export const PerformanceBudgetCarousel = ({
           })}
         </div>
       </div>
+      {galleryOpen && photos.length > 0 && (
+        <PhotoCarouselModal
+          photos={photos}
+          activeIndex={safeGalleryIndex}
+          onClose={() => setGalleryOpen(false)}
+          onPrev={() => setGalleryIndex((idx) => (idx - 1 + photos.length) % photos.length)}
+          onNext={() => setGalleryIndex((idx) => (idx + 1) % photos.length)}
+          onSelect={(idx) => setGalleryIndex(idx)}
+        />
+      )}
     </div>
   );
 };
@@ -195,6 +223,177 @@ export const PerformanceBudgetCarousel = ({
 // ==========================================
 // --- Sub-components & Visualizers ---
 // ==========================================
+
+const NCIIPhotoLauncher = ({ photos, previewPhoto, onOpen }: { photos: PhotoAsset[]; previewPhoto?: PhotoAsset; onOpen: () => void }) => {
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const preview = previewPhoto || photos[0];
+
+  return (
+    <div style={{ position: "relative", flex: "0 0 auto" }}>
+      <button
+        type="button"
+        onClick={onOpen}
+        onMouseEnter={() => setPreviewVisible(true)}
+        onMouseLeave={() => setPreviewVisible(false)}
+        onFocus={() => setPreviewVisible(true)}
+        onBlur={() => setPreviewVisible(false)}
+        aria-label="Open NC II photo carousel"
+        title="Open NC II photos"
+        style={{
+          width: "46px",
+          height: "46px",
+          borderRadius: "999px",
+          border: "1px solid rgba(10,47,82,0.14)",
+          background: "#fff",
+          color: "#0a2f52",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          boxShadow: "0 8px 20px rgba(10,47,82,0.12)",
+          transition: "transform 0.2s ease, color 0.2s ease, border-color 0.2s ease"
+        }}
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" aria-hidden="true">
+          <path d="M5 12h14" strokeLinecap="round" />
+          <path d="M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {previewVisible && preview && (
+        <div
+          style={{
+            position: "absolute",
+            right: 0,
+            top: "54px",
+            width: "112px",
+            height: "112px",
+            borderRadius: "8px",
+            overflow: "hidden",
+            background: "#fff",
+            border: "3px solid #fff",
+            boxShadow: "0 16px 32px rgba(10,47,82,0.24)",
+            zIndex: 20
+          }}
+        >
+          <img src={getAssetPath(preview.src)} alt={preview.alt} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        </div>
+      )}
+    </div>
+  );
+};
+
+const PhotoCarouselModal = ({
+  photos,
+  activeIndex,
+  onClose,
+  onPrev,
+  onNext,
+  onSelect
+}: {
+  photos: PhotoAsset[];
+  activeIndex: number;
+  onClose: () => void;
+  onPrev: () => void;
+  onNext: () => void;
+  onSelect: (idx: number) => void;
+}) => {
+  const activePhoto = photos[activeIndex];
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="NC II photo carousel"
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 3000,
+        background: "rgba(4, 11, 22, 0.78)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "42px"
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: "min(980px, 92vw)",
+          height: "min(680px, 86vh)",
+          background: "#081527",
+          border: "1px solid rgba(255,255,255,0.16)",
+          borderRadius: "8px",
+          boxShadow: "0 24px 70px rgba(0,0,0,0.45)",
+          display: "grid",
+          gridTemplateRows: "auto 1fr auto",
+          overflow: "hidden"
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+          <div>
+            <div style={{ fontSize: "12px", fontWeight: 900, color: "#f5a623", textTransform: "uppercase", letterSpacing: "0.8px" }}>NC II Section Photos</div>
+            <div style={{ fontSize: "18px", fontWeight: 900, color: "#fff", marginTop: "3px" }}>Photo {activeIndex + 1} of {photos.length}</div>
+          </div>
+          <button type="button" onClick={onClose} aria-label="Close NC II photo carousel" style={{ width: "40px", height: "40px", borderRadius: "999px", border: "1px solid rgba(255,255,255,0.22)", background: "transparent", color: "#fff", cursor: "pointer", fontSize: "24px", lineHeight: 1 }}>×</button>
+        </div>
+
+        <div style={{ position: "relative", minHeight: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "#030912" }}>
+          <button type="button" onClick={onPrev} aria-label="Previous NC II photo" style={modalArrowStyle("left")}>‹</button>
+          {activePhoto && (
+            <img
+              src={getAssetPath(activePhoto.src)}
+              alt={activePhoto.alt}
+              style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+            />
+          )}
+          <button type="button" onClick={onNext} aria-label="Next NC II photo" style={modalArrowStyle("right")}>›</button>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "center", gap: "10px", padding: "14px 18px", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+          {photos.map((photo, idx) => (
+            <button
+              key={photo.src}
+              type="button"
+              onClick={() => onSelect(idx)}
+              aria-label={`Show NC II photo ${idx + 1}`}
+              style={{
+                width: "54px",
+                height: "40px",
+                borderRadius: "5px",
+                border: idx === activeIndex ? "2px solid #f5a623" : "2px solid transparent",
+                padding: 0,
+                overflow: "hidden",
+                cursor: "pointer",
+                opacity: idx === activeIndex ? 1 : 0.7,
+                background: "transparent"
+              }}
+            >
+              <img src={getAssetPath(photo.src)} alt="" aria-hidden="true" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const modalArrowStyle = (side: "left" | "right"): React.CSSProperties => ({
+  position: "absolute",
+  [side]: "18px",
+  top: "50%",
+  transform: "translateY(-50%)",
+  width: "48px",
+  height: "48px",
+  borderRadius: "999px",
+  border: "1px solid rgba(255,255,255,0.24)",
+  background: "rgba(8,21,39,0.72)",
+  color: "#fff",
+  cursor: "pointer",
+  fontSize: "38px",
+  lineHeight: 1,
+  zIndex: 2
+});
 
 const EditableInsight = ({
   label,

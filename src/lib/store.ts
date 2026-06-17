@@ -34,6 +34,11 @@ export type PerformancePanel = {
   bullets: string[];
 };
 
+export type PhotoAsset = {
+  src: string;
+  alt: string;
+};
+
 export type BudgetRow = {
   label: string;
   allocation: number;
@@ -64,6 +69,8 @@ export type PerformanceBudgetStep = {
   panels: PerformancePanel[];
   budgetRows?: BudgetRow[];
   philIri?: PhilIriDataset[];
+  photos?: PhotoAsset[];
+  previewPhoto?: PhotoAsset;
   roster?: string[];
 };
 
@@ -455,6 +462,13 @@ export const defaultState = {
           { label: "Certified Learners", value: 16, target: 16, unit: "" },
           { label: "Partner Support", value: 100, target: 100, unit: "%" }
         ],
+        photos: [
+          { src: "/uploads/nc-ii/nc-ii-1.jpg", alt: "NC II certification photo 1" },
+          { src: "/uploads/nc-ii/nc-ii-2.jpg", alt: "NC II certification photo 2" },
+          { src: "/uploads/nc-ii/nc-ii-3.jpg", alt: "NC II certification photo 3" },
+          { src: "/uploads/nc-ii/nc-ii-4.jpg", alt: "NC II certification photo 4" }
+        ],
+        previewPhoto: { src: "/uploads/nc-ii/nc-ii-preview.png", alt: "NC II congratulations preview" },
         roster: [
           "Alguetas, Darene",
           "Banglos, Jelian",
