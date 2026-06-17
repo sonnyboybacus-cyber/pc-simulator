@@ -220,27 +220,41 @@
   .sp3-body { flex: 1; display: flex; gap: 40px; margin-top: 22px; min-height: 0; }
 
   .sp3-left { width: 42%; display: flex; }
+  .sp3-photo {
+    position: relative; flex: 1; border-radius: 20px; overflow: hidden;
+    box-shadow: 0 24px 60px rgba(10,47,82,0.22);
+    transition: box-shadow .3s ease, transform .3s ease;
+  }
+  .sp3-photo:hover { box-shadow: 0 30px 72px rgba(10,47,82,0.30); }
+  .sp3-photo image-slot { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .sp3-photo::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to top, rgba(7,26,46,0.92) 0%, rgba(7,26,46,0.45) 30%, rgba(7,26,46,0) 58%);
+  }
+  .sp3-photo-badge {
+    position: absolute; top: 22px; left: 22px; z-index: 2; pointer-events: none;
+    background: var(--sp3-gold); color: #fff; font-family: 'Outfit', sans-serif;
+    font-size: 15px; font-weight: 800; padding: 6px 14px; border-radius: 30px; letter-spacing: 1px;
+  }
+  .sp3-photo-caption { position: absolute; left: 30px; right: 30px; bottom: 28px; z-index: 2; pointer-events: none; color: #fff; }
+  .sp3-photo-caption .name { font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 900; line-height: 1.12; text-shadow: 0 2px 14px rgba(0,0,0,0.45); }
+  .sp3-photo-caption .meta { font-family: 'Outfit', sans-serif; font-size: 18px; color: var(--sp3-gold); font-weight: 700; margin-top: 8px; }
 
   .sp3-right { flex: 1; display: flex; flex-direction: column; gap: 22px; min-height: 0; }
-  .sp3-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .sp3-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px 20px; }
   .sp3-card {
-    position: relative; background: #fff; border: 1px solid #cbd5e1; border-radius: 16px;
-    padding: 20px 24px; overflow: hidden; cursor: default;
-    transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease;
+    position: relative; background: transparent; border: 0; border-radius: 0;
+    border-bottom: 3.5px solid var(--sp3-gold);
+    padding: 8px 0 10px 0; display: flex; align-items: baseline; gap: 10px; cursor: default;
+    transition: border-color .24s ease;
   }
-  .sp3-card::before {
-    content: ""; position: absolute; top: 0; left: 0; height: 4px; width: 0;
-    background: var(--sp3-gold); transition: width .3s ease;
-  }
-  .sp3-card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(10,47,82,0.12); border-color: var(--sp3-gold); }
-  .sp3-card:hover::before { width: 100%; }
-  .sp3-card .ico { width: 32px; height: 32px; color: var(--sp3-gold); margin-bottom: 8px; }
-  .sp3-card .num { font-family: 'Outfit', sans-serif; font-size: 54px; font-weight: 900; color: var(--sp3-navy); line-height: 1; }
-  .sp3-card .lbl { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 600; color: #475569; margin-top: 6px; }
-  .sp3-card.gold { background: #fff7ed; border-color: #ffedd5; }
+  .sp3-card:hover { border-color: var(--sp3-navy); }
+  .sp3-card .num { font-family: 'Outfit', sans-serif; font-size: 42px; font-weight: 900; color: var(--sp3-navy); line-height: 1; }
+  .sp3-card .lbl { font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 700; color: #475569; }
+  .sp3-card.gold { border-bottom-color: #ea580c; }
   .sp3-card.gold .num { color: #ea580c; }
   .sp3-card.gold .lbl { color: #c2410c; }
-  .sp3-card.gold .ico { color: #ea580c; }
+  .sp3-card.gold:hover { border-color: #ea580c; }
 
   .sp3-panel {
     flex: 1; min-height: 0; display: flex; flex-direction: column;
@@ -361,51 +375,44 @@
       <p style="font-size: 22px; color: #5b6b7d; line-height: 1.4; margin-top: 6px; max-width: 900px;">A small rural integrated school serving K–12 learners in Purok 1, Manaka, Ozamiz City — established 1935.</p>
 
       <div class="sp3-body">
-        <!-- LEFT · School Identity Text (No photo box) -->
-        <div class="sp3-left" style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 40px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 20px; box-shadow: 0 10px 30px rgba(15,23,42,0.04); min-height: 380px;">
-          <div style="font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: var(--sp3-gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px;">Established 1935</div>
-          <h1 style="font-family: 'Outfit', sans-serif; font-size: 46px; font-weight: 900; color: var(--sp3-navy); line-height: 1.25; margin: 0 0 24px 0; padding-bottom: 20px; border-bottom: 4px solid var(--sp3-gold); width: 100%;">
-            Jacinto Nemeño Integrated School
-          </h1>
-          <p style="font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 600; color: #475569; line-height: 1.6; margin: 0;">
-            School ID: 501206 <br/>
-            Purok 1, Manaka, <br/>
-            Ozamiz City
-          </p>
+        <!-- LEFT · Interactive Photo Hero -->
+        <div class="sp3-left">
+          <div class="sp3-photo">
+            <image-slot id="school-photo" src="./uploads/Gemini_Generated_Image_ddu677ddu677ddu6.png" shape="rounded" radius="20" fit="cover" placeholder="Drop a photo of the school"></image-slot>
+            <div class="sp3-photo-badge">EST · 1935</div>
+            <div class="sp3-photo-caption">
+              <div class="name">Jacinto Nemeño Integrated School</div>
+              <div class="meta">School ID 501206 · Purok 1, Manaka, Ozamiz City</div>
+            </div>
+          </div>
         </div>
 
         <!-- RIGHT · KPIs + tabbed details -->
         <div class="sp3-right">
           <div class="sp3-kpis">
             <div class="sp3-card">
-              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              <div class="num" data-count="176">176</div>
-              <div class="lbl">Learners</div>
+              <span class="num" data-count="176">176</span>
+              <span class="lbl">Learners</span>
             </div>
             <div class="sp3-card">
-              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              <div class="num" data-count="16">16</div>
-              <div class="lbl">Teachers</div>
+              <span class="num" data-count="16">16</span>
+              <span class="lbl">Teachers</span>
             </div>
             <div class="sp3-card">
-              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9h.01M9 13h.01M9 17h.01"/></svg>
-              <div class="num" data-count="14">14</div>
-              <div class="lbl">Classrooms</div>
+              <span class="num" data-count="14">14</span>
+              <span class="lbl">Classrooms</span>
             </div>
             <div class="sp3-card gold">
-              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-              <div class="num">1:15</div>
-              <div class="lbl">Learner–teacher</div>
+              <span class="num">1:15</span>
+              <span class="lbl">Learner–teacher</span>
             </div>
             <div class="sp3-card gold">
-              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-              <div class="num">1:15</div>
-              <div class="lbl">Classroom–learner</div>
+              <span class="num">1:15</span>
+              <span class="lbl">Classroom–learner</span>
             </div>
             <div class="sp3-card">
-              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 3 6 3s6-2 6-3v-5"/></svg>
-              <div class="num">K–12</div>
-              <div class="lbl">Integrated</div>
+              <span class="num">K–12</span>
+              <span class="lbl">Integrated</span>
             </div>
           </div>
 
