@@ -1,18 +1,11 @@
 {
-  "theme": "slate",
+  "theme": "deped",
   "transition": "fade",
-  "mode": "editor",
+  "mode": "presenter",
   "notes": {},
-  "slides": {
-    "5": {
-      "texts": {
-        "17": "Limited provision; many resources outdated (pandemic-era)."
-      },
-      "charts": {}
-    }
-  },
+  "slides": {},
   "dashboard": {
-    "currentStep": 0,
+    "currentStep": 4,
     "steps": [
       {
         "title": "Kindergarten",
@@ -21,7 +14,7 @@
           "Actual"
         ],
         "values": [
-          9,
+          7,
           8
         ],
         "max": 20,
