@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { defaultState, SavedPerformanceBudgetState, PerformanceBudgetState, PerformanceBudgetStep, PerformanceMetric, PerformancePanel, BudgetRow, BudgetRowNumericField, PerformanceBudgetFieldValue } from "@/lib/store";
+import { defaultState, SavedPerformanceBudgetState, PerformanceBudgetState, PerformanceBudgetStep, PerformanceMetric, PerformancePanel, BudgetRow, BudgetRowNumericField, PerformanceBudgetFieldValue, getAssetPath, mergeState } from "@/lib/store";
 import { getStepIcon } from "@/components/EnrolmentDashboard";
 
 export default function Editor() {
@@ -52,69 +52,33 @@ export default function Editor() {
     const loadData = async () => {
       let savedState = { ...defaultState };
       try {
-        const stateRes = await fetch('/.pir-deck.state.json?t=' + Date.now());
+        const stateRes = await fetch(getAssetPath('/.pir-deck.state.json?t=' + Date.now()));
         if (stateRes.ok) {
           const stateData = await stateRes.json();
-          const savedPerformanceBudget = stateData.performanceBudget as SavedPerformanceBudgetState | undefined;
-          savedState = {
-            ...defaultState,
-            ...stateData,
-            notes: stateData.notes || {},
-            slides: stateData.slides || {},
-            dashboard: {
-              currentStep: stateData.dashboard?.currentStep ?? defaultState.dashboard.currentStep,
-              steps: defaultState.dashboard.steps.map((step: any, idx: number) => ({
-                ...step,
-                ...(stateData.dashboard?.steps?.[idx] || {})
-              }))
-            },
-            characterization: {
-              currentStep: stateData.characterization?.currentStep ?? defaultState.characterization.currentStep,
-              activeDomainIdx: stateData.characterization?.activeDomainIdx ?? defaultState.characterization.activeDomainIdx ?? 0,
-              steps: defaultState.characterization.steps.map((step: any, idx: number) => ({
-                ...step,
-                ...(stateData.characterization?.steps?.[idx] || {}),
-                domains: step.domains.map((dom: any, dIdx: number) => ({
-                  ...dom,
-                  ...(stateData.characterization?.steps?.[idx]?.domains?.[dIdx] || {})
-                }))
-              }))
-            },
-            performanceBudget: {
-              currentStep: savedPerformanceBudget?.currentStep ?? defaultState.performanceBudget.currentStep,
-              activePanelIdx: savedPerformanceBudget?.activePanelIdx ?? defaultState.performanceBudget.activePanelIdx ?? 0,
-              steps: defaultState.performanceBudget.steps.map((step, idx) => {
-                const savedStep = savedPerformanceBudget?.steps?.[idx] || {};
-                return {
-                  ...step,
-                  ...savedStep,
-                  metrics: (step.metrics || []).map((metric, metricIdx) => ({
-                    ...metric,
-                    ...(savedStep.metrics?.[metricIdx] || {})
-                  })),
-                  budgetRows: step.budgetRows
-                    ? step.budgetRows.map((row, rowIdx) => ({
-                      ...row,
-                      ...(savedStep.budgetRows?.[rowIdx] || {})
-                    }))
-                    : undefined,
-                  panels: (step.panels || []).map((panel, panelIdx) => ({
-                    ...panel,
-                    ...(savedStep.panels?.[panelIdx] || {}),
-                    bullets: savedStep.panels?.[panelIdx]?.bullets || panel.bullets
-                  }))
-                };
-              })
-            }
-          };
+          savedState = mergeState(stateData);
         }
       } catch (err) {
         console.log('No saved state found or error, using defaults.');
       }
+
+      // Check localStorage for overrides
+      try {
+        const localStateStr = localStorage.getItem('pir-deck-state');
+        if (localStateStr) {
+          const localState = JSON.parse(localStateStr);
+          savedState = mergeState({
+            ...savedState,
+            ...localState
+          });
+        }
+      } catch (e) {
+        console.error('Failed to load state from localStorage:', e);
+      }
+
       setAppState(savedState);
 
       try {
-        const htmlRes = await fetch('/PIR 2026.dc.html');
+        const htmlRes = await fetch(getAssetPath('/PIR 2026.dc.html'));
         if (htmlRes.ok) {
           const htmlText = await htmlRes.text();
           const parser = new DOMParser();
@@ -147,7 +111,13 @@ export default function Editor() {
 
   const saveState = async (stateToSave: any) => {
     try {
-      await fetch('/api/save-state', {
+      localStorage.setItem('pir-deck-state', JSON.stringify(stateToSave));
+    } catch (e) {
+      console.error('Failed to save state to localStorage:', e);
+    }
+
+    try {
+      await fetch(getAssetPath('/api/save-state'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -155,7 +125,7 @@ export default function Editor() {
         body: JSON.stringify(stateToSave),
       });
     } catch (err) {
-      console.error('Failed to save state:', err);
+      console.error('Failed to save state to server:', err);
     }
   };
 

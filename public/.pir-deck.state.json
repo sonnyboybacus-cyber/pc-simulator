@@ -257,7 +257,7 @@
   },
   "performanceBudget": {
     "currentStep": 0,
-    "activePanelIdx": 0,
+    "activePanelIdx": 1,
     "steps": [
       {
         "title": "Learning Outcomes",

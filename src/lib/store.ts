@@ -607,3 +607,72 @@ export const defaultState = {
     ]
   } as PerformanceBudgetState
 };
+
+export function getAssetPath(path: string): string {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  if (!basePath) return path;
+  if (path.startsWith(basePath)) return path;
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  return `${basePath}${cleanPath}`;
+}
+
+export function mergeState(stateData: any): any {
+  if (!stateData) return defaultState;
+  const savedPerformanceBudget = stateData.performanceBudget as SavedPerformanceBudgetState | undefined;
+  
+  return {
+    ...defaultState,
+    ...stateData,
+    theme: stateData.theme || defaultState.theme,
+    transition: stateData.transition || defaultState.transition,
+    mode: stateData.mode || defaultState.mode,
+    notes: stateData.notes || {},
+    slides: stateData.slides || {},
+    dashboard: {
+      currentStep: stateData.dashboard?.currentStep ?? defaultState.dashboard.currentStep,
+      steps: defaultState.dashboard.steps.map((step: any, idx: number) => ({
+        ...step,
+        ...(stateData.dashboard?.steps?.[idx] || {})
+      }))
+    },
+    characterization: {
+      currentStep: stateData.characterization?.currentStep ?? defaultState.characterization.currentStep,
+      activeDomainIdx: stateData.characterization?.activeDomainIdx ?? defaultState.characterization.activeDomainIdx ?? 0,
+      steps: defaultState.characterization.steps.map((step: any, idx: number) => ({
+        ...step,
+        ...(stateData.characterization?.steps?.[idx] || {}),
+        domains: step.domains.map((dom: any, dIdx: number) => ({
+          ...dom,
+          ...(stateData.characterization?.steps?.[idx]?.domains?.[dIdx] || {})
+        }))
+      }))
+    },
+    performanceBudget: {
+      currentStep: savedPerformanceBudget?.currentStep ?? defaultState.performanceBudget.currentStep,
+      activePanelIdx: savedPerformanceBudget?.activePanelIdx ?? defaultState.performanceBudget.activePanelIdx ?? 0,
+      steps: defaultState.performanceBudget.steps.map((step, idx) => {
+        const savedStep = savedPerformanceBudget?.steps?.[idx] || {};
+        return {
+          ...step,
+          ...savedStep,
+          metrics: (step.metrics || []).map((metric, metricIdx) => ({
+            ...metric,
+            ...(savedStep.metrics?.[metricIdx] || {})
+          })),
+          budgetRows: step.budgetRows
+            ? step.budgetRows.map((row, rowIdx) => ({
+                ...row,
+                ...(savedStep.budgetRows?.[rowIdx] || {})
+              }))
+            : undefined,
+          panels: (step.panels || []).map((panel, panelIdx) => ({
+            ...panel,
+            ...(savedStep.panels?.[panelIdx] || {}),
+            bullets: savedStep.panels?.[panelIdx]?.bullets || panel.bullets
+          }))
+        };
+      })
+    }
+  };
+}
+
