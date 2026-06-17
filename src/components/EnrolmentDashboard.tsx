@@ -113,60 +113,62 @@ export const EnrolmentDashboard = ({
                 {/* Right Area (Controls & Findings) */}
                 <div style={{ width: '38%', display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     {/* Sliders Control Card */}
-                    <div id="dashboard-controls-card" className="dashboard-card-glass" style={{ padding: '24px' }}>
-                        <div id="dashboard-controls-title" style={{ fontSize: '18px', fontWeight: 700, color: '#0a2f52', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Adjust Metrics</div>
-                        <div id="dashboard-sliders-list" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                            {(currentStep === 0 || currentStep === 1 || currentStep === 2) && step.years && (
-                                <>
-                                    <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingRight: '4px' }}>
-                                        {step.years.map((yr: string, yIdx: number) => (
-                                            <React.Fragment key={yr}>
-                                                <DashboardSlider label={`${yr} Target`} value={(step.targets || [])[yIdx]} min={currentStep === 0 ? 1 : 10} max={step.max} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(yIdx, true, val)} />
-                                                <DashboardSlider label={`${yr} Actual`} value={(step.actuals || [])[yIdx]} min={currentStep === 0 ? 1 : 10} max={step.max} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(yIdx, false, val)} />
-                                            </React.Fragment>
-                                        ))}
-                                    </div>
-                                </>
-                            )}
-                            {currentStep === 3 && (
-                                <>
-                                    <DashboardSlider label="Grade 11 Enrolment" value={step.values[0]} min={1} max={step.max} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(0, false, val)} />
-                                    <DashboardSlider label="Grade 12 Enrolment" value={step.values[1]} min={1} max={step.max} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(1, false, val)} />
-                                </>
-                            )}
-                            {currentStep === 4 && step.cohorts && (
-                                <>
-                                    <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingRight: '4px' }}>
-                                        {step.cohorts.map((cName: string, cIdx: number) => (
-                                            <DashboardSlider key={cName} label={`${cName} flow shift`} value={(step.flows || [])[cIdx]} min={-15} max={15} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(cIdx, false, val)} />
-                                        ))}
-                                    </div>
-                                </>
-                            )}
+                    {mode === 'editor' && (
+                        <div id="dashboard-controls-card" className="dashboard-card-glass" style={{ padding: '24px' }}>
+                            <div id="dashboard-controls-title" style={{ fontSize: '18px', fontWeight: 700, color: '#0a2f52', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Adjust Metrics</div>
+                            <div id="dashboard-sliders-list" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                                {(currentStep === 0 || currentStep === 1 || currentStep === 2) && step.years && (
+                                    <>
+                                        <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingRight: '4px' }}>
+                                            {step.years.map((yr: string, yIdx: number) => (
+                                                <React.Fragment key={yr}>
+                                                    <DashboardSlider label={`${yr} Target`} value={(step.targets || [])[yIdx]} min={currentStep === 0 ? 1 : 10} max={step.max} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(yIdx, true, val)} />
+                                                    <DashboardSlider label={`${yr} Actual`} value={(step.actuals || [])[yIdx]} min={currentStep === 0 ? 1 : 10} max={step.max} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(yIdx, false, val)} />
+                                                </React.Fragment>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                                {currentStep === 3 && (
+                                    <>
+                                        <DashboardSlider label="Grade 11 Enrolment" value={step.values[0]} min={1} max={step.max} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(0, false, val)} />
+                                        <DashboardSlider label="Grade 12 Enrolment" value={step.values[1]} min={1} max={step.max} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(1, false, val)} />
+                                    </>
+                                )}
+                                {currentStep === 4 && step.cohorts && (
+                                    <>
+                                        <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingRight: '4px' }}>
+                                            {step.cohorts.map((cName: string, cIdx: number) => (
+                                                <DashboardSlider key={cName} label={`${cName} flow shift`} value={(step.flows || [])[cIdx]} min={-15} max={15} disabled={mode !== 'editor'} onChange={(val) => handleSliderChange(cIdx, false, val)} />
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
                         </div>
-                    </div>
+                    )}
                     {/* Findings & Action Card */}
-                    <div id="dashboard-details-card" className="dashboard-card-glass" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px', padding: '24px' }}>
+                    <div id="dashboard-details-card" className="dashboard-card-glass" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '20px', padding: '24px' }}>
                         <div>
-                            <div style={{ fontSize: '14px', fontWeight: 800, color: '#9aa7b4', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>Finding</div>
+                            <div style={{ fontSize: '15px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>Finding</div>
                             <div
                                 className="no-edit"
                                 contentEditable={mode === 'editor'}
                                 suppressContentEditableWarning
                                 onBlur={(e) => handleBlurText('finding', e)}
-                                style={{ fontSize: '18px', lineHeight: '1.45', color: '#2c3e50', outline: 'none', border: mode === 'editor' ? '1px dashed var(--vibe-accent)' : 'none', borderRadius: '6px', padding: '6px', minHeight: '36px' }}
+                                style={{ fontSize: '22px', lineHeight: '1.5', color: '#0f172a', fontWeight: '500', outline: 'none', border: mode === 'editor' ? '1px dashed var(--vibe-accent)' : 'none', borderRadius: '6px', padding: '6px', minHeight: '36px' }}
                             >
                                 {step.finding}
                             </div>
                         </div>
                         <div style={{ borderLeft: '4px solid #f5a623', paddingLeft: '14px' }}>
-                            <div style={{ fontSize: '14px', fontWeight: 800, color: '#b9791a', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>Recommended Action</div>
+                            <div style={{ fontSize: '15px', fontWeight: 800, color: '#b9791a', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>Recommended Action</div>
                             <div
                                 className="no-edit"
                                 contentEditable={mode === 'editor'}
                                 suppressContentEditableWarning
                                 onBlur={(e) => handleBlurText('action', e)}
-                                style={{ fontSize: '18px', lineHeight: '1.45', color: '#0a2f52', fontWeight: 600, outline: 'none', border: mode === 'editor' ? '1px dashed var(--vibe-accent)' : 'none', borderRadius: '6px', padding: '6px', minHeight: '36px' }}
+                                style={{ fontSize: '22px', lineHeight: '1.5', color: '#0a2f52', fontWeight: 700, outline: 'none', border: mode === 'editor' ? '1px dashed var(--vibe-accent)' : 'none', borderRadius: '6px', padding: '6px', minHeight: '36px' }}
                             >
                                 {step.action}
                             </div>

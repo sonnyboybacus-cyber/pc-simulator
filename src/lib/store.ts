@@ -96,7 +96,7 @@ export type PerformanceBudgetFieldValue =
   | BudgetRow[];
 
 export const defaultState = {
-  theme: 'slate',
+  theme: 'sunset',
   transition: 'fade',
   mode: 'editor',
   notes: {

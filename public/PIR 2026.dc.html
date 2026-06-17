@@ -10,7 +10,7 @@
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900&amp;family=IBM+Plex+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900&amp;family=IBM+Plex+Mono:wght@400;500;600;700&amp;family=Outfit:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
 <script src="./image-slot.js"></script>
 <link rel="stylesheet" href="./presenter.css">
 <script src="./presenter.js"></script>
@@ -212,35 +212,19 @@
   }
 
   /* ===== Slide 3 · School Profile redesign ===== */
-  #slide-school-profile { --sp3-navy: #0a2f52; --sp3-gold: #f5a623; }
+  .sp3-body, section[data-label="School Profile"] { 
+    --sp3-navy: #0a2f52; 
+    --sp3-gold: #f97316; /* sunset orange vibe */
+    font-family: 'Outfit', sans-serif;
+  }
   .sp3-body { flex: 1; display: flex; gap: 40px; margin-top: 22px; min-height: 0; }
 
   .sp3-left { width: 42%; display: flex; }
-  .sp3-photo {
-    position: relative; flex: 1; border-radius: 20px; overflow: hidden;
-    box-shadow: 0 24px 60px rgba(10,47,82,0.22);
-    transition: box-shadow .3s ease, transform .3s ease;
-  }
-  .sp3-photo:hover { box-shadow: 0 30px 72px rgba(10,47,82,0.30); }
-  .sp3-photo image-slot { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .sp3-photo::after {
-    content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: linear-gradient(to top, rgba(7,26,46,0.92) 0%, rgba(7,26,46,0.45) 30%, rgba(7,26,46,0) 58%);
-  }
-  .sp3-photo-badge {
-    position: absolute; top: 22px; left: 22px; z-index: 2; pointer-events: none;
-    font-family: 'IBM Plex Mono', monospace; font-size: 17px; font-weight: 700; letter-spacing: 2px;
-    color: #0a2f52; background: var(--sp3-gold); padding: 8px 16px; border-radius: 999px;
-    box-shadow: 0 8px 22px rgba(0,0,0,0.28);
-  }
-  .sp3-photo-caption { position: absolute; left: 30px; right: 30px; bottom: 28px; z-index: 2; pointer-events: none; color: #fff; }
-  .sp3-photo-caption .name { font-size: 32px; font-weight: 800; line-height: 1.12; text-shadow: 0 2px 14px rgba(0,0,0,0.45); }
-  .sp3-photo-caption .meta { font-family: 'IBM Plex Mono', monospace; font-size: 18px; color: var(--sp3-gold); margin-top: 8px; }
 
   .sp3-right { flex: 1; display: flex; flex-direction: column; gap: 22px; min-height: 0; }
   .sp3-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .sp3-card {
-    position: relative; background: #fff; border: 1px solid #e7ecf2; border-radius: 16px;
+    position: relative; background: #fff; border: 1px solid #cbd5e1; border-radius: 16px;
     padding: 20px 24px; overflow: hidden; cursor: default;
     transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease;
   }
@@ -248,57 +232,57 @@
     content: ""; position: absolute; top: 0; left: 0; height: 4px; width: 0;
     background: var(--sp3-gold); transition: width .3s ease;
   }
-  .sp3-card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(10,47,82,0.16); border-color: rgba(245,166,35,0.55); }
+  .sp3-card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(10,47,82,0.12); border-color: var(--sp3-gold); }
   .sp3-card:hover::before { width: 100%; }
   .sp3-card .ico { width: 32px; height: 32px; color: var(--sp3-gold); margin-bottom: 8px; }
-  .sp3-card .num { font-family: 'IBM Plex Mono', monospace; font-size: 50px; font-weight: 700; color: var(--sp3-navy); line-height: 1; }
-  .sp3-card .lbl { font-size: 19px; color: #5b6b7d; margin-top: 6px; }
-  .sp3-card.gold { background: #fdf4e3; border-color: #f3d9a6; }
-  .sp3-card.gold .num { color: #b9791a; }
-  .sp3-card.gold .lbl { color: #95702a; }
-  .sp3-card.gold .ico { color: #b9791a; }
+  .sp3-card .num { font-family: 'Outfit', sans-serif; font-size: 54px; font-weight: 900; color: var(--sp3-navy); line-height: 1; }
+  .sp3-card .lbl { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 600; color: #475569; margin-top: 6px; }
+  .sp3-card.gold { background: #fff7ed; border-color: #ffedd5; }
+  .sp3-card.gold .num { color: #ea580c; }
+  .sp3-card.gold .lbl { color: #c2410c; }
+  .sp3-card.gold .ico { color: #ea580c; }
 
   .sp3-panel {
     flex: 1; min-height: 0; display: flex; flex-direction: column;
-    background: #fff; border: 1px solid #e7ecf2; border-radius: 16px; padding: 8px;
-    box-shadow: 0 4px 18px rgba(10,47,82,0.04);
+    background: #fff; border: 1px solid #cbd5e1; border-radius: 16px; padding: 8px;
+    box-shadow: 0 4px 18px rgba(10,47,82,0.03);
   }
   .sp3-tabs { display: flex; gap: 6px; padding: 6px; }
   .sp3-tab {
     flex: 1; border: 0; background: transparent; border-radius: 11px; padding: 13px 16px;
-    font: 700 19px/1 'Libre Franklin', sans-serif; color: #5b6b7d; cursor: pointer;
+    font: 800 20px/1 'Outfit', sans-serif; color: #475569; cursor: pointer;
     transition: background .2s ease, color .2s ease;
   }
   .sp3-tab[aria-selected="true"] { background: var(--sp3-navy); color: #fff; }
-  .sp3-tab:hover:not([aria-selected="true"]) { background: #eef3f8; color: var(--sp3-navy); }
+  .sp3-tab:hover:not([aria-selected="true"]) { background: #f1f5f9; color: var(--sp3-navy); }
   .sp3-tabpanel { padding: 4px 20px 14px; }
   .sp3-tabpanel[hidden] { display: none; }
   .sp3-row {
     display: flex; justify-content: space-between; align-items: center; gap: 20px;
-    padding: 14px 12px; border-radius: 10px; border-bottom: 1px solid #eef2f6; transition: background .18s ease;
+    padding: 14px 12px; border-radius: 10px; border-bottom: 1px solid #f1f5f9; transition: background .18s ease;
   }
   .sp3-row:last-child { border-bottom: 0; }
-  .sp3-row:hover { background: #f6f9fc; }
-  .sp3-row .k { font-size: 22px; color: #5b6b7d; }
-  .sp3-row .v { font-size: 22px; font-weight: 600; color: #16263a; text-align: right; }
+  .sp3-row:hover { background: #f8fafc; }
+  .sp3-row .k { font-family: 'Outfit', sans-serif; font-size: 21px; font-weight: 500; color: #475569; }
+  .sp3-row .v { font-family: 'Outfit', sans-serif; font-size: 21px; font-weight: 700; color: #0f172a; text-align: right; }
   .sp3-chips { display: flex; flex-wrap: wrap; gap: 12px; padding: 14px 12px; }
   .sp3-chip {
-    display: flex; align-items: center; gap: 10px; background: #f4f7fb; border: 1px solid #e3eaf2;
-    border-radius: 999px; padding: 12px 20px; font-size: 20px; font-weight: 600; color: var(--sp3-navy);
+    display: flex; align-items: center; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0;
+    border-radius: 999px; padding: 12px 20px; font-size: 19px; font-weight: 600; color: var(--sp3-navy);
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
   }
-  .sp3-chip:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(10,47,82,0.12); border-color: rgba(245,166,35,0.55); }
+  .sp3-chip:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(10,47,82,0.08); border-color: var(--sp3-gold); }
   .sp3-chip .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--sp3-gold); }
 
   @media (prefers-reduced-motion: no-preference) {
-    #slide-school-profile .sp3-left,
-    #slide-school-profile .sp3-kpis,
-    #slide-school-profile .sp3-panel {
-      opacity: 0; transform: translateY(16px); transition: opacity .55s ease, transform .55s ease;
-    }
-    #slide-school-profile.is-in .sp3-left { opacity: 1; transform: none; transition-delay: .05s; }
-    #slide-school-profile.is-in .sp3-kpis { opacity: 1; transform: none; transition-delay: .15s; }
-    #slide-school-profile.is-in .sp3-panel { opacity: 1; transform: none; transition-delay: .28s; }
+    /* Keep elements visible by default, run reveal animation when .is-in class is added */
+    section[data-label="School Profile"].is-in .sp3-left { animation: sp3Reveal .55s ease .05s both; }
+    section[data-label="School Profile"].is-in .sp3-kpis { animation: sp3Reveal .55s ease .15s both; }
+    section[data-label="School Profile"].is-in .sp3-panel { animation: sp3Reveal .55s ease .28s both; }
+  }
+  @keyframes sp3Reveal {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: none; }
   }
 </style>
 </helmet>
@@ -377,16 +361,17 @@
       <p style="font-size: 22px; color: #5b6b7d; line-height: 1.4; margin-top: 6px; max-width: 900px;">A small rural integrated school serving K–12 learners in Purok 1, Manaka, Ozamiz City — established 1935.</p>
 
       <div class="sp3-body">
-        <!-- LEFT · interactive photo hero -->
-        <div class="sp3-left">
-          <div class="sp3-photo">
-            <image-slot id="school-photo" src="./uploads/Gemini_Generated_Image_ddu677ddu677ddu6.png" shape="rounded" radius="20" fit="cover" placeholder="Drop a photo of the school"></image-slot>
-            <div class="sp3-photo-badge">EST · 1935</div>
-            <div class="sp3-photo-caption">
-              <div class="name">Jacinto Nemeño Integrated School</div>
-              <div class="meta">School ID 501206 · Purok 1, Manaka, Ozamiz City</div>
-            </div>
-          </div>
+        <!-- LEFT · School Identity Text (No photo box) -->
+        <div class="sp3-left" style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 40px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 20px; box-shadow: 0 10px 30px rgba(15,23,42,0.04); min-height: 380px;">
+          <div style="font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: var(--sp3-gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px;">Established 1935</div>
+          <h1 style="font-family: 'Outfit', sans-serif; font-size: 46px; font-weight: 900; color: var(--sp3-navy); line-height: 1.25; margin: 0 0 24px 0; padding-bottom: 20px; border-bottom: 4px solid var(--sp3-gold); width: 100%;">
+            Jacinto Nemeño Integrated School
+          </h1>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 600; color: #475569; line-height: 1.6; margin: 0;">
+            School ID: 501206 <br/>
+            Purok 1, Manaka, <br/>
+            Ozamiz City
+          </p>
         </div>
 
         <!-- RIGHT · KPIs + tabbed details -->
@@ -491,68 +476,92 @@
     <div style="height: 100%; display: flex; flex-direction: column; padding: 54px 90px; box-sizing: border-box;">
       <div class="mono" style="font-size: 22px; letter-spacing: 3px; text-transform: uppercase; color: #f5a623; font-weight: 600;">Enrollment Context · Action Matrix</div>
       <h2 style="font-size: 46px; font-weight: 800; color: #0a2f52; letter-spacing: -0.5px; margin-top: 6px;">Decreasing &amp; Fluctuating Enrollment</h2>
-      <div style="flex: 1; min-height: 0; overflow-y: auto; margin-top: 20px; display: flex; flex-direction: column; gap: 12px; padding-right: 8px;">
+      <div style="flex: 1; min-height: 0; margin-top: 24px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 24px;">
 
-        <details style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 0 28px;">
-          <summary style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; font-size: 25px; font-weight: 800; color: #0a2f52;"><span>1 · Programs Implemented</span><span class="dmark" style="color: #f5a623; font-size: 30px;">+</span></summary>
-          <ul style="margin: 0; padding: 0 0 20px 26px; font-size: 21px; line-height: 1.45; color: #2c3e50; display: flex; flex-direction: column; gap: 7px;">
+        <!-- Card 1: Programs Implemented -->
+        <div style="background: #ffffff; border-top: 5px solid #0284c7; border-left: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; border-radius: 16px; padding: 24px; box-shadow: 0 10px 25px rgba(15,23,42,0.04); display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+            <div style="background: #0284c7; color: #ffffff; font-size: 15px; font-weight: 900; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: monospace;">1</div>
+            <h3 style="margin: 0; font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.2px;">Programs Implemented</h3>
+          </div>
+          <ul style="margin: 0; padding-left: 20px; font-size: 17.5px; line-height: 1.5; color: #1e293b; display: flex; flex-direction: column; gap: 8px; flex: 1;">
             <li>Early Registration Campaign</li>
-            <li>Balik-Eskwela &amp; Oplan Balik-Eskwela programs</li>
-            <li>Learner Information System (LIS) updating and validation</li>
-            <li>School-based enrollment advocacy and orientation activities</li>
-            <li>Coordination with parents and barangay stakeholders during enrollment</li>
+            <li>Balik-Eskwela &amp; Oplan Balik-Eskwela</li>
+            <li>LIS updates &amp; validation</li>
+            <li>Advocacy &amp; school orientation</li>
+            <li>Parent &amp; Barangay coordination</li>
           </ul>
-        </details>
+        </div>
 
-        <details style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 0 28px;">
-          <summary style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; font-size: 25px; font-weight: 800; color: #0a2f52;"><span>2 · Limitations</span><span class="dmark" style="color: #f5a623; font-size: 30px;">+</span></summary>
-          <ul style="margin: 0; padding: 0 0 20px 26px; font-size: 21px; line-height: 1.45; color: #2c3e50; display: flex; flex-direction: column; gap: 7px;">
-            <li>Limited reach in remote/coastal areas → delayed or missed enrollment information and low awareness</li>
-            <li>Limited counseling personnel; family financial difficulties; learner mobility (relocation/employment)</li>
-            <li>Low parent participation (work schedules, language barriers, weak engagement structures)</li>
-            <li>Limited budget for sustained campaigns and outreach</li>
-            <li>Transportation and geographic barriers in far-flung areas</li>
+        <!-- Card 2: Limitations -->
+        <div style="background: #ffffff; border-top: 5px solid #ef4444; border-left: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; border-radius: 16px; padding: 24px; box-shadow: 0 10px 25px rgba(15,23,42,0.04); display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+            <div style="background: #ef4444; color: #ffffff; font-size: 15px; font-weight: 900; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: monospace;">2</div>
+            <h3 style="margin: 0; font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.2px;">Limitations</h3>
+          </div>
+          <ul style="margin: 0; padding-left: 20px; font-size: 17.5px; line-height: 1.5; color: #1e293b; display: flex; flex-direction: column; gap: 8px; flex: 1;">
+            <li><strong>Limited reach</strong> in remote areas</li>
+            <li><strong>Counseling personnel</strong> limits</li>
+            <li><strong>Low participation</strong> due to schedules</li>
+            <li><strong>Constrained budget</strong> for campaigns</li>
+            <li><strong>Geographic barriers</strong> in far areas</li>
           </ul>
-        </details>
+        </div>
 
-        <details style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 0 28px;">
-          <summary style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; font-size: 25px; font-weight: 800; color: #0a2f52;"><span>3 · To Strengthen</span><span class="dmark" style="color: #f5a623; font-size: 30px;">+</span></summary>
-          <ul style="margin: 0; padding: 0 0 20px 26px; font-size: 21px; line-height: 1.45; color: #2c3e50; display: flex; flex-direction: column; gap: 7px;">
-            <li>Early Registration &amp; Continuous Enrollment Advocacy Program</li>
-            <li>Oplan Balik-Eskwela institutionalization and expansion</li>
-            <li>Strengthened Community and Parent Engagement Program</li>
-            <li>Learner Tracking, Retention, and Re-enrollment Monitoring System</li>
-            <li>School-Community Partnership Strengthening (SGC + Barangay linkage)</li>
+        <!-- Card 3: To Strengthen -->
+        <div style="background: #ffffff; border-top: 5px solid #f59e0b; border-left: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; border-radius: 16px; padding: 24px; box-shadow: 0 10px 25px rgba(15,23,42,0.04); display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+            <div style="background: #f59e0b; color: #ffffff; font-size: 15px; font-weight: 900; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: monospace;">3</div>
+            <h3 style="margin: 0; font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.2px;">To Strengthen</h3>
+          </div>
+          <ul style="margin: 0; padding-left: 20px; font-size: 17.5px; line-height: 1.5; color: #1e293b; display: flex; flex-direction: column; gap: 8px; flex: 1;">
+            <li><strong>Enrollment Advocacy</strong> programs</li>
+            <li><strong>Balik-Eskwela</strong> institutionalization</li>
+            <li><strong>Community &amp; Parent</strong> engagement</li>
+            <li><strong>Learner Tracking</strong> and retention</li>
+            <li><strong>SGC &amp; Barangay</strong> local linkage</li>
           </ul>
-        </details>
+        </div>
 
-        <details style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 0 28px;">
-          <summary style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; font-size: 25px; font-weight: 800; color: #0a2f52;"><span>4 · To Implement / Introduce</span><span class="dmark" style="color: #f5a623; font-size: 30px;">+</span></summary>
-          <ul style="margin: 0; padding: 0 0 20px 26px; font-size: 21px; line-height: 1.45; color: #2c3e50; display: flex; flex-direction: column; gap: 7px;">
-            <li><strong>LOMP</strong> — Learner Outreach &amp; Mapping Program: locate remote learners, track enrolment annually</li>
-            <li><strong>CBEAT</strong> — Community-Based Enrollment Advocacy Teams (teachers, barangay partners, parent leaders)</li>
-            <li>Home-Based Learning Support &amp; Counseling for struggling learners and at-risk dropouts</li>
-            <li>JHS→SHS Continuity Pathway Program to reduce transition-year dropout</li>
-            <li>Integrated Literacy + Retention Intervention Program (reading gains ↔ retention)</li>
+        <!-- Card 4: To Implement / Introduce -->
+        <div style="background: #ffffff; border-top: 5px solid #f97316; border-left: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; border-radius: 16px; padding: 24px; box-shadow: 0 10px 25px rgba(15,23,42,0.04); display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+            <div style="background: #f97316; color: #ffffff; font-size: 15px; font-weight: 900; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: monospace;">4</div>
+            <h3 style="margin: 0; font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.2px;">To Implement / Introduce</h3>
+          </div>
+          <ul style="margin: 0; padding-left: 20px; font-size: 17.5px; line-height: 1.5; color: #1e293b; display: flex; flex-direction: column; gap: 8px; flex: 1;">
+            <li><strong>LOMP</strong>: Learner Outreach Program</li>
+            <li><strong>CBEAT</strong>: Community Advocacy Teams</li>
+            <li><strong>Home-based learning</strong> &amp; counseling</li>
+            <li><strong>JHS→SHS Continuity</strong> pathways</li>
+            <li><strong>Literacy + Retention</strong> intervention</li>
           </ul>
-        </details>
+        </div>
 
-        <details style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 0 28px;">
-          <summary style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; font-size: 25px; font-weight: 800; color: #0a2f52;"><span>5 · Why Not Fully Addressed by the SDO</span><span class="dmark" style="color: #f5a623; font-size: 30px;">+</span></summary>
-          <ul style="margin: 0; padding: 0 0 20px 26px; font-size: 21px; line-height: 1.45; color: #2c3e50; display: flex; flex-direction: column; gap: 7px;">
-            <li>SDO works within approved budgets from higher government, which may not fully cover campaigns, transportation, personnel, and outreach</li>
-            <li>Enrollment is driven by socio-economic factors (poverty, migration, relocation) needing LGU, social-welfare, and barangay collaboration beyond the SDO mandate</li>
-            <li>Limited division manpower and competing priorities constrain field monitoring, child-finding, and sustained technical assistance</li>
+        <!-- Card 5: Why Not Addressed by SDO -->
+        <div style="background: #ffffff; border-top: 5px solid #6366f1; border-left: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; border-radius: 16px; padding: 24px; box-shadow: 0 10px 25px rgba(15,23,42,0.04); display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+            <div style="background: #6366f1; color: #ffffff; font-size: 15px; font-weight: 900; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: monospace;">5</div>
+            <h3 style="margin: 0; font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.2px;">Why Not Addressed by SDO</h3>
+          </div>
+          <ul style="margin: 0; padding-left: 20px; font-size: 17.5px; line-height: 1.5; color: #1e293b; display: flex; flex-direction: column; gap: 8px; flex: 1;">
+            <li><strong>Approved budget limits</strong> from central Gov</li>
+            <li><strong>Socio-economic factors</strong> (migration, finances)</li>
+            <li><strong>Manpower constraints</strong> for field monitoring</li>
           </ul>
-        </details>
+        </div>
 
-        <details style="background: #fff; border: 1px solid #e7ecf2; border-radius: 14px; padding: 0 28px;">
-          <summary style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; font-size: 25px; font-weight: 800; color: #0a2f52;"><span>6 · Programs to Sustain</span><span class="dmark" style="color: #f5a623; font-size: 30px;">+</span></summary>
-          <ul style="margin: 0; padding: 0 0 20px 26px; font-size: 21px; line-height: 1.45; color: #2c3e50; display: flex; flex-direction: column; gap: 7px;">
-            <li><strong>JESP</strong> — Enrollment Sustainability &amp; Partnership Program: stronger LGU/barangay/parent partnerships, a yearly sustainability plan, and stakeholder mobilization for retention</li>
-            <li><strong>Learner Assistance &amp; Retention Support</strong>: identify learners needing support, refer/link to agencies, and strengthen school-based interventions for vulnerable learners</li>
+        <!-- Card 6: Programs to Sustain -->
+        <div style="background: #ffffff; border-top: 5px solid #10b981; border-left: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; border-radius: 16px; padding: 24px; box-shadow: 0 10px 25px rgba(15,23,42,0.04); display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+            <div style="background: #10b981; color: #ffffff; font-size: 15px; font-weight: 900; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: monospace;">6</div>
+            <h3 style="margin: 0; font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.2px;">Programs to Sustain</h3>
+          </div>
+          <ul style="margin: 0; padding-left: 20px; font-size: 17.5px; line-height: 1.5; color: #1e293b; display: flex; flex-direction: column; gap: 8px; flex: 1;">
+            <li><strong>JESP</strong>: Enrolment Sustainability</li>
+            <li><strong>Learner Assistance</strong> &amp; retention support</li>
           </ul>
-        </details>
+        </div>
 
       </div>
     </div>
@@ -992,7 +1001,7 @@
   }
 
   function init() {
-    const slide = document.getElementById('slide-school-profile');
+    const slide = document.querySelector('section[data-label="School Profile"]') || document.getElementById('slide-school-profile');
     if (slide) { setup(slide); return true; }
     return false;
   }

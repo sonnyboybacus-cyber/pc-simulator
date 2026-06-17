@@ -75,6 +75,14 @@ export default function Editor() {
         console.error('Failed to load state from localStorage:', e);
       }
 
+      // Clear old saved texts for slide 3 to let the new layout render correctly
+      if (savedState.slides && savedState.slides[2]) {
+        delete savedState.slides[2];
+        try {
+          localStorage.setItem('pir-deck-state', JSON.stringify(savedState));
+        } catch (e) {}
+      }
+
       setAppState(savedState);
 
       try {
@@ -904,11 +912,38 @@ export default function Editor() {
 
           {/* Speaker Notes Bubble */}
           <section className="editor-card" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, background: 'transparent', border: 'none', boxShadow: 'none', padding: 0 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--vibe-accent)', fontWeight: 'bold', fontSize: '14px' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span>Speaker Notes Bubble</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: 'var(--vibe-accent)', fontWeight: 'bold', fontSize: '14px', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span>Speaker Notes Bubble</span>
+              </div>
+              <button
+                type="button"
+                className="popout-button"
+                onClick={() => window.open(getAssetPath('/notes/'), 'speaker-notes', 'width=600,height=500,menubar=no,toolbar=no,location=no,status=no')}
+                title="Open Notes in New Window"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '4px',
+                  padding: '2px 8px',
+                  fontSize: '11px',
+                  color: '#94a3b8',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <polyline points="15 3 21 3 21 9" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
+                </svg>
+                <span>Pop Out</span>
+              </button>
             </div>
             
             <div className="speaker-bubble" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>

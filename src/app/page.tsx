@@ -142,6 +142,14 @@ export default function Home() {
         console.error('Failed to load state from localStorage:', e);
       }
 
+      // Clear old saved texts for slide 3 to let the new layout render correctly
+      if (savedState.slides && savedState.slides[2]) {
+        delete savedState.slides[2];
+        try {
+          localStorage.setItem('pir-deck-state', JSON.stringify(savedState));
+        } catch (e) {}
+      }
+
       setAppState(savedState);
 
       try {
@@ -447,7 +455,29 @@ export default function Home() {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '6px' }}>
-              <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--vibe-accent)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Speaker Notes</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--vibe-accent)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Speaker Notes</span>
+                <button
+                  type="button"
+                  onClick={() => window.open(getAssetPath('/notes/'), 'speaker-notes', 'width=600,height=500,menubar=no,toolbar=no,location=no,status=no')}
+                  title="Open Notes in New Window"
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'pointer',
+                    color: '#94a3b8',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1="10" y1="14" x2="21" y2="3" />
+                  </svg>
+                </button>
+              </div>
               <span style={{ fontSize: '11px', color: '#64748b' }}>Double-click notes area to edit</span>
             </div>
             {(() => {
