@@ -78,6 +78,7 @@ export const PerformanceBudgetCarousel = ({
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", padding: "20px 40px", boxSizing: "border-box", width: "100%", fontFamily: "inherit" }}>
+      <div className="pir-head" style={{ marginBottom: "14px" }}><h2 className="pir-head-title">Performance &amp; Budget</h2></div>
       <div id="dashboard-stepper" style={{ marginBottom: "20px" }}>
         {safeStepData.map((item, idx) => (
           <button

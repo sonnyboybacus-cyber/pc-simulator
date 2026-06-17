@@ -12,6 +12,7 @@ export interface DashboardStep {
   targets?: number[];
   actuals?: number[];
   grades?: string[];
+  previousValues?: number[];
   cohorts?: string[];
   flows?: number[];
 }
@@ -99,16 +100,21 @@ export const defaultState = {
   theme: 'sunset',
   transition: 'fade',
   mode: 'editor',
+  migrationSectionDividers: false,
   notes: {
     "0": "Welcome the SDO review panel. This is the 2nd Quarter Program Implementation Review for Jacinto Nemeño Integrated School, SY 2026–2027.",
     "1": "Five parts: profile, performance dashboards, characterization, budget, and issues and concerns.",
+    "divider_1": "We will now proceed to Section 01: School Profile, highlighting the school's background and key statistics.",
     "2": "Small rural integrated school, established 1935. 176 learners, 16 teachers, healthy 1:15 ratio. Recently became an independent SHS.",
+    "divider_2": "Moving on to Section 02: Performance Dashboard & Targets, we will examine our enrolment trends and targets across K-12.",
     "3_0": "Kindergarten enrolment shows a continuous decline due to the absence of incoming learners from the Day Care Center, resulting in no new entrants at this entry level. This indicates a weakening feeder system at the early childhood level, which directly affects the sustainability of Kindergarten population in the school.",
     "3_1": "Elementary enrolment has stayed relatively stable, showing a -7 dip in SY 2025-2026 but stabilizing near the target in SY 2026-2027. We need to track transfer-out reasons and focus on learner retention.",
     "3_2": "Junior High School enrolment shows a steady increase due to improved retention strategies, strengthened Grade 6–7 transition support, and strong LGU advocacy encouraging learners to continue in JNIS. This is reinforced by SGC-COOP incentives for honor learners and continuing students, as well as incoming learners from new residents in Manaka. The increase is also supported by improved school facilities, including new JHS classrooms and a dedicated building, along with sufficient teachers, which strengthened parents’ and learners’ confidence in the program.",
     "3_3": "Senior High School enrolment shows a decline from SY 2025–2026 to 2026–2027 due to learner transfers to schools offering Automotive and Cookery, which are not available in JNIS. This is also influenced by previously limited ICT facilities (now improved with the acquisition of 6 computer units) and the use of a less ideal Marcos-type building for SHS, affecting program attractiveness and retention.",
     "3_4": "Tracking learners from Kindergarten to Grade 6 reveals mixed movement across SY 2025–2026 to 2026–2027. Variations are influenced by learner mobility, family-related circumstances, and transfers to nearby schools. In JHS, grade level enrolment shows a shifting distribution with intermediate level increases suggesting improved retention and cohort progression, while entry/exit fluctuations are driven by migration and cohort size differences.",
+    "divider_3": "Next is Section 03: Characterization, detailing our performance drivers, bottlenecks, and school systems.",
     "4": "The enrollment action matrix outlines key programs like early registration, Balik-Eskwela, and updates in LIS. Their limitations include limited reach in remote/coastal areas, lack of counseling support, and transportation barriers. To address this, we are strengthening community engagement (SGC + Barangay linkage), and introducing the JNIS Learner Outreach and Mapping Program (LOMP) and CBEAT.",
+    "divider_4": "We will now discuss Section 04: Performance & Budget Utilization, focusing on our school MOOE management and utilization for the fiscal year.",
     "5": "This slide details the Characterization Narrative and the Performance Drivers vs. Bottlenecks Matrix across Teachers & Instruction, Materials & Equipment, ICT Environment, Assessment, School Leadership, Division Technical Assistance, and Community/Industry Partnerships. It aligns our execution variables with school performance.",
     "6_0": "Our learning outcomes reveal key insights: ELLNA Numeracy and Mother Tongue showed significant gains (+56.17% and +38.35% respectively) due to foundational skills focus, while English declined by 6.28% and remains a priority. NAT Grade 6 showed excellent gains across Filipino, AP, Math, Science, and English. However, NAT Grade 10 overall proficiency is low at 34.76%, highlighting Science and Math as key priority areas for numeracy and reasoning support.",
     "6_1": "We are proud to recognize our first batch of 16 Grade 12 CSS students who achieved a 100% passing rate in Computer System Servicing NC II in partnership with the Immaculate Conception School of Technology (ICST).",
@@ -116,6 +122,7 @@ export const defaultState = {
     "6_3": "Budget utilization for Elementary School (SOB ES 2026) reached 87.1% (utilizing PHP 312,725.33 of PHP 359,000 downloaded). JHS (SOB JHS 2026) reached 89.2% (utilizing PHP 291,839.74 of PHP 327,000 downloaded), representing excellent financial management.",
     "6_4": "We maintain close documentation and liquidation monitoring of MOOE funds to align remaining funds directly with school operations, teaching, and learning needs.",
     "7": "MOOE is managed by the School Head with the Administrative Officer, ADAS III, BAC, and the Inspectorate Team, strictly following DepEd, government accounting, and COA rules. Middle performers analysis highlights the use of data-driven decisions and technical assistance requests.",
+    "divider_5": "Finally, Section 05: Issues and Concerns, outlining our priorities for division technical assistance and support.",
     "8": "Pull the threads together: the priorities the school needs division support on, including resources for remediation programs, additional literacy/numeracy materials, and ICT equipment.",
     "9": "Thank you very much. We now open the floor for the panel's questions and technical assistance."
   } as Record<string, string>,
@@ -153,13 +160,14 @@ export const defaultState = {
       {
         title: "Senior High",
         grades: ["Grade 11", "Grade 12"],
+        previousValues: [11, 16],
         values: [8, 11],
         max: 30,
-        finding: "SHS enrolment declined from 27 to 19 due to transfers to schools offering Cookery / Automotive.",
-        action: "Build on the 6 new computer units to make GAS / ICT-CSS strands more competitive."
+        finding: "Senior High School enrolment shows a decline from SY 2025-2026 to 2026-2027 due to learner transfers to schools offering Automotive and Cookery, which are not available in JNIS. This is also influenced by previously limited ICT facilities, now improved with the acquisition of 6 computer units, and the use of a less ideal Marcos-type building for SHS, affecting program attractiveness and retention.",
+        action: "Strengthen SHS program attractiveness by maximizing the new computer units, improving ICT-CSS visibility, and following up facility support for a more suitable SHS learning space."
       },
       {
-        title: "Cohort Tracking",
+        title: "Learner Tracking",
         cohorts: ["KG-G1", "G1-G2", "G2-G3", "G3-G4", "G4-G5", "G5-G6", "G7-G8", "G8-G9", "G9-G10"],
         flows: [8, 3, -10, 7, 2, -7, 2, 1, 0],
         max: 20,
@@ -649,10 +657,33 @@ export function mergeState(stateData: any): any {
     slides: stateData.slides || {},
     dashboard: {
       currentStep: stateData.dashboard?.currentStep ?? defaultState.dashboard.currentStep,
-      steps: defaultState.dashboard.steps.map((step: any, idx: number) => ({
-        ...step,
-        ...(stateData.dashboard?.steps?.[idx] || {})
-      }))
+      steps: defaultState.dashboard.steps.map((step: any, idx: number) => {
+        const savedStep = stateData.dashboard?.steps?.[idx] || {};
+        const mergedStep = {
+          ...step,
+          ...savedStep
+        };
+
+        if (idx === 3) {
+          const oldFinding = "SHS enrolment declined from 27 to 19 due to transfers to schools offering Cookery / Automotive.";
+          const oldAction = "Build on the 6 new computer units to make GAS / ICT-CSS strands more competitive.";
+          return {
+            ...mergedStep,
+            previousValues: step.previousValues,
+            finding: !savedStep.finding || savedStep.finding === oldFinding ? step.finding : mergedStep.finding,
+            action: !savedStep.action || savedStep.action === oldAction ? step.action : mergedStep.action
+          };
+        }
+
+        if (idx === 4) {
+          return {
+            ...mergedStep,
+            title: step.title
+          };
+        }
+
+        return mergedStep;
+      })
     },
     characterization: {
       currentStep: stateData.characterization?.currentStep ?? defaultState.characterization.currentStep,
@@ -697,12 +728,18 @@ export function mergeState(stateData: any): any {
 
 export function getNotesKey(slideIdx: number, state: any): string {
   if (!state) return String(slideIdx);
-  if (slideIdx === 3) {
-    return `3_${state.dashboard?.currentStep ?? 0}`;
-  }
-  if (slideIdx === 6) {
-    return `6_${state.performanceBudget?.currentStep ?? 0}`;
-  }
+  if (slideIdx === 2) return "divider_1";
+  if (slideIdx === 3) return "2";
+  if (slideIdx === 4) return "divider_2";
+  if (slideIdx === 5) return `3_${state.dashboard?.currentStep ?? 0}`;
+  if (slideIdx === 6) return "4";
+  if (slideIdx === 7) return "divider_3";
+  if (slideIdx === 8) return "5";
+  if (slideIdx === 9) return "divider_4";
+  if (slideIdx === 10) return `6_${state.performanceBudget?.currentStep ?? 0}`;
+  if (slideIdx === 11) return "7";
+  if (slideIdx === 12) return "divider_5";
+  if (slideIdx === 13) return "8";
+  if (slideIdx === 14) return "9";
   return String(slideIdx);
 }
-

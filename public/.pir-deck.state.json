@@ -2,6 +2,7 @@
   "theme": "sunset",
   "transition": "fade",
   "mode": "presenter",
+  "migrationSectionDividers": true,
   "notes": {
     "3_0": "This is the interactive Enrolment and Learner Tracking Dashboard. We can step through Kindergarten, Elementary, JHS, SHS, and Cohort Tracking dynamically, edit the metrics, and view comparative SVG diagrams."
   },
@@ -78,6 +79,10 @@
           "Grade 11",
           "Grade 12"
         ],
+        "previousValues": [
+          11,
+          16
+        ],
         "values": [
           8,
           11
@@ -118,7 +123,7 @@
   },
   "characterization": {
     "currentStep": 2,
-    "activeDomainIdx": 2,
+    "activeDomainIdx": 0,
     "steps": [
       {
         "title": "Equipment & Assessment",
@@ -259,7 +264,7 @@
   },
   "performanceBudget": {
     "currentStep": 0,
-    "activePanelIdx": 3,
+    "activePanelIdx": 0,
     "steps": [
       {
         "title": "Learning Outcomes",

@@ -179,7 +179,8 @@ export default function NotesPrompter() {
   }, [activeSlideIndex, appState, slides]);
 
   const handlePrev = () => {
-    if (activeSlideIndex === 3 && appState.dashboard && appState.dashboard.currentStep > 0) {
+    const activeSlide = slides[activeSlideIndex];
+    if (activeSlide?.label === "Enrolment Dashboard" && appState.dashboard && appState.dashboard.currentStep > 0) {
       const nextDashboard = {
         ...appState.dashboard,
         currentStep: appState.dashboard.currentStep - 1
@@ -188,7 +189,7 @@ export default function NotesPrompter() {
       updateAndBroadcast(newState);
       return;
     }
-    if (activeSlideIndex === 6 && appState.performanceBudget && appState.performanceBudget.currentStep > 0) {
+    if (activeSlide?.label === "Performance & Budget" && appState.performanceBudget && appState.performanceBudget.currentStep > 0) {
       const nextPerfBudget = {
         ...appState.performanceBudget,
         currentStep: appState.performanceBudget.currentStep - 1
@@ -201,10 +202,11 @@ export default function NotesPrompter() {
     if (activeSlideIndex > 0) {
       const prevIdx = activeSlideIndex - 1;
       let newState = { ...appState };
-      if (prevIdx === 3 && newState.dashboard) {
+      const prevSlide = slides[prevIdx];
+      if (prevSlide?.label === "Enrolment Dashboard" && newState.dashboard) {
         newState.dashboard = { ...newState.dashboard, currentStep: 4 };
       }
-      if (prevIdx === 6 && newState.performanceBudget) {
+      if (prevSlide?.label === "Performance & Budget" && newState.performanceBudget) {
         newState.performanceBudget = { ...newState.performanceBudget, currentStep: 4 };
       }
       updateAndBroadcast(newState);
@@ -213,7 +215,8 @@ export default function NotesPrompter() {
   };
 
   const handleNext = () => {
-    if (activeSlideIndex === 3 && appState.dashboard && appState.dashboard.currentStep < 4) {
+    const activeSlide = slides[activeSlideIndex];
+    if (activeSlide?.label === "Enrolment Dashboard" && appState.dashboard && appState.dashboard.currentStep < 4) {
       const nextDashboard = {
         ...appState.dashboard,
         currentStep: appState.dashboard.currentStep + 1
@@ -222,7 +225,7 @@ export default function NotesPrompter() {
       updateAndBroadcast(newState);
       return;
     }
-    if (activeSlideIndex === 6 && appState.performanceBudget && appState.performanceBudget.currentStep < 4) {
+    if (activeSlide?.label === "Performance & Budget" && appState.performanceBudget && appState.performanceBudget.currentStep < 4) {
       const nextPerfBudget = {
         ...appState.performanceBudget,
         currentStep: appState.performanceBudget.currentStep + 1
@@ -235,17 +238,17 @@ export default function NotesPrompter() {
     if (activeSlideIndex < slides.length - 1) {
       const nextIdx = activeSlideIndex + 1;
       let newState = { ...appState };
-      if (nextIdx === 3 && newState.dashboard) {
+      const nextSlide = slides[nextIdx];
+      if (nextSlide?.label === "Enrolment Dashboard" && newState.dashboard) {
         newState.dashboard = { ...newState.dashboard, currentStep: 0 };
       }
-      if (nextIdx === 6 && newState.performanceBudget) {
+      if (nextSlide?.label === "Performance & Budget" && newState.performanceBudget) {
         newState.performanceBudget = { ...newState.performanceBudget, currentStep: 0 };
       }
       updateAndBroadcast(newState);
       goToSlide(nextIdx);
     }
   };
-
   const adjustFontSize = (delta: number) => {
     setFontSize(prev => Math.max(14, Math.min(64, prev + delta)));
   };
@@ -258,11 +261,11 @@ export default function NotesPrompter() {
   let slideTitle = activeSlide?.label || `Slide ${activeSlideIndex + 1}`;
   let stepTitle = '';
   
-  if (activeSlideIndex === 3 && appState.dashboard) {
+  if (activeSlide?.label === "Enrolment Dashboard" && appState.dashboard) {
     const stepIdx = appState.dashboard.currentStep ?? 0;
     const stepLabel = appState.dashboard.steps?.[stepIdx]?.title || '';
     stepTitle = `(${stepLabel})`;
-  } else if (activeSlideIndex === 6 && appState.performanceBudget) {
+  } else if (activeSlide?.label === "Performance & Budget" && appState.performanceBudget) {
     const stepIdx = appState.performanceBudget.currentStep ?? 0;
     const stepLabel = appState.performanceBudget.steps?.[stepIdx]?.title || '';
     stepTitle = `(${stepLabel})`;
@@ -413,7 +416,11 @@ export default function NotesPrompter() {
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
             onClick={handlePrev}
-            disabled={activeSlideIndex === 0 && (!appState.dashboard || appState.dashboard.currentStep === 0)}
+            disabled={
+              activeSlideIndex === 0 &&
+              (activeSlide?.label !== "Enrolment Dashboard" || !appState.dashboard || appState.dashboard.currentStep === 0) &&
+              (activeSlide?.label !== "Performance & Budget" || !appState.performanceBudget || appState.performanceBudget.currentStep === 0)
+            }
             style={{
               background: '#1e293b',
               color: '#f8fafc',
@@ -423,14 +430,22 @@ export default function NotesPrompter() {
               cursor: 'pointer',
               fontWeight: 600,
               fontSize: '14px',
-              opacity: (activeSlideIndex === 0 && (!appState.dashboard || appState.dashboard.currentStep === 0)) ? 0.4 : 1
+              opacity: (
+                activeSlideIndex === 0 &&
+                (activeSlide?.label !== "Enrolment Dashboard" || !appState.dashboard || appState.dashboard.currentStep === 0) &&
+                (activeSlide?.label !== "Performance & Budget" || !appState.performanceBudget || appState.performanceBudget.currentStep === 0)
+              ) ? 0.4 : 1
             }}
           >
             ◀ Previous Step
           </button>
           <button
             onClick={handleNext}
-            disabled={activeSlideIndex === slides.length - 1 && (!appState.dashboard || activeSlideIndex !== 3 || appState.dashboard.currentStep === 4) && (!appState.performanceBudget || activeSlideIndex !== 6 || appState.performanceBudget.currentStep === 4)}
+            disabled={
+              activeSlideIndex === slides.length - 1 &&
+              (activeSlide?.label !== "Enrolment Dashboard" || !appState.dashboard || appState.dashboard.currentStep === 4) &&
+              (activeSlide?.label !== "Performance & Budget" || !appState.performanceBudget || appState.performanceBudget.currentStep === 4)
+            }
             style={{
               background: '#f97316',
               color: '#ffffff',
@@ -441,7 +456,11 @@ export default function NotesPrompter() {
               fontWeight: 600,
               fontSize: '14px',
               boxShadow: '0 4px 12px rgba(249, 115, 22, 0.25)',
-              opacity: (activeSlideIndex === slides.length - 1 && (!appState.dashboard || activeSlideIndex !== 3 || appState.dashboard.currentStep === 4) && (!appState.performanceBudget || activeSlideIndex !== 6 || appState.performanceBudget.currentStep === 4)) ? 0.4 : 1
+              opacity: (
+                activeSlideIndex === slides.length - 1 &&
+                (activeSlide?.label !== "Enrolment Dashboard" || !appState.dashboard || appState.dashboard.currentStep === 4) &&
+                (activeSlide?.label !== "Performance & Budget" || !appState.performanceBudget || appState.performanceBudget.currentStep === 4)
+              ) ? 0.4 : 1
             }}
           >
             Next Step ▶

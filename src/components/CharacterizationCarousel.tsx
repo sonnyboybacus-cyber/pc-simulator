@@ -51,6 +51,7 @@ export const CharacterizationCarousel = ({
 
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '20px 40px', boxSizing: 'border-box', width: '100%', fontFamily: 'inherit' }}>
+            <div className="pir-head" style={{ marginBottom: '14px' }}><h2 className="pir-head-title">Characterization</h2></div>
             {/* Stepper Wizard Header */}
             <div id="dashboard-stepper" style={{ marginBottom: '24px' }}>
                 {safeStepData.map((s: any, idx: number) => (

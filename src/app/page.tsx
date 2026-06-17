@@ -22,7 +22,6 @@ import {
   getEditableElements,
 } from "@/lib/chart-utils";
 
-
 // Helper functions moved to src/lib/chart-utils.ts
 
 // --- Main Page Component ---
@@ -142,9 +141,29 @@ export default function Home() {
         console.error('Failed to load state from localStorage:', e);
       }
 
-      // Clear old saved texts for slide 3 to let the new layout render correctly
-      if (savedState.slides && savedState.slides[2]) {
-        delete savedState.slides[2];
+      // Migrate slide state from old indices to new indices to support section dividers
+      if (savedState.slides && !savedState.migrationSectionDividers) {
+        const newSlidesState: any = {};
+        const indexMapping: Record<number, number> = {
+          0: 0,  // Title
+          1: 1,  // Outline
+          2: 3,  // School Profile (2 -> 3)
+          3: 5,  // Enrolment Dashboard (3 -> 5)
+          4: 6,  // Enrollment Action Matrix (4 -> 6)
+          5: 8,  // Characterization (5 -> 8)
+          6: 10, // Performance & Budget (6 -> 10)
+          7: 11, // MOOE Management (7 -> 11)
+          8: 13, // Issues & Concerns (8 -> 13)
+          9: 14, // Thank You (9 -> 14)
+        };
+        for (const [oldIdxStr, slideState] of Object.entries(savedState.slides)) {
+          const oldIdx = parseInt(oldIdxStr, 10);
+          if (indexMapping[oldIdx] !== undefined) {
+            newSlidesState[indexMapping[oldIdx]] = slideState;
+          }
+        }
+        savedState.slides = newSlidesState;
+        savedState.migrationSectionDividers = true;
         try {
           localStorage.setItem('pir-deck-state', JSON.stringify(savedState));
         } catch (e) {}

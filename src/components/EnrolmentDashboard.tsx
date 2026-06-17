@@ -54,6 +54,7 @@ export const EnrolmentDashboard = ({
     onDataChange: (idx: number, field: string, val: any) => void;
 }) => {
     const step = stepData[currentStep];
+    const getDisplayTitle = (title: string, idx: number) => idx === 4 ? "Learner Tracking" : title;
 
     const handleSliderChange = (valIdx: number, isTarget: boolean, val: number) => {
         if (currentStep === 3) {
@@ -83,6 +84,7 @@ export const EnrolmentDashboard = ({
 
     return (
         <div id="enrolment-dashboard-container" style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '20px 40px', boxSizing: 'border-box', width: '100%' }}>
+            <div className="pir-head" style={{ marginBottom: '14px' }}><h2 className="pir-head-title">Enrolment &amp; Learner Tracking</h2></div>
             {/* Stepper Wizard Header */}
             <div id="dashboard-stepper">
                 {stepData.map((s, idx) => (
@@ -91,10 +93,12 @@ export const EnrolmentDashboard = ({
                         type="button"
                         className={`dashboard-stepper-btn ${idx === currentStep ? 'active' : ''}`}
                         onClick={() => onStepChange(idx)}
+                        aria-pressed={idx === currentStep}
+                        aria-label={`Open ${getDisplayTitle(s.title, idx)} dashboard`}
                     >
                         <span className="dashboard-stepper-num">{String(idx + 1).padStart(2, '0')}</span>
                         {getStepIcon(idx)}
-                        <span className="dashboard-stepper-label">{s.title}</span>
+                        <span className="dashboard-stepper-label">{getDisplayTitle(s.title, idx)}</span>
                     </button>
                 ))}
             </div>
@@ -396,13 +400,18 @@ export const DonutChart = ({ data }: { data: any }) => {
     const g11 = data.values[0];
     const g12 = data.values[1];
     const total = g11 + g12;
+    const previousValues = data.previousValues || [];
+    const years = data.years || ["2025-2026", "2026-2027"];
+    const grades = data.grades || ["Grade 11", "Grade 12"];
+    const hasPrevious = previousValues.length === data.values.length;
+    const previousTotal = hasPrevious ? previousValues.reduce((sum: number, value: number) => sum + value, 0) : 0;
 
     const c = 2 * Math.PI * 90; // ~565
     const g11Len = total > 0 ? (g11 / total) * c : 0;
     const g12Len = total > 0 ? (g12 / total) * c : 0;
 
     return (
-        <svg width="100%" height="100%" viewBox="0 0 400 320" style={{ fontFamily: 'inherit', maxWidth: '100%', maxHeight: '100%' }}>
+        <svg width="100%" height="100%" viewBox="0 0 560 320" style={{ fontFamily: 'inherit', maxWidth: '100%', maxHeight: '100%' }}>
             <defs>
                 <filter id="donut-shadow" x="-20%" y="-20%" width="140%" height="140%">
                     <feDropShadow dx="0" dy="5" stdDeviation="7" floodColor="#0a2f52" floodOpacity="0.08" />
@@ -419,34 +428,59 @@ export const DonutChart = ({ data }: { data: any }) => {
 
             {/* Segmented slices with spacers */}
             {/* Grade 12 (Outer/Primary) */}
-            <circle cx="200" cy="140" r="90" fill="none" stroke="url(#donut-g12-grad)" strokeWidth="22"
+            <circle cx="150" cy="140" r="90" fill="none" stroke="url(#donut-g12-grad)" strokeWidth="22"
                 strokeDasharray={`${g12Len - 3} ${c}`} strokeDashoffset="0"
-                transform="rotate(-90 200 140)" className="svg-donut-slice" strokeLinecap="round" />
+                transform="rotate(-90 150 140)" className="svg-donut-slice" strokeLinecap="round" />
             {/* Grade 11 (Inner/Secondary) */}
-            <circle cx="200" cy="140" r="90" fill="none" stroke="url(#donut-g11-grad)" strokeWidth="22"
+            <circle cx="150" cy="140" r="90" fill="none" stroke="url(#donut-g11-grad)" strokeWidth="22"
                 strokeDasharray={`${g11Len - 3} ${c}`} strokeDashoffset={`-${g12Len}`}
-                transform="rotate(-90 200 140)" className="svg-donut-slice" strokeLinecap="round" />
+                transform="rotate(-90 150 140)" className="svg-donut-slice" strokeLinecap="round" />
 
             {/* Inner Central card backdrop */}
-            <circle cx="200" cy="140" r="62" fill="#ffffff" filter="url(#donut-shadow)" />
+            <circle cx="150" cy="140" r="62" fill="#ffffff" filter="url(#donut-shadow)" />
 
             {/* Central total text */}
-            <text x="200" y="136" textAnchor="middle" fill="#0a2f52" fontSize="38" fontWeight="900" className="mono">{total}</text>
-            <text x="200" y="158" textAnchor="middle" fill="#64748b" fontSize="10" fontWeight="800" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total SHS Enrolment</text>
+            <text x="150" y="136" textAnchor="middle" fill="#0a2f52" fontSize="38" fontWeight="900" className="mono">{total}</text>
+            <text x="150" y="158" textAnchor="middle" fill="#64748b" fontSize="10" fontWeight="800" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>SY {years[1]} Total</text>
 
             {/* Legend labels */}
-            <g transform="translate(60, 275)">
+            <g transform="translate(10, 275)">
                 <rect x="10" y="6" width="12" height="12" fill="#64748b" rx="3" />
                 <text x="28" y="16" fill="#475569" fontSize="12" fontWeight="700">Grade 11 ({g11})</text>
 
                 <rect x="160" y="6" width="12" height="12" fill="var(--vibe-accent)" rx="3" />
                 <text x="178" y="16" fill="#475569" fontSize="12" fontWeight="700">Grade 12 ({g12})</text>
             </g>
+
+            {hasPrevious && (
+                <g transform="translate(300, 72)" filter="url(#donut-shadow)">
+                    <rect x="0" y="0" width="230" height="158" rx="14" fill="#fff" opacity="0.96" />
+                    <text x="16" y="28" fill="#0a2f52" fontSize="15" fontWeight="900">Comparative Enrolment - SHS</text>
+                    <text x="16" y="54" fill="#64748b" fontSize="11" fontWeight="800">Grade Level</text>
+                    <text x="112" y="54" fill="#64748b" fontSize="11" fontWeight="800" textAnchor="middle">{years[0]}</text>
+                    <text x="184" y="54" fill="#64748b" fontSize="11" fontWeight="800" textAnchor="middle">{years[1]}</text>
+                    <line x1="16" y1="64" x2="214" y2="64" stroke="#e2e8f0" strokeWidth="1" />
+
+                    {grades.map((grade: string, idx: number) => (
+                        <g key={grade} transform={`translate(0, ${idx * 34})`}>
+                            <text x="16" y="90" fill="#334155" fontSize="13" fontWeight="800">{grade}</text>
+                            <text x="112" y="90" fill="#64748b" fontSize="14" fontWeight="850" textAnchor="middle" className="mono">{previousValues[idx]}</text>
+                            <text x="184" y="90" fill="var(--vibe-accent)" fontSize="14" fontWeight="900" textAnchor="middle" className="mono">{data.values[idx]}</text>
+                        </g>
+                    ))}
+
+                    <line x1="16" y1="134" x2="214" y2="134" stroke="#e2e8f0" strokeWidth="1" />
+                    <text x="16" y="152" fill="#0a2f52" fontSize="12" fontWeight="900">Total</text>
+                    <text x="112" y="152" fill="#64748b" fontSize="13" fontWeight="900" textAnchor="middle" className="mono">{previousTotal}</text>
+                    <text x="184" y="152" fill="var(--vibe-accent)" fontSize="13" fontWeight="900" textAnchor="middle" className="mono">{total}</text>
+                </g>
+            )}
         </svg>
     );
 };
 
 export const CohortFlow = ({ data }: { data: any }) => {
+    const [hoveredIdx, setHoveredIdx] = React.useState<number | null>(null);
     const cohorts = data.cohorts || [];
     const flows = data.flows || [];
 
@@ -485,7 +519,14 @@ export const CohortFlow = ({ data }: { data: any }) => {
                 const sign = isUp ? "+" : "";
 
                 return (
-                    <g key={idx} filter="url(#flow-glow)">
+                    <g
+                        key={idx}
+                        filter="url(#flow-glow)"
+                        onMouseEnter={() => setHoveredIdx(idx)}
+                        onMouseLeave={() => setHoveredIdx(null)}
+                        style={{ cursor: 'help' }}
+                    >
+                        <title>{`${cName}: ${sign}${val} learner shift`}</title>
                         {/* Curved ribbon path */}
                         <path d={pathD} fill="none" stroke={color} strokeWidth={Math.max(6, Math.min(20, Math.abs(val) * 1.8))} className="svg-flow-path" strokeLinecap="round" />
 
@@ -504,6 +545,14 @@ export const CohortFlow = ({ data }: { data: any }) => {
 
                         {/* Label below */}
                         <text x={x + 25} y="270" textAnchor="middle" fill="#475569" fontSize="9" fontWeight="700" transform={`rotate(-35 ${x + 25} 270)`}>{cName}</text>
+
+                        {hoveredIdx === idx && (
+                            <g transform={`translate(${Math.min(x + 25, 535)}, ${Math.max(34, y2 - 36)})`} pointerEvents="none">
+                                <rect x="-48" y="-24" width="96" height="26" rx="7" fill="#0f172a" stroke={textCol} strokeWidth="1.5" opacity="0.94" />
+                                <text textAnchor="middle" y="-8" fill="#fff" fontSize="10" fontWeight="800">{cName}</text>
+                                <text textAnchor="middle" y="8" fill={textCol} fontSize="12" fontWeight="900" className="mono">{sign}{val} learners</text>
+                            </g>
+                        )}
                     </g>
                 );
             })}

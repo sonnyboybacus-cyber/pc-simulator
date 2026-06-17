@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { defaultState, SavedPerformanceBudgetState, PerformanceBudgetState, PerformanceBudgetStep, PerformanceMetric, PerformancePanel, BudgetRow, BudgetRowNumericField, PerformanceBudgetFieldValue, getAssetPath, mergeState, getNotesKey } from "@/lib/store";
 import { getStepIcon } from "@/components/EnrolmentDashboard";
 
+const getDashboardStepTitle = (title: string, idx: number) => idx === 4 ? "Learner Tracking" : title;
+
 export default function Editor() {
   const [appState, setAppState] = useState<any>(defaultState);
   const [slides, setSlides] = useState<any[]>([]);
@@ -75,9 +77,29 @@ export default function Editor() {
         console.error('Failed to load state from localStorage:', e);
       }
 
-      // Clear old saved texts for slide 3 to let the new layout render correctly
-      if (savedState.slides && savedState.slides[2]) {
-        delete savedState.slides[2];
+      // Migrate slide state from old indices to new indices to support section dividers
+      if (savedState.slides && !savedState.migrationSectionDividers) {
+        const newSlidesState: any = {};
+        const indexMapping: Record<number, number> = {
+          0: 0,  // Title
+          1: 1,  // Outline
+          2: 3,  // School Profile (2 -> 3)
+          3: 5,  // Enrolment Dashboard (3 -> 5)
+          4: 6,  // Enrollment Action Matrix (4 -> 6)
+          5: 8,  // Characterization (5 -> 8)
+          6: 10, // Performance & Budget (6 -> 10)
+          7: 11, // MOOE Management (7 -> 11)
+          8: 13, // Issues & Concerns (8 -> 13)
+          9: 14, // Thank You (9 -> 14)
+        };
+        for (const [oldIdxStr, slideState] of Object.entries(savedState.slides)) {
+          const oldIdx = parseInt(oldIdxStr, 10);
+          if (indexMapping[oldIdx] !== undefined) {
+            newSlidesState[indexMapping[oldIdx]] = slideState;
+          }
+        }
+        savedState.slides = newSlidesState;
+        savedState.migrationSectionDividers = true;
         try {
           localStorage.setItem('pir-deck-state', JSON.stringify(savedState));
         } catch (e) {}
@@ -518,7 +540,7 @@ export default function Editor() {
                   >
                     <span className="dashboard-stepper-num">{String(idx + 1).padStart(2, '0')}</span>
                     {getStepIcon(idx)}
-                    <span className="dashboard-stepper-label" style={{ fontSize: '13px' }}>{s.title}</span>
+                    <span className="dashboard-stepper-label" style={{ fontSize: '13px' }}>{getDashboardStepTitle(s.title, idx)}</span>
                   </button>
                 ))}
               </div>
