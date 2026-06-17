@@ -148,27 +148,27 @@ export const EnrolmentDashboard = ({
                         </div>
                     )}
                     {/* Findings & Action Card */}
-                    <div id="dashboard-details-card" className="dashboard-card-glass" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '20px', padding: '24px' }}>
+                    <div id="dashboard-details-card" className="dashboard-card-glass" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '24px', padding: '28px' }}>
                         <div>
-                            <div style={{ fontSize: '15px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>Finding</div>
+                            <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '16px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>Finding</div>
                             <div
                                 className="no-edit"
                                 contentEditable={mode === 'editor'}
                                 suppressContentEditableWarning
                                 onBlur={(e) => handleBlurText('finding', e)}
-                                style={{ fontSize: '22px', lineHeight: '1.5', color: '#0f172a', fontWeight: '500', outline: 'none', border: mode === 'editor' ? '1px dashed var(--vibe-accent)' : 'none', borderRadius: '6px', padding: '6px', minHeight: '36px' }}
+                                style={{ fontFamily: "'Outfit', sans-serif", fontSize: '26px', lineHeight: '1.5', color: '#0f172a', fontWeight: '600', outline: 'none', border: mode === 'editor' ? '1px dashed var(--vibe-accent)' : 'none', borderRadius: '6px', padding: '6px', minHeight: '36px' }}
                             >
                                 {step.finding}
                             </div>
                         </div>
-                        <div style={{ borderLeft: '4px solid #f5a623', paddingLeft: '14px' }}>
-                            <div style={{ fontSize: '15px', fontWeight: 800, color: '#b9791a', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>Recommended Action</div>
+                        <div style={{ borderLeft: '5px solid #ea580c', paddingLeft: '18px' }}>
+                            <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '16px', fontWeight: 800, color: '#ea580c', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>Recommended Action</div>
                             <div
                                 className="no-edit"
                                 contentEditable={mode === 'editor'}
                                 suppressContentEditableWarning
                                 onBlur={(e) => handleBlurText('action', e)}
-                                style={{ fontSize: '22px', lineHeight: '1.5', color: '#0a2f52', fontWeight: 700, outline: 'none', border: mode === 'editor' ? '1px dashed var(--vibe-accent)' : 'none', borderRadius: '6px', padding: '6px', minHeight: '36px' }}
+                                style={{ fontFamily: "'Outfit', sans-serif", fontSize: '26px', lineHeight: '1.5', color: '#031b33', fontWeight: '800', outline: 'none', border: mode === 'editor' ? '1px dashed var(--vibe-accent)' : 'none', borderRadius: '6px', padding: '6px', minHeight: '36px' }}
                             >
                                 {step.action}
                             </div>
