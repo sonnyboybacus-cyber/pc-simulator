@@ -276,10 +276,12 @@ export const CharacterizationCarousel = ({
 
                                 <div style={{
                                     opacity: isSelected ? 1 : 0,
-                                    transition: 'opacity 0.3s ease',
+                                    transition: 'opacity 0.3s ease, max-height 0.3s ease',
                                     visibility: isSelected ? 'visible' : 'hidden',
                                     height: isSelected ? 'auto' : 0,
-                                    overflow: 'hidden'
+                                    maxHeight: isSelected ? '450px' : 0,
+                                    overflowY: isSelected ? 'auto' : 'hidden',
+                                    paddingRight: '6px'
                                 }}>
                                     <ul style={{ margin: 0, paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                         {dom.bullets.map((bullet: string, bIdx: number) => (

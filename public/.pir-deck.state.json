@@ -117,8 +117,8 @@
     ]
   },
   "characterization": {
-    "currentStep": 0,
-    "activeDomainIdx": 0,
+    "currentStep": 2,
+    "activeDomainIdx": 2,
     "steps": [
       {
         "title": "Equipment & Assessment",
@@ -259,7 +259,7 @@
   },
   "performanceBudget": {
     "currentStep": 0,
-    "activePanelIdx": 0,
+    "activePanelIdx": 3,
     "steps": [
       {
         "title": "Learning Outcomes",
