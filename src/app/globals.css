@@ -216,7 +216,6 @@ body {
 }
 
 /* Visibility adjustments for presenter mode */
-#presenter-layout-root.presenter-mode-active .editor-trigger-bubble,
 #presenter-layout-root.presenter-mode-active .editor-modal {
   display: none !important;
 }
