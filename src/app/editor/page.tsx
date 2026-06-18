@@ -118,7 +118,7 @@ export default function Editor() {
           const parsedSlides = sections.map((section: any, idx: number) => {
             const label = section.getAttribute('data-label') || 'Slide';
             const screenLabel = section.getAttribute('data-screen-label') || '';
-            const noteKey = getNotesKey(idx, savedState);
+            const noteKey = getNotesKey(idx, savedState, label);
             const speakerNotes = savedState.notes[noteKey] ?? section.getAttribute('data-speaker-notes') ?? '';
 
             return {
@@ -196,7 +196,8 @@ export default function Editor() {
 
   const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
-    const noteKey = getNotesKey(activeSlideIndex, appState);
+    const activeSlide = slides[activeSlideIndex];
+    const noteKey = getNotesKey(activeSlideIndex, appState, activeSlide?.label);
 
     // Update local slides list display
     setSlides(prev => {
@@ -390,7 +391,7 @@ export default function Editor() {
   }
 
   const activeSlide = slides[activeSlideIndex];
-  const noteKey = getNotesKey(activeSlideIndex, appState);
+  const noteKey = getNotesKey(activeSlideIndex, appState, activeSlide?.label);
   const activeNotesText = appState.notes?.[noteKey] ?? activeSlide?.speakerNotes ?? '';
 
   const isDashboardSlide = activeSlide?.label === "Enrolment Dashboard";
@@ -429,7 +430,7 @@ export default function Editor() {
                 <div className="rail-item-label">{slide.label}</div>
                  <div className="rail-item-desc">
                   {(() => {
-                    const itemNoteKey = getNotesKey(idx, appState);
+                    const itemNoteKey = getNotesKey(idx, appState, slide?.label);
                     return appState.notes?.[itemNoteKey] ?? slide.speakerNotes ?? 'No speaker notes.';
                   })()}
                 </div>

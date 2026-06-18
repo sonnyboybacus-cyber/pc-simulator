@@ -54,7 +54,7 @@ export default function NotesPrompter() {
           const parsedSlides = sections.map((section: any, idx: number) => {
             const label = section.getAttribute('data-label') || 'Slide';
             const screenLabel = section.getAttribute('data-screen-label') || '';
-            const noteKey = getNotesKey(idx, savedState);
+            const noteKey = getNotesKey(idx, savedState, label);
             const speakerNotes = savedState.notes[noteKey] ?? section.getAttribute('data-speaker-notes') ?? '';
 
             return {
@@ -141,7 +141,8 @@ export default function NotesPrompter() {
 
   const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
-    const noteKey = getNotesKey(activeSlideIndex, appState);
+    const activeSlide = slides[activeSlideIndex];
+    const noteKey = getNotesKey(activeSlideIndex, appState, activeSlide?.label);
 
     // Update slides cache locally
     if (slides[activeSlideIndex]) {
@@ -254,7 +255,7 @@ export default function NotesPrompter() {
   };
 
   const activeSlide = slides[activeSlideIndex];
-  const noteKey = getNotesKey(activeSlideIndex, appState);
+  const noteKey = getNotesKey(activeSlideIndex, appState, activeSlide?.label);
   const activeNotesText = appState.notes?.[noteKey] ?? activeSlide?.speakerNotes ?? '';
 
   // Calculate slide title + step indicator

@@ -189,7 +189,7 @@ export default function Home() {
             const style = section.getAttribute('style') || '';
             const className = section.getAttribute('class') || '';
             
-            const noteKey = getNotesKey(idx, savedState);
+            const noteKey = getNotesKey(idx, savedState, label);
             const speakerNotes = savedState.notes[noteKey] ?? section.getAttribute('data-speaker-notes') ?? '';
 
             if (savedState.slides[idx]?.texts) {
@@ -318,7 +318,8 @@ export default function Home() {
 
   const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
-    const noteKey = getNotesKey(activeSlideIndex, appState);
+    const activeSlide = slides[activeSlideIndex];
+    const noteKey = getNotesKey(activeSlideIndex, appState, activeSlide?.label);
     setSlides(prev => {
       const updated = [...prev];
       if (updated[activeSlideIndex]) {
@@ -500,8 +501,9 @@ export default function Home() {
               <span style={{ fontSize: '11px', color: '#64748b' }}>Double-click notes area to edit</span>
             </div>
             {(() => {
-              const noteKey = getNotesKey(activeSlideIndex, appState);
-              const activeNotesText = appState.notes?.[noteKey] ?? slides[activeSlideIndex]?.speakerNotes ?? '';
+              const activeSlide = slides[activeSlideIndex];
+              const noteKey = getNotesKey(activeSlideIndex, appState, activeSlide?.label);
+              const activeNotesText = appState.notes?.[noteKey] ?? activeSlide?.speakerNotes ?? '';
               return (
                 <textarea
                   className="notes-textarea"

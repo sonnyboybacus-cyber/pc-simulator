@@ -18,6 +18,22 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   .mono { font-family: 'IBM Plex Mono', monospace; }
 
+  /* Custom scrollbar for Catch Up Plan */
+  .catchup-body::-webkit-scrollbar {
+    width: 6px;
+  }
+  .catchup-body::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 999px;
+  }
+  .catchup-body::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+  }
+  .catchup-body::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
   /* ===== Unified slide header — navy Outfit title · navy underline · gold left accent ===== */
   .pir-head { position: relative; z-index: 1; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 7px solid #0a2f52; }
   .pir-head-title {
@@ -831,8 +847,106 @@
     </div>
   </section>
 
-  <!-- ===== 27 · THANK YOU ===== -->
-  <section class="slide-wm" data-label="Thank You" data-screen-label="25" data-speaker-notes="Close and open the floor for the panel's questions and technical assistance." style="background: linear-gradient(155deg, #0a2f52 0%, #0e477c 100%); font-family: 'Libre Franklin', sans-serif; color: #fff; overflow: hidden;">
+  <!-- ===== 27 · CATCH UP PLAN ===== -->
+  <section class="slide-wm" data-label="Catch Up Plan" data-screen-label="25" data-speaker-notes="Our Catch Up Plan maps out physical targets and backlogs—specifically reading/numeracy levels, ICT resources, and instructional leadership—with concrete action plans, personnel assignments, and timelines." style="background: #f7f9fb; font-family: 'Libre Franklin', sans-serif; overflow: hidden;">
+    <div style="height: 100%; display: flex; flex-direction: column; padding: 56px 90px; box-sizing: border-box;">
+      <div class="pir-head">
+        <h2 class="pir-head-title">School Catch Up Plan</h2>
+      </div>
+
+      <!-- Scrollable Table Container -->
+      <div class="catchup-body" style="flex: 1; overflow-y: auto; margin-top: 20px; padding-right: 10px;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Libre Franklin', sans-serif;">
+          <thead>
+            <tr style="background: #0a2f52; color: #fff; font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; position: sticky; top: 0; z-index: 10;">
+              <th style="padding: 16px 20px; border-top-left-radius: 8px; border-bottom-left-radius: 8px; width: 22%;">Physical Target / Backlog</th>
+              <th style="padding: 16px 20px; width: 22%;">Under / Over Achievement (Physical)</th>
+              <th style="padding: 16px 20px; width: 28%;">Action Plan</th>
+              <th style="padding: 16px 20px; width: 16%;">Person in Charge</th>
+              <th style="padding: 16px 20px; border-top-right-radius: 8px; border-bottom-right-radius: 8px; width: 12%;">Target Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0; background: #ffffff;">
+              <td style="padding: 14px 20px; font-weight: 700; color: #0a2f52; font-size: 15px; line-height: 1.4;">Low performance in reading, literacy, and numeracy (CRLA, ELLNA, NAT, PHIL-IRI gaps)</td>
+              <td style="padding: 14px 20px; color: #475569; font-size: 15px; line-height: 1.4;">Learners below proficiency level in key competencies</td>
+              <td style="padding: 14px 20px; color: #1e293b; font-size: 15px; font-weight: 500; line-height: 1.4;">Strengthen ARAL sessions, CNR-ESP, RRP, daily 30-minute morning reading time, and Reading Coach integration</td>
+              <td style="padding: 14px 20px; vertical-align: middle;">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;"><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">School Head</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">Teachers K-SHS</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">Reading Coordinator</span></div>
+              </td>
+              <td style="padding: 14px 20px; vertical-align: middle;"><span style="display: inline-block; background: #fef3c7; color: #d97706; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 800; white-space: nowrap;">Ongoing (SY 26-27)</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+              <td style="padding: 14px 20px; font-weight: 700; color: #0a2f52; font-size: 15px; line-height: 1.4;">Limited ICT resources for digital remediation (Khan Academy, MS Teams, Reading Coach)</td>
+              <td style="padding: 14px 20px; color: #475569; font-size: 15px; line-height: 1.4;">Under-capacity in ICT-based instruction and assessment</td>
+              <td style="padding: 14px 20px; color: #1e293b; font-size: 15px; font-weight: 500; line-height: 1.4;">Request additional computer units; coordinate with SDO ICT Unit, LGU-SEF, and partners; integrate Khan Academy for remediation</td>
+              <td style="padding: 14px 20px; vertical-align: middle;">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;"><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">School Head</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">ICT Coordinator</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">SDO ICT Unit</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">LGU</span></div>
+              </td>
+              <td style="padding: 14px 20px; vertical-align: middle;"><span style="display: inline-block; background: #fef3c7; color: #d97706; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 800; white-space: nowrap;">Q3-Q4 SY 26-27</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0; background: #ffffff;">
+              <td style="padding: 14px 20px; font-weight: 700; color: #0a2f52; font-size: 15px; line-height: 1.4;">Lack of instructional support in Integrated School (JHS-SHS coordination)</td>
+              <td style="padding: 14px 20px; color: #475569; font-size: 15px; line-height: 1.4;">Limited coordination and monitoring support for programs</td>
+              <td style="padding: 14px 20px; color: #1e293b; font-size: 15px; font-weight: 500; line-height: 1.4;">Designate additional instructional support/OIC assistance for JHS operations and documentation</td>
+              <td style="padding: 14px 20px; vertical-align: middle;">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;"><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">School Head</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">SDO</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">PSDS</span></div>
+              </td>
+              <td style="padding: 14px 20px; vertical-align: middle;"><span style="display: inline-block; background: #fef3c7; color: #d97706; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 800; white-space: nowrap;">Q2-Q3 SY 26-27</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+              <td style="padding: 14px 20px; font-weight: 700; color: #0a2f52; font-size: 15px; line-height: 1.4;">Teacher workload due to multi-subject teaching</td>
+              <td style="padding: 14px 20px; color: #475569; font-size: 15px; line-height: 1.4;">Staffing gaps affecting specialization delivery</td>
+              <td style="padding: 14px 20px; color: #1e293b; font-size: 15px; font-weight: 500; line-height: 1.4;">Request additional TLE teacher to complete specialization and balance workload</td>
+              <td style="padding: 14px 20px; vertical-align: middle;">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;"><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">School Head</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">HR / SDO</span></div>
+              </td>
+              <td style="padding: 14px 20px; vertical-align: middle;"><span style="display: inline-block; background: #fef3c7; color: #d97706; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 800; white-space: nowrap;">Q3-Q4 SY 26-27</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0; background: #ffffff;">
+              <td style="padding: 14px 20px; font-weight: 700; color: #0a2f52; font-size: 15px; line-height: 1.4;">Insufficient SHS classrooms affecting enrolment expansion</td>
+              <td style="padding: 14px 20px; color: #475569; font-size: 15px; line-height: 1.4;">Infrastructure backlog limiting SHS intake</td>
+              <td style="padding: 14px 20px; color: #1e293b; font-size: 15px; font-weight: 500; line-height: 1.4;">Follow up SHS building request; coordinate with LGU and SDO Engineering Unit for funding and prioritization</td>
+              <td style="padding: 14px 20px; vertical-align: middle;">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;"><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">School Head</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">LGU</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">SDO</span></div>
+              </td>
+              <td style="padding: 14px 20px; vertical-align: middle;"><span style="display: inline-block; background: #fef3c7; color: #d97706; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 800; white-space: nowrap;">Q2-Q4 SY 26-27</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+              <td style="padding: 14px 20px; font-weight: 700; color: #0a2f52; font-size: 15px; line-height: 1.4;">Limited literacy support materials and underutilized reading corner</td>
+              <td style="padding: 14px 20px; color: #475569; font-size: 15px; line-height: 1.4;">Lack of updated reading resources aligned with SoR/MATATAG</td>
+              <td style="padding: 14px 20px; color: #1e293b; font-size: 15px; font-weight: 500; line-height: 1.4;">Revitalize reading corner; procure updated reading materials; schedule structured reading time</td>
+              <td style="padding: 14px 20px; vertical-align: middle;">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;"><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">Reading Coordinator</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">English/Filipino Teachers</span></div>
+              </td>
+              <td style="padding: 14px 20px; vertical-align: middle;"><span style="display: inline-block; background: #fef3c7; color: #d97706; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 800; white-space: nowrap;">Q2 SY 26-27</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0; background: #ffffff;">
+              <td style="padding: 14px 20px; font-weight: 700; color: #0a2f52; font-size: 15px; line-height: 1.4;">No functional SBFP kitchen facility</td>
+              <td style="padding: 14px 20px; color: #475569; font-size: 15px; line-height: 1.4;">Limited capacity for hot meal preparation for beneficiaries</td>
+              <td style="padding: 14px 20px; color: #1e293b; font-size: 15px; font-weight: 500; line-height: 1.4;">Establish SBFP kitchen through PTA, parent volunteers, and LGU support for basic facilities and equipment</td>
+              <td style="padding: 14px 20px; vertical-align: middle;">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;"><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">School Head</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">PTA Officers</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">Parents</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">SBFP Coordinator</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">LGU</span></div>
+              </td>
+              <td style="padding: 14px 20px; vertical-align: middle;"><span style="display: inline-block; background: #fef3c7; color: #d97706; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 800; white-space: nowrap;">Q3 SY 26-27</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+              <td style="padding: 14px 20px; font-weight: 700; color: #0a2f52; font-size: 15px; line-height: 1.4;">Limited external academic partnerships</td>
+              <td style="padding: 14px 20px; color: #475569; font-size: 15px; line-height: 1.4;">Weak enrichment and benchmarking opportunities</td>
+              <td style="padding: 14px 20px; color: #1e293b; font-size: 15px; font-weight: 500; line-height: 1.4;">Establish partnerships with private schools for literacy support, sharing of practices, and learner enrichment</td>
+              <td style="padding: 14px 20px; vertical-align: middle;">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;"><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">School Head</span><span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; line-height: 1.3; margin: 2px 0;">Partnership Coordinator</span></div>
+              </td>
+              <td style="padding: 14px 20px; vertical-align: middle;"><span style="display: inline-block; background: #fef3c7; color: #d97706; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 800; white-space: nowrap;">Q3 SY 26-27</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 28 · THANK YOU ===== -->
+  <section class="slide-wm" data-label="Thank You" data-screen-label="26" data-speaker-notes="Close and open the floor for the panel's questions and technical assistance." style="background: linear-gradient(155deg, #0a2f52 0%, #0e477c 100%); font-family: 'Libre Franklin', sans-serif; color: #fff; overflow: hidden;">
     <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 90px 110px; box-sizing: border-box;">
       <div class="mono" style="font-size: 24px; letter-spacing: 5px; text-transform: uppercase; color: #f5a623; font-weight: 600;">Program Implementation Review · SY 2026–2027</div>
       <h1 style="font-size: 130px; font-weight: 900; letter-spacing: -3px; line-height: 0.95; margin-top: 18px;">Thank you.</h1>

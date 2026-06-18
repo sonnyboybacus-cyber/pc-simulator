@@ -149,6 +149,7 @@ export const defaultState = {
     "7": "MOOE is managed by the School Head with the Administrative Officer, ADAS III, BAC, and the Inspectorate Team, strictly following DepEd, government accounting, and COA rules. Middle performers analysis highlights the use of data-driven decisions and technical assistance requests.",
     "divider_5": "Finally, Section 05: Issues and Concerns, outlining our priorities for division technical assistance and support.",
     "8": "Pull the threads together: the priorities the school needs division support on, including resources for remediation programs, additional literacy/numeracy materials, and ICT equipment.",
+    "catch_up": "Our Catch Up Plan maps out physical targets and backlogs—specifically reading/numeracy levels, ICT resources, and instructional leadership—with concrete action plans, personnel assignments, and timelines.",
     "9": "Thank you very much. We now open the floor for the panel's questions and technical assistance."
   } as Record<string, string>,
   slides: {} as Record<number, { texts: Record<number, string>; charts?: any }>,
@@ -821,8 +822,29 @@ export function mergeState(stateData: any): any {
   };
 }
 
-export function getNotesKey(slideIdx: number, state: any): string {
+export function getNotesKey(slideIdx: number, state: any, label?: string): string {
   if (!state) return String(slideIdx);
+  if (label) {
+    const cleanLabel = label.trim();
+    if (cleanLabel === "Title") return "0";
+    if (cleanLabel === "Outline") return "1";
+    if (cleanLabel === "Section 1 Divider") return "divider_1";
+    if (cleanLabel === "School Profile") return "2";
+    if (cleanLabel === "Section 2 Divider") return "divider_2";
+    if (cleanLabel === "Enrolment Dashboard") return `3_${state.dashboard?.currentStep ?? 0}`;
+    if (cleanLabel === "Enrollment Action Matrix") return "4";
+    if (cleanLabel === "Section 3 Divider") return "divider_3";
+    if (cleanLabel === "Characterization") return "5";
+    if (cleanLabel === "Section 4 Divider") return "divider_4";
+    if (cleanLabel === "Performance & Budget" || cleanLabel === "Performance &amp; Budget") return `6_${state.performanceBudget?.currentStep ?? 0}`;
+    if (cleanLabel === "Assessment Action Framework") return "aaf";
+    if (cleanLabel === "MOOE Management") return "7";
+    if (cleanLabel === "Section 5 Divider") return "divider_5";
+    if (cleanLabel === "Performance Q&A" || cleanLabel === "Performance Q&amp;A") return "qa";
+    if (cleanLabel === "Issues & Concerns" || cleanLabel === "Issues &amp; Concerns") return "8";
+    if (cleanLabel === "Catch Up Plan") return "catch_up";
+    if (cleanLabel === "Thank You") return "9";
+  }
   if (slideIdx === 2) return "divider_1";
   if (slideIdx === 3) return "2";
   if (slideIdx === 4) return "divider_2";
@@ -832,9 +854,12 @@ export function getNotesKey(slideIdx: number, state: any): string {
   if (slideIdx === 8) return "5";
   if (slideIdx === 9) return "divider_4";
   if (slideIdx === 10) return `6_${state.performanceBudget?.currentStep ?? 0}`;
-  if (slideIdx === 11) return "7";
-  if (slideIdx === 12) return "divider_5";
-  if (slideIdx === 13) return "8";
-  if (slideIdx === 14) return "9";
+  if (slideIdx === 11) return "aaf";
+  if (slideIdx === 12) return "7";
+  if (slideIdx === 13) return "divider_5";
+  if (slideIdx === 14) return "qa";
+  if (slideIdx === 15) return "8";
+  if (slideIdx === 16) return "catch_up";
+  if (slideIdx === 17) return "9";
   return String(slideIdx);
 }
