@@ -61,6 +61,23 @@ export type PhilIriDataset = {
   interpretation: string[];
 };
 
+export type CrlaLevels = {
+  lowEmerging: number;
+  highEmerging: number;
+  developing: number;
+  transitioning: number;
+  gradeLevel: number;
+};
+
+export type CrlaDataset = {
+  year: string;
+  total: number;
+  gender?: { male: number; female: number };
+  grades: { g1: number; g2: number; g3: number };
+  profiles: CrlaLevels;
+  interpretation: string[];
+};
+
 export type PerformanceBudgetStep = {
   title: string;
   subtitle: string;
@@ -69,6 +86,7 @@ export type PerformanceBudgetStep = {
   panels: PerformancePanel[];
   budgetRows?: BudgetRow[];
   philIri?: PhilIriDataset[];
+  crla?: CrlaDataset[];
   photos?: PhotoAsset[];
   previewPhoto?: PhotoAsset;
   roster?: string[];
@@ -406,6 +424,58 @@ export const defaultState = {
             ]
           }
         ],
+        crla: [
+          {
+            year: "2023-2024",
+            total: 43,
+            grades: { g1: 12, g2: 12, g3: 19 },
+            profiles: {
+              lowEmerging: 4.65,
+              highEmerging: 0,
+              developing: 23.26,
+              transitioning: 30.23,
+              gradeLevel: 41.86
+            },
+            interpretation: [
+              "Only 4.65% of learners are in the Low Emerging category, indicating a solid foundation in basic letter sounds.",
+              "A combined 72.09% of learners are Transitioning or Reading at Grade Level, showcasing strong reading potential in the early grades."
+            ]
+          },
+          {
+            year: "2024-2025",
+            total: 46,
+            gender: { male: 42.55, female: 57.45 },
+            grades: { g1: 20, g2: 15, g3: 11 },
+            profiles: {
+              lowEmerging: 0,
+              highEmerging: 0,
+              developing: 15.22,
+              transitioning: 15.22,
+              gradeLevel: 69.57
+            },
+            interpretation: [
+              "Zero learners fell into the Emerging (Low/High) reader profiles, a significant achievement for early literacy programs.",
+              "Reading at Grade Level increased dramatically to 69.57% (+27.71 points compared to the previous year), highlighting highly effective classroom instruction."
+            ]
+          },
+          {
+            year: "2025-2026",
+            total: 46,
+            gender: { male: 45.65, female: 54.35 },
+            grades: { g1: 11, g2: 21, g3: 14 },
+            profiles: {
+              lowEmerging: 0,
+              highEmerging: 0,
+              developing: 0,
+              transitioning: 21.74,
+              gradeLevel: 78.26
+            },
+            interpretation: [
+              "Zero learners are in the Low/High Emerging or Developing categories, meaning 100% of assessed learners are at least Transitioning.",
+              "Reading at Grade Level reached an outstanding 78.26%, demonstrating sustained progress in early-grade literacy intervention."
+            ]
+          }
+        ],
         panels: [
           {
             title: "ELLNA",
@@ -449,6 +519,17 @@ export const defaultState = {
               "K2 Filipino frustration is down to 0%.",
               "K3 Filipino frustration improved from 23.08% to 10.71%.",
               "K3 English independent readers moved from 59.62% to 50%, requiring monitoring."
+            ]
+          },
+          {
+            title: "CRLA",
+            status: "Emerging cleared",
+            finding: "CRLA results show a clear upward trend in reading profiles, with emerging readers completely cleared by 2024-2025.",
+            action: "Sustain early grade reading intervention (CRLA profiling) and push transitioning readers to full grade level reading.",
+            bullets: [
+              "Emerging readers (low/high) decreased from 4.65% to 0%.",
+              "Reading at Grade Level rose from 41.86% to 78.26% over three years.",
+              "Developing readers reduced to 0% by SY 2025-2026."
             ]
           }
         ]

@@ -6,6 +6,8 @@ import {
   PerformanceMetric,
   PhilIriDataset,
   PhilIriLevels,
+  CrlaDataset,
+  CrlaLevels,
   PhotoAsset,
   getAssetPath,
 } from "@/lib/store";
@@ -441,11 +443,12 @@ const PerformanceBudgetVisual = ({ step, activePanelIdx = 0 }: { step: Performan
   return <LearningOutcomesVisual step={step} activePanelIdx={activePanelIdx} />;
 };
 
-const LO_GROUPS: { key: string; kind: "slope" | "radar" | "gauge" | "recovery"; title: string; caption: string }[] = [
+const LO_GROUPS: { key: string; kind: "slope" | "radar" | "gauge" | "recovery" | "crla"; title: string; caption: string }[] = [
   { key: "ELLNA", kind: "slope", title: "ELLNA", caption: "Previous → current vs the 75% target" },
   { key: "NAT G6", kind: "radar", title: "NAT Grade 6", caption: "Five learning areas vs the 75% target" },
   { key: "NAT G10", kind: "gauge", title: "NAT Grade 10", caption: "Mastery gap to the 75% target" },
-  { key: "PHIL-IRI", kind: "recovery", title: "PHIL-IRI", caption: "Reading recovery — frustration down, independence up" }
+  { key: "PHIL-IRI", kind: "recovery", title: "PHIL-IRI", caption: "Reading recovery — frustration down, independence up" },
+  { key: "CRLA", kind: "crla", title: "CRLA", caption: "Comprehensive Rapid Literacy Assessment (Grades 1 to 3)" }
 ];
 
 const LearningOutcomesVisual = ({ step, activePanelIdx = 0 }: { step: PerformanceBudgetStep; activePanelIdx?: number }) => {
@@ -455,7 +458,9 @@ const LearningOutcomesVisual = ({ step, activePanelIdx = 0 }: { step: Performanc
   const isRecovery = group.key === "PHIL-IRI";
   const summary = isRecovery
     ? 100 - averageMetric(metrics.filter((metric) => metric.target === 0))
-    : averageMetric(metrics);
+    : group.key === "CRLA"
+      ? (step.crla && step.crla[step.crla.length - 1]?.profiles.gradeLevel) ?? 78.26
+      : averageMetric(metrics);
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", minHeight: 0 }}>
@@ -465,11 +470,11 @@ const LearningOutcomesVisual = ({ step, activePanelIdx = 0 }: { step: Performanc
           <span style={{ fontSize: "17px", color: "#5b6b7d", fontWeight: 750 }}>{group.caption}</span>
         </div>
         <span className="mono" style={{ fontSize: "27px", fontWeight: 900, color: "#0a2f52", whiteSpace: "nowrap" }}>
-          {summary.toFixed(1)}% <span style={{ fontSize: "14px", color: "#9aa7b4", fontWeight: 800 }}>{isRecovery ? "recovery signal" : "group average"}</span>
+          {summary.toFixed(1)}% <span style={{ fontSize: "14px", color: "#9aa7b4", fontWeight: 800 }}>{isRecovery ? "recovery signal" : group.key === "CRLA" ? "reading at grade level" : "group average"}</span>
         </span>
       </div>
       <div key={idx} className="pb-viz-enter" style={{ flex: 1, minHeight: 0 }}>
-        {metrics.length === 0 ? (
+        {metrics.length === 0 && group.key !== "CRLA" ? (
           <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#9aa7b4", fontSize: "20px", fontWeight: 700 }}>No metrics for this group.</div>
         ) : group.kind === "slope" ? (
           <SlopeChart metrics={metrics} target={75} />
@@ -477,6 +482,8 @@ const LearningOutcomesVisual = ({ step, activePanelIdx = 0 }: { step: Performanc
           <RadarChart metrics={metrics} target={75} />
         ) : group.kind === "gauge" ? (
           <GaugeBulletPanel metrics={metrics} target={75} />
+        ) : group.kind === "crla" ? (
+          <CrlaChart datasets={step.crla ?? []} />
         ) : (
           <RecoveryChart datasets={step.philIri ?? []} metrics={metrics} />
         )}
@@ -714,6 +721,109 @@ const RecoveryChart = ({ datasets, metrics }: { datasets: PhilIriDataset[]; metr
         >
           <span style={{ display: "inline-block", transform: showNotes ? "rotate(90deg)" : "none", transition: "transform 0.2s ease" }}>▸</span>
           Strategic interpretation
+        </button>
+        {showNotes && (
+          <ul style={{ margin: "12px 0 0", paddingLeft: "22px", display: "flex", flexDirection: "column", gap: "8px" }}>
+            {active.interpretation.map((line, i) => (
+              <li key={i} style={{ fontSize: "18px", lineHeight: 1.4, color: "#2c3e50", fontWeight: 600 }}>{line}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const CRLA_PROFILES: { key: keyof CrlaLevels; label: string; color: string }[] = [
+  { key: "gradeLevel", label: "Reading At Grade Level", color: "#10b981" },
+  { key: "transitioning", label: "Transitioning Reader", color: "#3b82f6" },
+  { key: "developing", label: "Developing Reader", color: "#f5a623" },
+  { key: "highEmerging", label: "High Emerging Reader", color: "#f87171" },
+  { key: "lowEmerging", label: "Low Emerging Reader", color: "#ef4444" }
+];
+
+const CrlaStack = ({ title, dist }: { title: string; dist: CrlaLevels }) => (
+  <div>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "8px", gap: "12px" }}>
+      <span style={{ fontSize: "22px", fontWeight: 850, color: "#0a2f52" }}>{title}</span>
+      <span className="mono" style={{ fontSize: "15px", fontWeight: 800, color: "#5b6b7d" }}>
+        {dist.gradeLevel.toFixed(1)}% Grade Lvl · {dist.transitioning.toFixed(1)}% Trans · {dist.developing.toFixed(1)}% Dev · {dist.highEmerging.toFixed(1)}% High Emg · {dist.lowEmerging.toFixed(1)}% Low Emg
+      </span>
+    </div>
+    <div style={{ display: "flex", height: "36px", borderRadius: "10px", overflow: "hidden", background: "#eef2f6" }}>
+      {CRLA_PROFILES.map((lvl) => {
+        const v = dist[lvl.key];
+        if (v <= 0) return null;
+        return (
+          <div key={lvl.key} style={{ width: `${clampPercent(v)}%`, background: lvl.color, display: "flex", alignItems: "center", justifyContent: "center", transition: "width 0.35s ease" }}>
+            {v >= 4.5 && <span className="mono" style={{ fontSize: "14px", fontWeight: 800, color: "#fff" }}>{v.toFixed(1)}%</span>}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+);
+
+const CrlaChart = ({ datasets }: { datasets: CrlaDataset[] }) => {
+  const years = Array.from(new Set(datasets.map((d) => d.year)));
+  const [yr, setYr] = useState<string>(years[years.length - 1] ?? "2025-2026");
+  const [showNotes, setShowNotes] = useState(false);
+
+  const active = datasets.find((d) => d.year === yr) || datasets[0];
+
+  const pill = (selected: boolean): React.CSSProperties => ({
+    border: 0,
+    cursor: "pointer",
+    borderRadius: "999px",
+    padding: "8px 16px",
+    fontSize: "16px",
+    fontWeight: 800,
+    fontFamily: "inherit",
+    background: selected ? "var(--vibe-accent)" : "transparent",
+    color: selected ? "#fff" : "#5b6b7d",
+    transition: "background 0.2s ease, color 0.2s ease"
+  });
+
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", gap: "18px", minHeight: 0 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "4px", background: "#f7f9fb", padding: "4px", borderRadius: "999px" }}>
+          {years.map((y) => (
+            <button key={y} type="button" onClick={() => setYr(y)} style={pill(y === yr)}>{y}</button>
+          ))}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          {active.gender && (
+            <span className="mono" style={{ fontSize: "15px", fontWeight: 800, color: "#0e477c", background: "#e0f2fe", borderRadius: "999px", padding: "4px 12px" }}>
+              ♂ {active.gender.male}% · ♀ {active.gender.female}%
+            </span>
+          )}
+          <span className="mono" style={{ fontSize: "15px", fontWeight: 800, color: "#5b6b7d" }}>
+            n = {active.total} · G1: {active.grades.g1} · G2: {active.grades.g2} · G3: {active.grades.g3}
+          </span>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <CrlaStack title="Reading Profiles Distribution" dist={active.profiles} />
+      </div>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "14px 20px", fontSize: "15px", color: "#5b6b7d", fontWeight: 750 }}>
+        {CRLA_PROFILES.map((lvl) => (
+          <span key={lvl.key} style={{ display: "flex", alignItems: "center", gap: "7px" }}>
+            <span style={{ width: "13px", height: "13px", borderRadius: "4px", background: lvl.color }} />{lvl.label}
+          </span>
+        ))}
+      </div>
+
+      <div style={{ borderTop: "1px solid #eef2f6", paddingTop: "12px", marginTop: "auto" }}>
+        <button
+          type="button"
+          onClick={() => setShowNotes((s) => !s)}
+          style={{ border: 0, background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", padding: 0, fontFamily: "inherit", fontSize: "16px", fontWeight: 800, color: "#0a2f52" }}
+        >
+          <span style={{ display: "inline-block", transform: showNotes ? "rotate(90deg)" : "none", transition: "transform 0.2s ease" }}>▸</span>
+          Strategic interpretation {active.year === "2025-2026" && <span style={{ fontSize: "12px", color: "#f5a623", fontWeight: 700 }}>(corrected from slide typo)</span>}
         </button>
         {showNotes && (
           <ul style={{ margin: "12px 0 0", paddingLeft: "22px", display: "flex", flexDirection: "column", gap: "8px" }}>
